@@ -204,7 +204,11 @@ Recent runs in this workspace reported:
 - All key hyperparameters and paths are centralized in `config.py`
 - Dataset split boundaries are deterministic and index-based
 
-## 11. Author
+## 12. Thesis Defense Guide
+
+For the full technical defense roadmap, glossary, and viva preparation notes, open [DefensePrep.md](DefensePrep.md).
+
+## 13. Author
 
 M Samiul Hasnat  
 Sichuan University  
