@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CT-MUSIQ Documentation</title>
+  <meta name="description" content="CT-MUSIQ project documentation and thesis defense preparation." />
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body>
+  <div class="layout">
+    <aside class="left-panel" aria-label="Documentation navigation">
+      <div class="brand">
+        <h1>CT-MUSIQ</h1>
+        <p>Project Docs</p>
+      </div>
+
+      <nav class="doc-nav" aria-label="Document selector">
+        <button class="doc-btn active" data-doc="README.md">README</button>
+        <button class="doc-btn" data-doc="DefensePrep.md">Defense Prep</button>
+      </nav>
+
+      <section class="toc-wrap" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul id="tocList"></ul>
+      </section>
+    </aside>
+
+    <main class="content" id="content" aria-live="polite">
+      <div class="loading">Loading document...</div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="site.js"></script>
+</body>
+</html>
