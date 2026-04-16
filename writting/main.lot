@@ -1,0 +1,17 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {4.1}{\ignorespaces Complete CT-MUSIQ hyperparameter configuration.}}{50}{table.caption.2}%
+\contentsline {table}{\numberline {4.2}{\ignorespaces Ablation study results (validation aggregate at epoch 30, 30-epoch training).}}{51}{table.caption.3}%
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {5.1}{\ignorespaces Test set performance on the LDCTIQAC 2023 benchmark (100 images). Best results in \textbf {bold}. ``$\star $'' indicates results from the original LDCTIQAC 2023 challenge leaderboard (Lee et al., 2025). Methods without $\star $ are reproduced/proposed in this work.}}{52}{table.caption.4}%
+\contentsline {table}{\numberline {5.2}{\ignorespaces Selected training snapshots for CT-MUSIQ (100-epoch run).}}{55}{table.caption.5}%
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {A.1}{\ignorespaces Selected epochs from the CT-MUSIQ primary training log. Stage 1 (epochs 1--5): frozen encoder. Stage 2 (epochs 6--100): full fine-tuning. Best val.\ aggregate checkpoint is highlighted.}}{75}{table.caption.9}%
+\contentsline {table}{\numberline {A.2}{\ignorespaces Validation aggregate across ablation configurations (30 epochs). Values shown at selected epochs. Best configuration highlighted.}}{78}{table.caption.10}%
+\contentsline {table}{\numberline {A.3}{\ignorespaces CT-MUSIQ architecture summary.}}{78}{table.caption.11}%
+\addvspace {10\p@ }
+\contentsfinish 
+\contentsfinish 

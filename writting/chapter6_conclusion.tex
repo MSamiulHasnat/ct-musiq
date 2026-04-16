@@ -1,0 +1,296 @@
+% ============================================================
+% Chapter 6: Conclusion and Future Work
+% CT-MUSIQ Undergraduate Thesis
+% ============================================================
+
+\chapter{Conclusion and Future Work}
+\label{chap:conclusion}
+
+\section{Summary of Contributions}
+\label{sec:conc_summary}
+
+This thesis has presented CT-MUSIQ, a novel no-reference image quality assessment
+framework for brain low-dose computed tomography, motivated by the pressing clinical
+need for automated, scalable quality assurance in high-throughput LDCT pipelines.
+The work spans the complete research cycle from literature review and problem
+identification through architectural design, training methodology, systematic experimental
+evaluation, and ablation validation.
+
+The principal scientific and engineering contributions of this thesis are:
+
+\textbf{1. CT-MUSIQ architecture.} A purpose-built NR-IQA system adapted from the
+Multi-Scale Image Quality Transformer (MUSIQ) for the specific constraints of brain CT
+imaging. CT-MUSIQ processes 193 patch tokens from a two-scale spatial pyramid
+($224 \times 224$ and $384 \times 384$ pixels), encodes their spatial positions with a
+hash-based factored embedding scheme, and processes the full token sequence with a
+12-layer, 8-head Transformer encoder initialised from pretrained ViT-B/32 weights.
+
+\textbf{2. Clinical preprocessing adaptation.} The brain soft-tissue windowing
+transformation (level~40~HU, width~80~HU) is identified and motivated as a critical
+preprocessing step that aligns the model's perceptual input with the radiologist's
+viewing conditions during annotation---a methodological refinement not present in the
+original LDCTIQAC challenge design, which was targeted at abdominal CT.
+
+\textbf{3. Scale-consistency KL regularisation.} A novel composite loss function that
+adds a Kullback-Leibler divergence term between per-scale quality prediction
+distributions and the global quality prediction, enforcing cross-scale consistency and
+providing effective regularisation on the small 700-image training set. Ablation studies
+confirm this is the most impactful single contribution, providing +0.034 aggregate
+performance improvement at the 30-epoch ablation budget.
+
+\textbf{4. Two-stage fine-tuning with EMA and gradient clipping.} A carefully engineered
+training protocol that stabilises the fine-tuning of a large pretrained Transformer on
+a small medical dataset, including frozen encoder warm-up, linear learning rate warm-up,
+cosine annealing, exponential moving average weight smoothing, and gradient clipping.
+
+\textbf{5. Comprehensive benchmarking.} CT-MUSIQ is benchmarked against six published
+LDCTIQAC 2023 leaderboard methods and the independently reimplemented Agaldran Combo
+baseline, with systematic ablation studies confirming the individual contribution of each
+proposed component.
+
+\textbf{6. Open-source implementation.} A complete, reproducible PyTorch implementation
+with centralised configuration management, deterministic seeding, and modular scripts
+for training, evaluation, and ablation, enabling full reproduction of all reported
+experiments.
+
+
+\section{Conclusions}
+\label{sec:conc_conclusions}
+
+The experimental results lead to the following conclusions:
+
+\textbf{Conclusion 1: Multi-scale Vision Transformers are an appropriate architecture
+for LDCT NR-IQA.} CT-MUSIQ's Aggregate of 2.7235 places it among the top methods
+evaluated on the LDCTIQAC 2023 benchmark, demonstrating that the multi-scale Transformer
+paradigm---originally designed for natural image IQA---transfers effectively to the
+medical CT domain with appropriate domain adaptations.
+
+\textbf{Conclusion 2: Scale-consistency KL regularisation is the most impactful
+proposed component.} Among all ablation configurations tested, the scale-consistency KL
+loss at $\lambda = 0.10$ provides the largest single performance gain (+0.034 aggregate
+at 30 epochs), validating the hypothesis that preventing per-scale overfitting is critical
+for learning from 700 training samples.
+
+\textbf{Conclusion 3: Ensemble diversity can outperform single-model regularisation on
+small datasets.} The Agaldran Combo (Swin-T + ResNet-50 ensemble) achieves a higher
+Aggregate (2.7682) than CT-MUSIQ (2.7235) despite having fewer parameters and simpler
+training. This finding suggests that architectural diversity through ensembling may be
+a more effective strategy than regularising a larger single model on datasets of this
+scale.
+
+\textbf{Conclusion 4: Classical NR-IQA methods are fundamentally inadequate for CT.}
+The 0.60 aggregate gap between CT-MUSIQ and BRISQUE confirms the literature review
+conclusion that Natural Scene Statistics-based methods fail on calibrated medical images
+due to the domain mismatch between natural image statistics and Hounsfield Unit
+distributions.
+
+\textbf{Conclusion 5: Brain CT windowing alignment is a non-trivial methodological
+choice.} The adaptation of preprocessing from the original challenge's abdominal
+windowing to the clinically standard brain soft-tissue window is both clinically
+motivated and technically significant, ensuring the model processes the same intensity
+distribution as the annotating radiologists.
+
+
+\section{Limitations and Self-Critique}
+\label{sec:conc_limitations}
+
+This thesis acknowledges the following significant limitations that should be considered
+when interpreting the results:
+
+\textbf{Limited dataset scope.} All experiments are conducted on a single dataset of
+1,000 brain CT images from one challenge. Generalisation to different scanner models,
+patient populations, dose levels, or anatomical regions is entirely unvalidated. A
+clinically deployable system would require validation on multi-institutional, multi-vendor
+datasets with diverse acquisition parameters.
+
+\textbf{Small test set.} The 100-image test set provides insufficient statistical power
+to claim statistically significant performance differences between methods with aggregate
+scores differing by less than 0.1 points. The reported results are point estimates subject
+to substantial sampling uncertainty.
+
+\textbf{Non-identical baseline reimplementation.} The Agaldran Combo implemented here
+is motivated by but not identical to the original challenge submission. The higher
+performance of the reimplemented Agaldran Combo (2.7682 vs.\ published 2.7427) may
+reflect the different training conditions rather than the architectural advantages.
+
+\textbf{Hardware constraints.} The 6~GB VRAM limitation of the consumer GPU used in
+this work restricts the experimental scope: only two scales can be used in full training,
+batch size is limited to 10, and ensemble strategies for CT-MUSIQ itself (e.g., multiple
+CT-MUSIQ models trained with different random seeds) could not be explored.
+
+\textbf{No clinical validation.} CT-MUSIQ's quality scores are validated against
+radiologist consensus labels from the LDCTIQAC 2023 challenge but have not been validated
+in a real clinical setting---for instance, by demonstrating that high-quality scans
+predicted by CT-MUSIQ have improved diagnostic yield for specific pathologies relative
+to low-quality scans predicted by CT-MUSIQ.
+
+
+\section{Future Work}
+\label{sec:conc_future}
+
+The findings of this thesis open several promising directions for future research:
+
+\textbf{1. Multi-institutional dataset collection.} The most impactful direction for
+clinical validation would be the collection and annotation of a large, multi-institutional
+dataset covering diverse scanner types, patient demographics, dose levels, and anatomical
+regions. Such a dataset would enable robust evaluation of generalisation and domain
+adaptation strategies.
+
+\textbf{2. CT-MUSIQ ensemble.} Combining multiple CT-MUSIQ models trained with different
+random seeds or different KL regularisation weights would be expected to improve
+aggregate performance through prediction diversity, similar to the benefit observed with
+the Agaldran Combo. A five-model ensemble of CT-MUSIQ variants could potentially surpass
+the Agaldran Combo baseline.
+
+\textbf{3. CT-MUSIQ and Agaldran Combo ensemble.} Given the complementary strengths of
+CT-MUSIQ (better PLCC calibration) and Agaldran Combo (better SROCC/KROCC), combining
+their predictions through a learned or simple averaging strategy would be expected to
+outperform either method alone.
+
+\textbf{4. Three-scale CT-MUSIQ with extended training.} The ablation study showed that
+the three-scale configuration (A6) slightly underperforms at 30 epochs but may benefit
+from the full 100-epoch training. With access to a larger GPU, training the three-scale
+variant to convergence would determine whether native-resolution ($512 \times 512$)
+patches provide additional quality information beyond the two-scale pyramid.
+
+\textbf{5. Vision-language model integration.} Emerging VLM-based approaches such as
+IQAGPT \cite{chen2024iqagpt} demonstrate that combining visual quality features with
+language-based reasoning can produce explainable quality assessments aligned with
+radiologist diagnostic criteria. Integrating CT-MUSIQ's visual features with a
+domain-adapted language model to generate textual quality reports alongside numerical
+scores would significantly enhance clinical interpretability.
+
+\textbf{6. Prospective clinical deployment study.} Embedding CT-MUSIQ within a hospital
+PACS pipeline and conducting a prospective study measuring its agreement with
+radiologist quality flags, its scan rejection accuracy, and its correlation with
+diagnostic outcomes would provide the clinical validation necessary for regulatory
+approval and widespread adoption.
+
+\textbf{7. Explainability through attention visualisation.} CT-MUSIQ's Transformer
+self-attention maps could be visualised to identify the image regions and patches that
+most strongly influence the quality score prediction, providing a degree of explainability
+that may help radiologists understand and trust the automated assessment.
+
+\textbf{8. Extension to volumetric quality assessment.} The current work operates on
+individual 2D axial slices. A volumetric extension that aggregates quality scores across
+all slices of a CT volume---or processes slices jointly through a temporal/volumetric
+attention mechanism---would better reflect clinical practice, where overall scan quality
+is assessed at the volume level.
+
+\textbf{9. Self-supervised pre-training on unlabelled CT.} Given the chronic shortage
+of annotated CT quality data, self-supervised pre-training strategies adapted for CT
+images (e.g., masked image modelling in HU space) could provide stronger CT-domain
+representations as the initialisation for CT-MUSIQ, potentially surpassing the
+ImageNet-pretrained ViT-B/32 starting point.
+
+
+\section{Broader Impact and Ethical Considerations}
+\label{sec:conc_ethics}
+
+The deployment of automated AI systems in clinical medical imaging carries significant
+ethical responsibilities that this section briefly examines, recognising that the thesis
+work itself is an early research contribution rather than a clinically deployed system.
+
+\subsection{Radiation Safety and the ALARA Principle}
+
+CT-MUSIQ is motivated in part by the goal of supporting the ALARA principle: by providing
+reliable automated quality assessment, the system could enable real-time scan rejection
+and immediate re-acquisition at the dose level that achieves diagnostic quality, rather
+than systematically exposing patients to higher doses ``to be safe.'' However, this
+goal introduces a dual risk: if CT-MUSIQ incorrectly accepts a poor-quality scan
+(false positive), a patient may receive a subdiagnostic examination that delays care;
+if it incorrectly rejects a good-quality scan (false negative), the patient receives
+unnecessary additional radiation. The appropriate operating threshold for a clinical
+deployment must be determined through careful clinical validation studies that explicitly
+quantify the trade-off between these two error types.
+
+\subsection{Bias and Fairness}
+
+The LDCTIQAC 2023 dataset, while a valuable benchmark, was collected under specific
+acquisition conditions and annotated by a specific pool of radiologists. The model
+trained on this data may inherit biases from the annotation process, including
+systematic biases related to the specific scanner parameters used, the demographics
+of the patient cohort, or the preferences of the annotating radiologists. Before
+clinical deployment, it would be essential to evaluate CT-MUSIQ on data from diverse
+patient populations, scanners, and annotation teams to assess the robustness and fairness
+of its quality predictions across different subgroups.
+
+\subsection{Transparency and Explainability}
+
+A clinically deployed AI system must be explainable to the radiologists and
+radiographers who interact with it. CT-MUSIQ, as a black-box neural network, does not
+currently provide any explanation for its quality score predictions beyond the numerical
+score itself. Attention visualisation techniques---such as attention rollout, Grad-CAM
+applied to the \texttt{[CLS]} token, or attention map averaging across layers---could
+provide heatmaps indicating which image regions most strongly influenced the quality
+prediction. Such visualisations would help radiographers understand why a scan was
+flagged as low quality, potentially identifying specific artefacts that the model found
+problematic. Developing and validating these explainability tools is an important step
+toward clinical trust and regulatory approval.
+
+\subsection{Regulatory Pathway}
+
+In most jurisdictions, AI-based clinical decision support tools (including automated
+image quality assessment systems) require regulatory approval before clinical deployment.
+In the European Union, such systems are classified as medical devices under the MDR
+2017/745 and require conformity assessment by a notified body. In the United States,
+FDA clearance is required under the 510(k) pathway for software as a medical device
+(SaMD). These regulatory processes require extensive clinical validation evidence,
+cybersecurity assessment, and quality management system certification. CT-MUSIQ, as a
+research prototype, is far from meeting these requirements, but the work presented in
+this thesis provides a scientifically rigorous foundation upon which a regulatory-grade
+system could be built.
+
+\section{Reflection on the Research Process}
+\label{sec:conc_reflection}
+
+This thesis was developed alongside the implementation of the CT-MUSIQ codebase,
+creating a close integration between experimental work and documentation. Several
+methodological lessons emerged that are worth recording for future researchers.
+
+\textbf{Dataset inspection.} An early challenge was discovering that the dataset
+contained brain CT slices rather than the abdominal CT implied by the original challenge
+description. This finding---made through careful inspection of the raw images---led
+to the critical methodological adaptation of using brain soft-tissue windowing, which
+measurably improved model performance. Thorough dataset inspection is a prerequisite
+for any medical AI project, and domain expertise is essential to recognising when
+reported dataset metadata does not match the actual image content.
+
+\textbf{Centralised configuration.} Maintaining a single \texttt{config.py} file as the
+sole repository of all hyperparameters proved invaluable during the iterative training
+and ablation process. When a hyperparameter needed adjustment, a single change propagated
+correctly to all scripts, eliminating the risk of inconsistencies between training and
+evaluation configurations. This practice is strongly recommended for all machine learning
+research projects involving multiple interacting scripts.
+
+\textbf{Training monitoring.} The training logs revealed unexpected patterns in the
+validation aggregate that prompted investigation of the stochastic training dynamics.
+Rather than being a cause for concern, these patterns were identified as normal behaviour
+of gradient descent on a small dataset. Systematic monitoring of training dynamics
+through detailed logging is essential for diagnosing model behaviour and distinguishing
+normal stochasticity from genuine training pathologies.
+
+\section{Closing Remarks}
+\label{sec:conc_closing}
+
+This thesis demonstrates that the challenge of automated perceptual quality assessment
+for brain low-dose CT imaging can be meaningfully addressed through a carefully designed
+combination of multi-scale Vision Transformer architecture, clinical domain adaptation,
+and principled regularisation. CT-MUSIQ achieves competitive state-of-the-art performance
+on the LDCTIQAC 2023 benchmark while operating entirely within the constraints of
+consumer GPU hardware, making its principles accessible to researchers without access to
+high-end computing infrastructure.
+
+The work also reveals that ensemble methods combining architecturally diverse backbones
+can surpass even well-regularised single models on small medical datasets, a finding with
+broad implications for the development of deep learning systems in data-scarce clinical
+domains. The complementary nature of CT-MUSIQ and the Agaldran Combo baseline suggests
+that hybrid strategies combining multi-scale patch tokenisation with diverse
+convolutional-hierarchical features represent a particularly promising direction for
+future research.
+
+Ultimately, the goal of this research is to contribute a step toward a future where every
+CT acquisition is automatically and reliably assessed for diagnostic quality, enabling
+real-time quality feedback to radiographers, objective benchmarking of reconstruction
+algorithms, and---most importantly---improved patient care through the consistent delivery
+of diagnostically acceptable images at the lowest achievable radiation dose.

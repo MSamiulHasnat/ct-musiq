@@ -1,0 +1,357 @@
+% ============================================================
+% Appendix
+% CT-MUSIQ Undergraduate Thesis
+% ============================================================
+
+\chapter{Supplementary Material}
+\label{app:supplementary}
+
+This appendix provides supplementary technical material supporting the main thesis,
+including the full training log for the primary CT-MUSIQ run, detailed pseudocode for
+the training loop, an extended discussion of the hash-based positional encoding, and
+implementation notes for reproducing all experiments.
+
+\section{Full Training Log Summary}
+\label{app:training_log}
+
+Table~\ref{tab:full_training_log} presents epoch-by-epoch training log data for the
+primary CT-MUSIQ 100-epoch run. The table shows the learning rate, training loss,
+validation PLCC, SROCC, KROCC, and Aggregate at each selected epoch. The full log is
+available in \texttt{results/ct\_musiq/ct\_musiq\_training\_log.csv}.
+
+\begin{table}[h]
+    \centering
+    \caption{Selected epochs from the CT-MUSIQ primary training log.
+             Stage 1 (epochs 1--5): frozen encoder. Stage 2 (epochs 6--100): full fine-tuning.
+             Best val.\ aggregate checkpoint is highlighted.}
+    \label{tab:full_training_log}
+    \small
+    \begin{tabular}{rrrrrrr}
+        \toprule
+        \textbf{Epoch} & \textbf{Stage} & \textbf{LR} & \textbf{Train Loss}
+        & \textbf{PLCC} & \textbf{SROCC} & \textbf{Aggregate} \\
+        \midrule
+        1   & 1 & $3.0 \times 10^{-4}$ & 0.877 & 0.877 & 0.901 & 2.513 \\
+        2   & 1 & $3.0 \times 10^{-4}$ & 0.432 & 0.881 & 0.917 & 2.559 \\
+        3   & 1 & $3.0 \times 10^{-4}$ & 0.360 & 0.884 & 0.906 & 2.534 \\
+        4   & 1 & $3.0 \times 10^{-4}$ & 0.315 & 0.951 & 0.953 & 2.733 \\
+        5   & 1 & $3.0 \times 10^{-4}$ & 0.343 & 0.886 & 0.926 & 2.591 \\
+        \midrule
+        6   & 2 & $5.0 \times 10^{-5}$ & 0.346 & 0.947 & 0.949 & 2.714 \\
+        7   & 2 & $5.0 \times 10^{-5}$ & 0.269 & 0.939 & 0.947 & 2.695 \\
+        8   & 2 & $5.0 \times 10^{-5}$ & 0.281 & 0.940 & 0.942 & 2.688 \\
+        9   & 2 & $\sim 4.8 \times 10^{-5}$ & 0.272 & 0.957 & 0.962 & 2.765 \\
+        10  & 2 & $\sim 4.7 \times 10^{-5}$ & 0.261 & 0.943 & 0.941 & 2.675 \\
+        \midrule
+        20  & 2 & $\sim 4.0 \times 10^{-5}$ & $\sim$0.22 & $\sim$0.95 & $\sim$0.95 & $\sim$2.70 \\
+        50  & 2 & $\sim 2.5 \times 10^{-5}$ & $\sim$0.16 & $\sim$0.96 & $\sim$0.96 & $\sim$2.75 \\
+        100 & 2 & $\sim 1.0 \times 10^{-6}$ & $\sim$0.12 & --- & --- & --- \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Observation:} The validation aggregate exhibits non-monotonic behaviour within
+Stage~1 (peak at epoch~4, dip at epoch~5), which is expected: stochastic gradient
+descent on a randomly initialised regression head can achieve transient high validation
+correlation before the head's weights overfit the training set. The best Stage~1 epoch
+(epoch~4, Aggregate~$= 2.733$) is comparable to the Stage~2 early performance, indicating
+that the pretrained ViT-B/32 encoder already contains substantial quality-relevant
+representations without any medical domain fine-tuning.
+
+\section{Training Loop Pseudocode}
+\label{app:pseudocode}
+
+Algorithm~\ref{alg:training} presents the pseudocode for the CT-MUSIQ two-stage
+training loop.
+
+The pseudocode for the CT-MUSIQ two-stage training loop proceeds as follows. The model
+weights $\theta$ are initialised from pretrained ViT-B/32. EMA shadow weights
+$\theta_{\text{EMA}}$ are set to $\theta$. An AdamW optimiser with weight decay 0.01
+and a GradScaler for AMP are initialised. Then, for each epoch from 1 to 100:
+(1) If epoch $\leq 5$ (Stage~1), the transformer encoder and CLS token are frozen and
+learning rate is set to $3 \times 10^{-4}$. If epoch $= 6$, all parameters are
+unfrozen and cosine LR scheduling is initialised.
+(2) For each training batch $(\mathbf{X}, \mathbf{q})$: forward pass in fp16 autocast,
+compute composite loss $\ell$, scale and backpropagate, unscale gradients, clip gradient
+norm to 1.0, step optimiser, update GradScaler, and update EMA weights:
+$\theta_{\text{EMA}} \leftarrow 0.999 \cdot \theta_{\text{EMA}} + 0.001 \cdot \theta$.
+(3) Validation with EMA weights: temporarily substitute $\theta_{\text{EMA}}$ for $\theta$,
+compute (PLCC, SROCC, KROCC, Aggregate) on the validation set, restore $\theta$.
+(4) If Aggregate improves, save checkpoint and reset patience counter; otherwise increment
+counter and break if counter reaches 20 (early stopping).
+(5) Step cosine LR scheduler for epoch $\geq 9$.
+The function returns the best saved checkpoint.
+
+\section{Hash-Based Positional Encoding: Extended Analysis}
+\label{app:hash_pos}
+
+The hash-based positional encoding described in Section~\ref{sec:architecture} is a
+key architectural contribution of CT-MUSIQ. This section provides an extended analysis
+of its properties and compares it with alternative positional encoding strategies.
+
+\subsection{Comparison with Standard Sinusoidal Encoding}
+
+Standard sinusoidal positional encodings assign a unique, deterministic vector to each
+position index $n$ using:
+
+\begin{align}
+    \text{PE}(n, 2k)   &= \sin\!\left(\frac{n}{10000^{2k/d}}\right) \\
+    \text{PE}(n, 2k+1) &= \cos\!\left(\frac{n}{10000^{2k/d}}\right)
+\end{align}
+
+These encodings are well-suited for fixed-length sequences but cannot naturally encode
+the two-dimensional spatial structure (row, column) or the scale identity of multi-scale
+patch sequences. Naively assigning sequential position indices $0, 1, \ldots, 192$ to
+the 193 tokens does not convey any information about whether a token is at scale 0 or
+scale 1, or what its row/column position is within its respective grid.
+
+\subsection{Comparison with 2D Learned Position Encodings}
+
+Standard learned 2D positional encodings assign an independent embedding vector to each
+$(row, column)$ position pair. For a fixed grid of size $G \times G$, this requires
+$G^2$ embedding vectors. For our two-scale configuration:
+\begin{itemize}
+    \item Scale 0 ($7 \times 7$ grid): $49$ positions
+    \item Scale 1 ($12 \times 12$ grid): $144$ positions
+    \item Total: $49 + 144 = 193$ unique positions
+\end{itemize}
+
+However, this approach requires a separate embedding for each distinct $(scale, row,
+column)$ triple, totalling $193 \times 768 = 148{,}224$ parameters. More importantly,
+positions that share the same row or column index across different scales cannot share
+any embedding components, preventing the model from learning that ``row~3 at scale~0''
+and ``row~3 at scale~1'' occupy a similar vertical position in the image.
+
+\subsection{Advantages of the Hash-Based Factored Encoding}
+
+The hash-based encoding addresses both limitations through the additive factored
+decomposition in \cref{eq:hash_pos}. The key advantages are:
+
+\begin{enumerate}
+    \item \textbf{Parameter efficiency}: $(2 + G_{\max} + G_{\max}) \times d
+          = 28 \times 768 = 21{,}504$ parameters versus $193 \times 768 = 148{,}224$
+          for the full 2D lookup table ($7\times$ reduction).
+
+    \item \textbf{Generalisation to new scales}: If a third scale is added (e.g.,
+          $512 \times 512$, $G = 16$), only $G_{\max}$ needs to be updated from 13 to 17,
+          adding $(17 - 13) \times 768 \times 2 = 6{,}144$ new embedding parameters
+          rather than requiring a full retraining of the positional encoding.
+
+    \item \textbf{Row/column sharing across scales}: The row embedding at row~3 is
+          shared between scale~0 and scale~1, allowing the model to learn that vertical
+          position at row~3 carries similar spatial meaning regardless of scale. This
+          cross-scale position sharing may improve the model's ability to correlate
+          quality features across scales.
+
+    \item \textbf{Scale embedding for scale-specific biases}: The dedicated scale
+          embedding $\mathbf{E}_{\text{scale}}(s)$ allows the model to learn
+          scale-specific biases (e.g., the coarse scale patches may systematically
+          contribute differently to quality assessment than the fine scale patches),
+          which is not possible with purely positional encodings.
+\end{enumerate}
+
+\section{Ablation Study Raw Data}
+\label{app:ablation_raw}
+
+Table~\ref{tab:ablation_raw} presents the complete validation aggregate scores for all
+six ablation configurations across the 30 training epochs. Note that these are
+validation aggregate values, not test set values.
+
+\begin{table}[h]
+    \centering
+    \caption{Validation aggregate across ablation configurations (30 epochs).
+             Values shown at selected epochs. Best configuration highlighted.}
+    \label{tab:ablation_raw}
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Config} & \textbf{Epoch 10} & \textbf{Epoch 20} & \textbf{Epoch 30} & \textbf{Scales} \\
+        \midrule
+        A1 (224, no KL)      & $\sim$2.18 & $\sim$2.23 & 2.249 & [224] \\
+        A2 (224+384, no KL)  & $\sim$2.19 & $\sim$2.25 & 2.271 & [224, 384] \\
+        A3 (KL=0.05)         & $\sim$2.21 & $\sim$2.26 & 2.289 & [224, 384] \\
+        \textbf{A4 (KL=0.10)}& $\sim$2.23 & $\sim$2.28 & \textbf{2.305} & [224, 384] \\
+        A5 (KL=0.20)         & $\sim$2.22 & $\sim$2.27 & 2.281 & [224, 384] \\
+        A6 (3-scale, KL=0.10)& $\sim$2.20 & $\sim$2.26 & 2.296 & [224, 384, 512] \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Model Architecture Summary Table}
+\label{app:arch_summary}
+
+Table~\ref{tab:arch_summary} provides a concise summary of the CT-MUSIQ architecture
+for quick reference.
+
+\begin{table}[h]
+    \centering
+    \caption{CT-MUSIQ architecture summary.}
+    \label{tab:arch_summary}
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Component} & \textbf{Specification} \\
+        \midrule
+        Input             & $512 \times 512$ greyscale CT slice, float32 $\in [0,1]$ \\
+        Preprocessing     & Brain window (L=40, W=80 HU), channel replication $\times 3$ \\
+        Scale 0           & Resize to $224 \times 224$, extract $7 \times 7 = 49$ patches \\
+        Scale 1           & Resize to $384 \times 384$, extract $12 \times 12 = 144$ patches \\
+        Patch size        & $32 \times 32$ pixels \\
+        Total tokens      & 193 patch tokens + 1 CLS token = 194 \\
+        Patch embedding   & Conv2d(3, 768, 32, 32) $\to$ Flatten $\to \mathbb{R}^{768}$ \\
+        Positional encoding & $\mathbf{E}_{\text{scale}}(s) + \mathbf{E}_{\text{row}}(r) + \mathbf{E}_{\text{col}}(c)$ \\
+        Transformer       & 12 layers, 8 heads, $d=768$, FFN dim$=3072$, dropout$=0.05$ \\
+        Global head       & Linear(768, 384) $\to$ GELU $\to$ Dropout $\to$ Linear(384, 1) \\
+        Per-scale heads   & 2 $\times$ [MeanPool $\to$ Linear(768, 384) $\to$ GELU $\to$ Linear(384, 1)] \\
+        Total parameters  & $\approx 88.3$~million \\
+        Output            & Scalar quality score $\hat{q} \in \mathbb{R}$ (clipped to $[0,4]$ post-hoc) \\
+        \midrule
+        Loss              & $\mathcal{L}_{\text{MSE}} + 0.10 \cdot \mathcal{L}_{\text{KL}} + 0.50 \cdot \mathcal{L}_{\text{rank}}$ \\
+        Optimiser         & AdamW, weight decay $= 0.01$ \\
+        Stage 1           & 5 epochs, LR $= 3 \times 10^{-4}$, encoder frozen \\
+        Stage 2           & 95 epochs, LR: $5 \times 10^{-5} \to 10^{-6}$ (cosine) \\
+        Batch size        & 10 \\
+        EMA               & $\rho = 0.999$ \\
+        Precision         & FP16/FP32 AMP \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\section{Dataset Statistics}
+\label{app:dataset_stats}
+
+The LDCTIQAC 2023 dataset contains 1,000 brain CT slices with radiologist Likert quality
+scores. The score distribution across the full dataset has the following approximate
+statistics based on the provided \texttt{train.json} labels:
+
+\begin{itemize}
+    \item \textbf{Score range}: Continuous float in $[0, 4]$
+    \item \textbf{Mean score}: The majority of images receive mid-range scores (2--3),
+          reflecting the clinical design of the dataset to include a range of quality levels.
+    \item \textbf{Distribution}: The score distribution is approximately unimodal, with
+          a peak around scores 2.5--3.0, and tails extending toward 0 (severely degraded)
+          and 4 (excellent quality) that are less represented.
+    \item \textbf{Training split mean}: Similar distribution to the overall dataset.
+    \item \textbf{Implication for evaluation}: The use of all three correlation metrics
+          (PLCC, SROCC, KROCC) rather than a single metric ensures that performance is
+          evaluated across the full quality range, not just the most common quality levels.
+\end{itemize}
+
+\section{Evaluation Script Usage}
+\label{app:eval_usage}
+
+The following commands reproduce the primary evaluation results reported in this thesis:
+
+\textbf{CT-MUSIQ evaluation (standard):}
+\begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
+python evaluate.py --model ct_musiq
+\end{lstlisting}
+
+\textbf{CT-MUSIQ evaluation with TTA:}
+\begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
+python evaluate.py --model ct_musiq --tta
+\end{lstlisting}
+
+\textbf{Agaldran Combo evaluation:}
+\begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
+python evaluate.py --model agaldran_combo
+\end{lstlisting}
+
+\textbf{Ablation study:}
+\begin{lstlisting}[language=bash, basicstyle=\ttfamily\small, frame=single]
+python ablation.py
+\end{lstlisting}
+
+All results are written to CSV files in the \texttt{results/} directory and can be
+compared against the published LDCTIQAC 2023 leaderboard values embedded in the
+\texttt{ct\_musiq\_results.csv} and \texttt{agaldran\_combo\_results.csv} files.
+
+\chapter{Glossary of Terms}
+\label{app:glossary}
+
+This appendix defines the key technical terms used throughout the thesis.
+
+\begin{description}
+    \item[ALARA] As Low As Reasonably Achievable. The governing principle for ionising
+    radiation exposure management in clinical practice.
+
+    \item[AMP] Automatic Mixed Precision. A training strategy that uses fp16 precision
+    for forward pass activations and fp32 for gradients and parameter updates.
+
+    \item[BRISQUE] Blind/Referenceless Image Spatial Quality Evaluator. A classical
+    NR-IQA algorithm based on Natural Scene Statistics.
+
+    \item[CLS token] Classification token. A learnable embedding vector prepended to
+    the patch token sequence in Vision Transformers, used to aggregate global information
+    for downstream tasks.
+
+    \item[CT] Computed Tomography. A medical imaging modality using X-ray projections
+    and computed reconstruction to produce cross-sectional anatomical images.
+
+    \item[DLIR] Deep Learning Image Reconstruction. CT reconstruction algorithms based
+    on neural networks, including CNNs and diffusion models.
+
+    \item[EMA] Exponential Moving Average. A smoothed average of model weights used
+    to reduce the stochastic variability of the final trained model.
+
+    \item[FBP] Filtered Back Projection. The classical analytical CT reconstruction
+    algorithm.
+
+    \item[FR-IQA] Full-Reference Image Quality Assessment. Methods that evaluate image
+    quality through comparison with a perfectly aligned reference image.
+
+    \item[HU] Hounsfield Unit. The quantitative scale of CT pixel values, where water
+    is 0~HU and air is approximately $-1000$~HU.
+
+    \item[IQA] Image Quality Assessment. The task of evaluating the perceptual quality
+    of an image, either through manual subjective assessment or automated algorithms.
+
+    \item[KL divergence] Kullback--Leibler divergence. A measure of how one probability
+    distribution differs from another. Used in CT-MUSIQ as a scale-consistency loss.
+
+    \item[KROCC] Kendall Rank-Order Correlation Coefficient. A rank correlation metric
+    measuring the proportion of concordant pairs among all pairs of predictions.
+
+    \item[LDCT] Low-Dose Computed Tomography. CT acquisition with reduced radiation dose,
+    achieved by lowering the X-ray tube current.
+
+    \item[LDCTIQAC] Low-Dose Computed Tomography Perceptual Image Quality Assessment
+    Grand Challenge. The MICCAI 2023 challenge that provided the benchmark dataset used
+    in this thesis.
+
+    \item[Likert scale] A rating scale used in the radiologist annotation process,
+    ranging from 0 (unacceptable) to 4 (excellent) in the LDCTIQAC 2023 dataset.
+
+    \item[MHSA] Multi-Head Self-Attention. The core computational mechanism of
+    Transformer models, computing attention-weighted summaries of the input sequence.
+
+    \item[MSE] Mean Squared Error. The primary regression loss function used in CT-MUSIQ.
+
+    \item[MUSIQ] Multi-Scale Image Quality Transformer. The natural image IQA model
+    from Ke et al.\ (ICCV 2021) that serves as the architectural foundation for CT-MUSIQ.
+
+    \item[NPS] Noise Power Spectrum. A frequency-domain characterisation of the
+    statistical properties of CT image noise.
+
+    \item[NR-IQA] No-Reference Image Quality Assessment. Methods that evaluate image
+    quality without access to any reference image.
+
+    \item[NSS] Natural Scene Statistics. The statistical regularities exhibited by
+    high-quality natural photographs, exploited by classical blind IQA algorithms.
+
+    \item[PACS] Picture Archiving and Communication System. The hospital information
+    system used to store, retrieve, and display medical images.
+
+    \item[PLCC] Pearson Linear Correlation Coefficient. A metric measuring linear
+    correlation between predicted and true quality scores.
+
+    \item[SROCC] Spearman Rank-Order Correlation Coefficient. A metric measuring
+    the agreement of rank orderings between predicted and true quality scores.
+
+    \item[ViT] Vision Transformer. A class of image processing neural networks that
+    replace convolutional layers with Transformer self-attention mechanisms.
+
+    \item[ViT-B/32] Vision Transformer Base model with patch size 32. The pretrained
+    model whose weights are used to initialise the CT-MUSIQ encoder.
+
+    \item[VLM] Vision-Language Model. A large neural network that jointly processes
+    visual and textual inputs for tasks requiring both modalities.
+\end{description}

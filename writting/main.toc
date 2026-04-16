@@ -1,45 +1,160 @@
-\contentsline {section}{\numberline {I}Methodology}{6}{section.1}%
-\contentsline {section}{\numberline {II}Overview and Problem Formulation}{6}{section.2}%
-\contentsline {section}{\numberline {III}Dataset and Pre-Processing}{6}{section.3}%
-\contentsline {subsection}{\numberline {\mbox {III-A}}LDCTIQAC 2023 Dataset}{6}{subsection.3.1}%
-\contentsline {subsection}{\numberline {\mbox {III-B}}Data Splits}{6}{subsection.3.2}%
-\contentsline {subsection}{\numberline {\mbox {III-C}}CT Windowing Pre-Processing}{6}{subsection.3.3}%
-\contentsline {subsection}{\numberline {\mbox {III-D}}Data Loading Pipeline}{7}{subsection.3.4}%
-\contentsline {section}{\numberline {IV}Proposed Model Architecture: CT-MUSIQ}{7}{section.4}%
-\contentsline {subsection}{\numberline {\mbox {IV-A}}Architecture Overview}{7}{subsection.4.1}%
-\contentsline {subsection}{\numberline {\mbox {IV-B}}Multi-Scale Patch Tokenisation}{7}{subsection.4.2}%
-\contentsline {subsection}{\numberline {\mbox {IV-C}}Spatial Coordinate Representation}{8}{subsection.4.3}%
-\contentsline {subsection}{\numberline {\mbox {IV-D}}Grayscale-to-RGB Channel Replication}{8}{subsection.4.4}%
-\contentsline {subsection}{\numberline {\mbox {IV-E}}Patch Embedding Module}{8}{subsection.4.5}%
-\contentsline {subsection}{\numberline {\mbox {IV-F}}Hash-Based Positional Encoding}{8}{subsection.4.6}%
-\contentsline {subsection}{\numberline {\mbox {IV-G}}Learnable \texttt {[CLS]} Token}{8}{subsection.4.7}%
-\contentsline {subsection}{\numberline {\mbox {IV-H}}Transformer Encoder}{8}{subsection.4.8}%
-\contentsline {subsection}{\numberline {\mbox {IV-I}}Prediction Heads}{9}{subsection.4.9}%
-\contentsline {section}{\numberline {V}Loss Function}{9}{section.5}%
-\contentsline {subsection}{\numberline {\mbox {V-A}}Mean Squared Error Loss}{9}{subsection.5.1}%
-\contentsline {subsection}{\numberline {\mbox {V-B}}Scale-Consistency KL Divergence Loss}{9}{subsection.5.2}%
-\contentsline {subsection}{\numberline {\mbox {V-C}}Pairwise Margin Ranking Loss}{9}{subsection.5.3}%
-\contentsline {section}{\numberline {VI}Training Procedure}{10}{section.6}%
-\contentsline {subsection}{\numberline {\mbox {VI-A}}Two-Stage Training Schedule}{10}{subsection.6.1}%
-\contentsline {subsection}{\numberline {\mbox {VI-B}}Optimiser}{10}{subsection.6.2}%
-\contentsline {subsection}{\numberline {\mbox {VI-C}}Mixed Precision Training}{10}{subsection.6.3}%
-\contentsline {subsection}{\numberline {\mbox {VI-D}}Gradient Clipping}{10}{subsection.6.4}%
-\contentsline {subsection}{\numberline {\mbox {VI-E}}Exponential Moving Average}{10}{subsection.6.5}%
-\contentsline {subsection}{\numberline {\mbox {VI-F}}Early Stopping}{10}{subsection.6.6}%
-\contentsline {subsection}{\numberline {\mbox {VI-G}}Reproducibility}{10}{subsection.6.7}%
-\contentsline {section}{\numberline {VII}Data Augmentation}{10}{section.7}%
-\contentsline {section}{\numberline {VIII}Evaluation Protocol}{11}{section.8}%
-\contentsline {subsection}{\numberline {\mbox {VIII-A}}Evaluation Metrics}{11}{subsection.8.1}%
-\contentsline {subsection}{\numberline {\mbox {VIII-B}}Test-Time Augmentation}{11}{subsection.8.2}%
-\contentsline {subsection}{\numberline {\mbox {VIII-C}}Isotonic Regression Calibration}{11}{subsection.8.3}%
-\contentsline {section}{\numberline {IX}Comparison Baseline: Agaldran Combo}{11}{section.9}%
-\contentsline {section}{\numberline {X}Ablation Study Design}{12}{section.10}%
-\contentsline {section}{\numberline {XI}Implementation Details}{12}{section.11}%
-\contentsline {subsection}{\numberline {\mbox {XI-A}}Software Environment}{12}{subsection.11.1}%
-\contentsline {subsection}{\numberline {\mbox {XI-B}}Hardware}{12}{subsection.11.2}%
-\contentsline {subsection}{\numberline {\mbox {XI-C}}Model Parameter Count}{12}{subsection.11.3}%
-\contentsline {subsection}{\numberline {\mbox {XI-D}}Training Convergence}{12}{subsection.11.4}%
-\contentsline {subsection}{\numberline {\mbox {XI-E}}Final Experimental Results}{12}{subsection.11.5}%
-\contentsline {section}{\numberline {XII}Summary}{12}{section.12}%
-\contentsline {section}{\numberline {XIII}*}{14}{section.13}%
-\contentsline {chapter}{References}{14}{section.13}%
+\contentsline {chapter}{Abstract}{i}{chapter*.1}%
+\contentsline {chapter}{List of Figures}{viii}{chapter*.1}%
+\contentsline {chapter}{List of Tables}{ix}{chapter*.1}%
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Background and Motivation}{1}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Problem Statement}{3}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Proposed Approach: CT-MUSIQ}{4}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Contributions}{4}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Thesis Structure}{5}{section.1.5}%
+\contentsline {section}{\numberline {1.6}Scope and Limitations}{6}{section.1.6}%
+\contentsline {section}{\numberline {1.7}Clinical Context and Significance}{7}{section.1.7}%
+\contentsline {subsection}{\numberline {1.7.1}The CT Acquisition Workflow}{7}{subsection.1.7.1}%
+\contentsline {subsection}{\numberline {1.7.2}The Economic and Radiation Safety Case}{7}{subsection.1.7.2}%
+\contentsline {subsection}{\numberline {1.7.3}Research Benchmarking Applications}{8}{subsection.1.7.3}%
+\contentsline {chapter}{\numberline {2}Literature Review}{9}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introduction to the Review}{9}{section.2.1}%
+\contentsline {section}{\numberline {2.2}The Clinical Imperative and Evolution of Computed Tomography Reconstruction}{9}{section.2.2}%
+\contentsline {section}{\numberline {2.3}The Dichotomy of Image Quality Assessment: Subjective Evaluation versus Full-Reference Metrics}{11}{section.2.3}%
+\contentsline {section}{\numberline {2.4}Ontological Flaws of Traditional No-Reference IQA for CT}{12}{section.2.4}%
+\contentsline {section}{\numberline {2.5}Deep Learning-Driven NR-IQA and the Feature Extraction Bottleneck}{13}{section.2.5}%
+\contentsline {section}{\numberline {2.6}Evaluation Deficits and Standardisation}{14}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Vision Transformers, Multi-Scale Processing, and the MUSIQ Architecture}{15}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Vision Transformer Foundations}{16}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}The Swin Transformer and Hierarchical Attention}{16}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}The MUSIQ Architecture}{17}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Limitations of MUSIQ for Medical CT}{17}{subsection.2.7.4}%
+\contentsline {section}{\numberline {2.8}Emerging Frontiers: Vision-Language Models in IQA}{18}{section.2.8}%
+\contentsline {section}{\numberline {2.9}Synthesis and Identification of the Research Gap}{19}{section.2.9}%
+\contentsline {section}{\numberline {2.10}Transfer Learning and Domain Adaptation in Medical Imaging}{20}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Fundamentals of Transfer Learning for Medical Imaging}{20}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Grayscale-to-RGB Adaptation Strategies}{21}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Fine-Tuning Stability on Small Medical Datasets}{21}{subsection.2.10.3}%
+\contentsline {section}{\numberline {2.11}Regularisation Strategies for Small Dataset Deep Learning}{22}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Data Augmentation for CT Images}{22}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Dropout and Weight Decay}{23}{subsection.2.11.2}%
+\contentsline {subsection}{\numberline {2.11.3}Scale-Consistency KL Regularisation as a Novel Form of Self-Supervision}{23}{subsection.2.11.3}%
+\contentsline {section}{\numberline {2.12}Evaluation Metrics in IQA Research}{24}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Pearson Linear Correlation Coefficient}{24}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Spearman Rank-Order Correlation Coefficient}{24}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}Kendall Rank-Order Correlation Coefficient}{24}{subsection.2.12.3}%
+\contentsline {subsection}{\numberline {2.12.4}Aggregate Score}{25}{subsection.2.12.4}%
+\contentsline {chapter}{\numberline {3}Methodology}{26}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Overview and Problem Formulation}{26}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Dataset and Pre-Processing}{27}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}LDCTIQAC 2023 Dataset}{27}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Data Splits}{27}{subsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.2.3}CT Windowing Pre-Processing}{28}{subsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.2.4}Data Loading Pipeline}{28}{subsection.3.2.4}%
+\contentsline {section}{\numberline {3.3}Proposed Model Architecture: CT-MUSIQ}{29}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Architecture Overview}{29}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Multi-Scale Patch Tokenisation}{30}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Spatial Coordinate Representation}{30}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}Grayscale-to-RGB Channel Replication}{30}{subsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.3.5}Patch Embedding Module}{31}{subsection.3.3.5}%
+\contentsline {subsection}{\numberline {3.3.6}Hash-Based Positional Encoding}{31}{subsection.3.3.6}%
+\contentsline {subsection}{\numberline {3.3.7}Learnable \texttt {[CLS]} Token}{32}{subsection.3.3.7}%
+\contentsline {subsection}{\numberline {3.3.8}Transformer Encoder}{32}{subsection.3.3.8}%
+\contentsline {subsection}{\numberline {3.3.9}Prediction Heads}{32}{subsection.3.3.9}%
+\contentsline {section}{\numberline {3.4}Loss Function}{33}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Mean Squared Error Loss}{33}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Scale-Consistency KL Divergence Loss}{34}{subsection.3.4.2}%
+\contentsline {subsection}{\numberline {3.4.3}Pairwise Margin Ranking Loss}{34}{subsection.3.4.3}%
+\contentsline {section}{\numberline {3.5}Training Procedure}{35}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Two-Stage Training Schedule}{35}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Optimiser}{36}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Mixed Precision Training}{36}{subsection.3.5.3}%
+\contentsline {subsection}{\numberline {3.5.4}Gradient Clipping}{36}{subsection.3.5.4}%
+\contentsline {subsection}{\numberline {3.5.5}Exponential Moving Average (EMA)}{36}{subsection.3.5.5}%
+\contentsline {subsection}{\numberline {3.5.6}Early Stopping}{37}{subsection.3.5.6}%
+\contentsline {section}{\numberline {3.6}Data Augmentation}{37}{section.3.6}%
+\contentsline {section}{\numberline {3.7}Evaluation Protocol}{38}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Evaluation Metrics}{38}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Test-Time Augmentation}{39}{subsection.3.7.2}%
+\contentsline {subsection}{\numberline {3.7.3}Isotonic Regression Calibration}{39}{subsection.3.7.3}%
+\contentsline {section}{\numberline {3.8}Comparison Baseline: Agaldran Combo}{39}{section.3.8}%
+\contentsline {section}{\numberline {3.9}Ablation Study Design}{40}{section.3.9}%
+\contentsline {chapter}{\numberline {4}Experiments}{42}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Overview}{42}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Implementation Details}{42}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Software Environment}{42}{subsection.4.2.1}%
+\contentsline {subsection}{\numberline {4.2.2}Hardware Specifications}{43}{subsection.4.2.2}%
+\contentsline {section}{\numberline {4.3}Hyperparameter Configuration}{43}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Baseline Hyperparameters}{43}{subsection.4.3.1}%
+\contentsline {section}{\numberline {4.4}Training Runs}{44}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}CT-MUSIQ Primary Training Run}{44}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Agaldran Combo Training Run}{44}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Ablation Study}{45}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Protocol}{45}{subsection.4.5.1}%
+\contentsline {subsection}{\numberline {4.5.2}Ablation Configuration Details}{45}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Ablation Results}{45}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Ablation Summary}{46}{subsection.4.5.4}%
+\contentsline {section}{\numberline {4.6}Evaluation Procedure}{46}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Reproducibility}{47}{section.4.7}%
+\contentsline {section}{\numberline {4.8}Comparison Protocol Justification}{47}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Comparison with LDCTIQAC 2023 Leaderboard}{48}{subsection.4.8.1}%
+\contentsline {subsection}{\numberline {4.8.2}Within-Paper Comparison: CT-MUSIQ vs.\ Agaldran Combo}{48}{subsection.4.8.2}%
+\contentsline {section}{\numberline {4.9}Additional Experimental Notes}{49}{section.4.9}%
+\contentsline {subsection}{\numberline {4.9.1}Windows DataLoader Compatibility}{49}{subsection.4.9.1}%
+\contentsline {subsection}{\numberline {4.9.2}Memory Profiling}{49}{subsection.4.9.2}%
+\contentsline {subsection}{\numberline {4.9.3}Training with Resume}{49}{subsection.4.9.3}%
+\contentsline {chapter}{\numberline {5}Results and Discussion}{52}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Overview}{52}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Main Test Set Results}{52}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Quantitative Performance Comparison}{52}{subsection.5.2.1}%
+\contentsline {section}{\numberline {5.3}Analysis of Individual Correlation Metrics}{53}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}PLCC Analysis}{53}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}SROCC Analysis}{54}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}KROCC Analysis}{54}{subsection.5.3.3}%
+\contentsline {section}{\numberline {5.4}Training Dynamics}{54}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}CT-MUSIQ Training Progression}{54}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Loss Component Dynamics}{55}{subsection.5.4.2}%
+\contentsline {section}{\numberline {5.5}Discussion}{55}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Interpretation of CT-MUSIQ Performance}{55}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Interpretation of Agaldran Combo Performance}{56}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Complementary Strengths}{56}{subsection.5.5.3}%
+\contentsline {subsection}{\numberline {5.5.4}Comparison with Classical Methods}{56}{subsection.5.5.4}%
+\contentsline {subsection}{\numberline {5.5.5}Relationship Between Ablation and Full Training Results}{57}{subsection.5.5.5}%
+\contentsline {section}{\numberline {5.6}Limitations of the Presented Results}{57}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Single Dataset Evaluation}{57}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Comparison with Original Challenge Submissions}{57}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}Compute Constraints}{58}{subsection.5.6.3}%
+\contentsline {subsection}{\numberline {5.6.4}No Statistical Significance Testing}{58}{subsection.5.6.4}%
+\contentsline {subsection}{\numberline {5.6.5}No Qualitative Error Analysis}{58}{subsection.5.6.5}%
+\contentsline {section}{\numberline {5.7}Extended Analysis: Correlation Between Aggregate and Clinical Utility}{58}{section.5.7}%
+\contentsline {subsection}{\numberline {5.7.1}Approximate Confusion Analysis}{58}{subsection.5.7.1}%
+\contentsline {subsection}{\numberline {5.7.2}Score Calibration Analysis}{59}{subsection.5.7.2}%
+\contentsline {subsection}{\numberline {5.7.3}Sensitivity to Test Set Composition}{59}{subsection.5.7.3}%
+\contentsline {section}{\numberline {5.8}Error Analysis by Quality Level}{59}{section.5.8}%
+\contentsline {subsection}{\numberline {5.8.1}High-Quality Images (Score 3--4)}{60}{subsection.5.8.1}%
+\contentsline {subsection}{\numberline {5.8.2}Low-Quality Images (Score 0--1)}{60}{subsection.5.8.2}%
+\contentsline {subsection}{\numberline {5.8.3}Mid-Range Quality Images (Score 1.5--2.5)}{60}{subsection.5.8.3}%
+\contentsline {section}{\numberline {5.9}Summary of Results}{61}{section.5.9}%
+\contentsline {chapter}{\numberline {6}Conclusion and Future Work}{62}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Summary of Contributions}{62}{section.6.1}%
+\contentsline {section}{\numberline {6.2}Conclusions}{63}{section.6.2}%
+\contentsline {section}{\numberline {6.3}Limitations and Self-Critique}{63}{section.6.3}%
+\contentsline {section}{\numberline {6.4}Future Work}{64}{section.6.4}%
+\contentsline {section}{\numberline {6.5}Broader Impact and Ethical Considerations}{65}{section.6.5}%
+\contentsline {subsection}{\numberline {6.5.1}Radiation Safety and the ALARA Principle}{66}{subsection.6.5.1}%
+\contentsline {subsection}{\numberline {6.5.2}Bias and Fairness}{66}{subsection.6.5.2}%
+\contentsline {subsection}{\numberline {6.5.3}Transparency and Explainability}{66}{subsection.6.5.3}%
+\contentsline {subsection}{\numberline {6.5.4}Regulatory Pathway}{66}{subsection.6.5.4}%
+\contentsline {section}{\numberline {6.6}Reflection on the Research Process}{67}{section.6.6}%
+\contentsline {section}{\numberline {6.7}Closing Remarks}{67}{section.6.7}%
+\contentsline {chapter}{References}{69}{section.6.7}%
+\contentsline {chapter}{Declaration}{73}{chapter*.7}%
+\contentsline {chapter}{Acknowledgements}{74}{chapter*.8}%
+\contentsline {chapter}{\numberline {A}Supplementary Material}{75}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Full Training Log Summary}{75}{section.A.1}%
+\contentsline {section}{\numberline {A.2}Training Loop Pseudocode}{76}{section.A.2}%
+\contentsline {section}{\numberline {A.3}Hash-Based Positional Encoding: Extended Analysis}{76}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Comparison with Standard Sinusoidal Encoding}{76}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}Comparison with 2D Learned Position Encodings}{77}{subsection.A.3.2}%
+\contentsline {subsection}{\numberline {A.3.3}Advantages of the Hash-Based Factored Encoding}{77}{subsection.A.3.3}%
+\contentsline {section}{\numberline {A.4}Ablation Study Raw Data}{77}{section.A.4}%
+\contentsline {section}{\numberline {A.5}Model Architecture Summary Table}{78}{section.A.5}%
+\contentsline {section}{\numberline {A.6}Dataset Statistics}{78}{section.A.6}%
+\contentsline {section}{\numberline {A.7}Evaluation Script Usage}{79}{section.A.7}%
+\contentsline {chapter}{\numberline {B}Glossary of Terms}{80}{appendix.B}%
+\contentsfinish 

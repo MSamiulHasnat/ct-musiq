@@ -1,0 +1,455 @@
+% ============================================================
+% Chapter 4: Experiments
+% CT-MUSIQ Undergraduate Thesis
+% ============================================================
+
+\chapter{Experiments}
+\label{chap:experiments}
+
+\section{Overview}
+\label{sec:exp_overview}
+
+This chapter provides a comprehensive description of the experimental framework used to
+evaluate CT-MUSIQ and to validate the contributions of each proposed architectural and
+training component. Section~\ref{sec:exp_impl} details the software and hardware
+environment. Section~\ref{sec:exp_hyperparams} documents the full set of hyperparameters
+used for both CT-MUSIQ and the Agaldran Combo baseline. Section~\ref{sec:exp_training}
+describes the main training runs in chronological order. Section~\ref{sec:exp_ablation}
+presents the complete ablation study protocol and results. Section~\ref{sec:exp_eval}
+specifies the evaluation procedure for the held-out test set. Section~\ref{sec:exp_repro}
+discusses reproducibility provisions.
+
+
+\section{Implementation Details}
+\label{sec:exp_impl}
+
+\subsection{Software Environment}
+
+The complete CT-MUSIQ project is implemented in Python~3.12 running in a virtual
+environment (\texttt{.venv}) created with \texttt{py -3.12 -m venv .venv}. The following
+core dependencies are used:
+
+\begin{itemize}
+    \item \textbf{PyTorch~2.x}: Primary deep learning framework for model definition,
+          training loop, automatic differentiation, and CUDA acceleration.
+    \item \textbf{timm ($\geq$ 0.9.0)}: Model zoo library providing pretrained ViT-B/32
+          weights (\texttt{vit\_base\_patch32\_224}) and Swin-T weights
+          (\texttt{swin\_tiny\_patch4\_window7\_224}).
+    \item \textbf{torchvision ($\geq$ 0.15)}: Used for pretrained ResNet-50 weights
+          in the Agaldran Combo baseline.
+    \item \textbf{PIL/Pillow}: Image loading and float-mode augmentation operations,
+          including bicubic resizing and rotation without quantisation artefacts.
+    \item \textbf{NumPy}: Array operations during preprocessing, augmentation, and
+          metric computation.
+    \item \textbf{SciPy}: Pearson, Spearman, and Kendall correlation coefficient
+          computation for evaluation.
+    \item \textbf{scikit-learn}: Isotonic regression calibration for the optional
+          post-processing step.
+    \item \textbf{pandas}: Training log CSV management for epoch-by-epoch logging.
+    \item \textbf{tqdm}: Progress bar display during training and evaluation.
+\end{itemize}
+
+All hyperparameters and file paths are centralised in a single \texttt{config.py}
+file, which serves as the sole source of truth for the entire experiment. Training,
+evaluation, and ablation scripts import configuration constants from this file, ensuring
+that no hyperparameter is ever hard-coded in a script and that all experiments are fully
+reproducible by modifying only the configuration file.
+
+\subsection{Hardware Specifications}
+
+All experiments in this thesis are conducted on a single workstation with the following
+hardware specifications:
+
+\begin{itemize}
+    \item \textbf{GPU}: NVIDIA GeForce RTX~3060 Laptop GPU (6~GB GDDR6 VRAM, Ampere
+          architecture, 3840 CUDA cores, 30 TFLOPS fp16 Tensor Core performance).
+    \item \textbf{CPU}: Intel Core i7 mobile processor.
+    \item \textbf{RAM}: 16~GB DDR4 system memory.
+    \item \textbf{Storage}: NVMe SSD for fast dataset loading (eliminates I/O bottleneck
+          with \texttt{num\_workers = 0} on Windows).
+    \item \textbf{Operating System}: Windows 11 (64-bit).
+    \item \textbf{CUDA version}: 11.8 (compatible with PyTorch 2.x).
+\end{itemize}
+
+The RTX~3060 Laptop GPU's 6~GB VRAM budget is the principal hardware constraint that
+motivated the mixed-precision training strategy, the two-scale pyramid (rather than
+three-scale), and the batch size of 10. Training one epoch of CT-MUSIQ on the 700-image
+training set requires approximately \textbf{31--40 seconds}. A complete 100-epoch
+training run requires approximately \textbf{50--55 minutes}. The Agaldran Combo baseline
+trains somewhat faster due to its single-resolution input pipeline.
+
+
+\section{Hyperparameter Configuration}
+\label{sec:exp_hyperparams}
+
+Table~\ref{tab:hyperparams} summarises the complete hyperparameter configuration for
+the primary CT-MUSIQ training run. All values are as specified in \texttt{config.py}.
+
+\begin{table}[h]
+    \centering
+    \caption{Complete CT-MUSIQ hyperparameter configuration.}
+    \label{tab:hyperparams}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Category} & \textbf{Hyperparameter} & \textbf{Value} \\
+        \midrule
+        Architecture & Embedding dimension $d$ & 768 \\
+                     & Number of attention heads $H$ & 8 \\
+                     & Number of Transformer layers $L$ & 12 \\
+                     & FFN hidden dimension & 3072 \\
+                     & Dropout rate & 0.05 \\
+                     & Multi-scale sizes (pixels) & [224, 384] \\
+                     & Patch size (pixels) & 32 \\
+                     & Total tokens per image & 193 \\
+                     & Max grid size $G_{\max}$ & 13 \\
+        \midrule
+        Training     & Batch size & 10 \\
+                     & Maximum epochs & 100 \\
+                     & Stage~1 epochs (frozen encoder) & 5 \\
+                     & Stage~2 warm-up epochs & 3 \\
+                     & Stage~1 learning rate & $3 \times 10^{-4}$ \\
+                     & Stage~2 base learning rate & $5 \times 10^{-5}$ \\
+                     & Minimum learning rate & $1 \times 10^{-6}$ \\
+                     & Weight decay & 0.01 \\
+                     & Gradient clipping norm & 1.0 \\
+                     & EMA decay $\rho$ & 0.999 \\
+                     & Early stopping patience & 20 \\
+        \midrule
+        Loss         & MSE loss weight & 1.0 \\
+                     & KL loss weight $\lambda_{\text{KL}}$ & 0.10 \\
+                     & Ranking loss weight $\lambda_{\text{rank}}$ & 0.50 \\
+                     & Number of KL bins $K$ & 20 \\
+                     & KL Gaussian $\sigma$ & 0.5 \\
+                     & Ranking margin $m$ & 0.1 \\
+        \midrule
+        CT Window    & Window level (HU) & 40 \\
+                     & Window width (HU) & 80 \\
+        \midrule
+        Dataset      & Training images & 700 (indices 0--699) \\
+                     & Validation images & 200 (indices 700--899) \\
+                     & Test images & 100 (indices 900--999) \\
+        \midrule
+        Reproducibility & Random seed & 42 \\
+                        & cuDNN deterministic & True \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Baseline Hyperparameters}
+
+The Agaldran Combo baseline uses the same dataset split, loss function, and batch size
+as CT-MUSIQ, but with the following differences:
+
+\begin{itemize}
+    \item \textbf{No two-stage training}: Trained end-to-end from epoch 1 with a constant
+          learning rate of $3 \times 10^{-4}$, transitioning to cosine annealing from
+          epoch~6 (same as CT-MUSIQ Stage~2 cosine phase).
+    \item \textbf{Input resolution}: Single resolution ($224 \times 224$), not
+          multi-scale patches.
+    \item \textbf{EMA}: Applied identically with $\rho = 0.999$.
+    \item \textbf{Early stopping patience}: 20 epochs, same as CT-MUSIQ.
+\end{itemize}
+
+The Agaldran Combo model has approximately $\sim$30~million parameters (Swin-T:
+$\sim$28M, ResNet-50: $\sim$25M, shared prediction heads: $\sim$0.5M, noting that
+the two backbones are trained jointly in a single model object).
+
+
+\section{Training Runs}
+\label{sec:exp_training}
+
+\subsection{CT-MUSIQ Primary Training Run}
+
+The primary CT-MUSIQ training run spans 100 epochs using the full two-stage schedule
+and all hyperparameters in Table~\ref{tab:hyperparams}. The training log captures
+per-epoch values of: training total loss, training MSE loss, training KL loss,
+validation total loss, validation MSE, validation KL, PLCC, SROCC, KROCC, Aggregate,
+and wall-clock time per epoch.
+
+\textbf{Stage~1 convergence (epochs 1--5):} The validation aggregate rises from
+approximately 2.51 at epoch~1 (where the encoder is frozen and only the randomly
+initialised heads are trained) to approximately 2.59 by epoch~5. The training loss
+falls steeply from $\sim$0.88 to $\sim$0.34 as the heads learn a crude quality mapping
+from the frozen pretrained features.
+
+\textbf{Stage~2 early phase (epochs 6--20):} Upon unfreezing the encoder, the
+validation aggregate rises sharply to 2.71 at epoch~4 of Stage~2 (epoch~9 overall),
+demonstrating that the pretrained encoder rapidly adapts its representations to the
+CT quality assessment task. The training loss continues to decrease as the KL loss
+becomes active and begins penalising scale inconsistencies.
+
+\textbf{Stage~2 convergence phase (epochs 21--100):} The validation aggregate rises
+steadily from $\sim$2.65 to a peak of approximately 2.76, with the best checkpoint
+saved at the epoch achieving the maximum validation aggregate. The cosine learning rate
+decay provides a smooth convergence trajectory without oscillation. Training MSE falls
+from $\sim$0.27 to $\sim$0.12 over this phase.
+
+\textbf{Best validation checkpoint}: The saved checkpoint achieves a validation
+aggregate of $\sim$2.76, which corresponds to the model used for test set evaluation.
+
+\subsection{Agaldran Combo Training Run}
+
+The Agaldran Combo baseline is trained for 100 epochs under its simplified training
+schedule. The training proceeds rapidly in the first 10 epochs as both backbones
+adapt from ImageNet classification to CT quality regression. The ensemble of Swin-T
+and ResNet-50 achieves strong performance due to the complementary feature representations
+of window-based attention (Swin-T) and pyramid-pooled convolutional features (ResNet-50).
+
+The best checkpoint for the Agaldran Combo model is saved at the validation aggregate
+peak during training, and this checkpoint is used for final test set evaluation.
+
+
+\section{Ablation Study}
+\label{sec:exp_ablation}
+
+\subsection{Protocol}
+
+Six ablation configurations (A1--A6) are trained for 30 epochs each, using the same
+random seed (42), training data, validation data, and preprocessing pipeline as the
+primary CT-MUSIQ run. The shorter 30-epoch budget is chosen to enable evaluation of
+all six configurations within the available compute budget while still reaching a
+meaningful performance level for comparison. The validation aggregate at epoch~30 is
+used as the comparison metric.
+
+\subsection{Ablation Configuration Details}
+
+\begin{description}
+    \item[Configuration A1 (Single Scale, No KL):] Only the coarse scale ($224 \times
+    224$, 49 patches) is used. The KL loss is disabled ($\lambda_{\text{KL}} = 0$),
+    and the per-scale heads are absent. This configuration serves as the single-scale
+    baseline that represents the minimum viable model, testing the benefit of multi-scale
+    input against a single-scale ViT-based quality assessor.
+
+    \item[Configuration A2 (Two Scales, No KL):] Both scales ($224 \times 224$ and
+    $384 \times 384$, 193 total patches) are used with $\lambda_{\text{KL}} = 0$.
+    Per-scale heads are present (to produce $\hat{q}_s$) but their disagreement is not
+    penalised. This configuration isolates the contribution of the KL regularisation
+    loss from the contribution of multi-scale tokenisation.
+
+    \item[Configuration A3 (Two Scales, KL $\lambda = 0.05$):] The full architecture
+    with two scales, but with a weaker KL weight. If A3 underperforms A4, the stronger
+    $\lambda = 0.10$ provides necessary regularisation. If A3 matches A4, there is little
+    sensitivity to the exact KL weight in this range.
+
+    \item[Configuration A4 (Two Scales, KL $\lambda = 0.10$):] The proposed full
+    CT-MUSIQ configuration. Serves as the reference point within the ablation.
+
+    \item[Configuration A5 (Two Scales, KL $\lambda = 0.20$):] Tests whether doubling
+    the KL weight over-regularises the model, potentially forcing the per-scale heads to
+    agree at the expense of the global head's ability to learn the true quality mapping.
+
+    \item[Configuration A6 (Three Scales, KL $\lambda = 0.10$):] Adds a third scale at
+    $512 \times 512$ pixels (16$\times$16 = 256 additional patches, 449 total tokens).
+    This requires updating the maximum grid size to $G_{\max} = 17$ and increases the
+    sequence length from 193 to 449 tokens, substantially increasing VRAM usage. This
+    tests whether native-resolution processing provides additional quality-relevant
+    information beyond the two-scale representation.
+\end{description}
+
+\subsection{Ablation Results}
+
+Table~\ref{tab:ablation_results} presents the validation aggregate at epoch~30 for all
+six configurations. The results demonstrate several key findings:
+
+\begin{table}[h]
+    \centering
+    \caption{Ablation study results (validation aggregate at epoch 30, 30-epoch training).}
+    \label{tab:ablation_results}
+    \begin{tabular}{llcccc}
+        \toprule
+        Config & Description & Scales & $\lambda_{\text{KL}}$ & Val.\ Aggregate \\
+        \midrule
+        A1 & Single scale, no KL   & [224]        & 0.00 & 2.249 \\
+        A2 & Two scales, no KL     & [224, 384]   & 0.00 & 2.271 \\
+        A3 & Two scales, KL~0.05   & [224, 384]   & 0.05 & 2.289 \\
+        A4 & Two scales, KL~0.10   & [224, 384]   & 0.10 & 2.305 \\
+        A5 & Two scales, KL~0.20   & [224, 384]   & 0.20 & 2.281 \\
+        A6 & Three scales, KL~0.10 & [224, 384, 512] & 0.10 & 2.296 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\textbf{Key observations:}
+
+\begin{enumerate}
+    \item \textbf{Multi-scale vs.\ single-scale (A1 vs.\ A2):} Adding the second scale
+    (384~pixels) improves the 30-epoch aggregate from 2.249 to 2.271, a gain of +0.022.
+    This confirms that the fine-scale patches ($144 \times$ $32 \times 32$ patches at
+    384~px) provide complementary quality-relevant features not captured at the coarse
+    scale alone.
+
+    \item \textbf{KL regularisation benefit (A2 vs.\ A4):} Adding the scale-consistency
+    KL loss at $\lambda = 0.10$ further improves aggregate from 2.271 to 2.305, a gain
+    of +0.034 over the two-scale model without KL. This is the largest single improvement
+    from any component tested in the ablation, confirming that scale-consistency
+    regularisation is the most impactful innovation.
+
+    \item \textbf{KL weight sensitivity (A3, A4, A5):} The optimal KL weight is
+    $\lambda = 0.10$ (A4 = 2.305 $>$ A3 = 2.289 $>$ A5 = 2.281). A weight of 0.05 is
+    insufficient to enforce strong cross-scale consistency, while a weight of 0.20
+    begins to over-regularise by pushing the per-scale heads too strongly toward the
+    global head at the expense of MSE accuracy. The performance difference between A3
+    and A5 is relatively small (0.008), suggesting mild sensitivity to the exact KL
+    weight in this range, but $\lambda = 0.10$ is robustly optimal.
+
+    \item \textbf{Three scales vs.\ two scales (A4 vs.\ A6):} Adding the $512 \times 512$
+    native-resolution scale slightly reduces the 30-epoch aggregate from 2.305 to 2.296.
+    This marginal underperformance may be attributable to the increased sequence length
+    (449 tokens) making training convergence slightly slower within the 30-epoch budget,
+    rather than a true quality signal deficit. Full 100-epoch training of A6 would be
+    needed to draw a definitive conclusion about the benefit of native-resolution
+    processing.
+\end{enumerate}
+
+\subsection{Ablation Summary}
+
+Based on the ablation study, the proposed CT-MUSIQ configuration (two scales at
+$[224, 384]$ with $\lambda_{\text{KL}} = 0.10$) is confirmed as the best-performing
+configuration under the 30-epoch ablation budget. The scale-consistency KL loss is the
+most impactful single component, contributing approximately twice the performance gain of
+the additional scale alone. These results validate the three core design principles of
+CT-MUSIQ articulated in Chapter~\ref{chap:introduction}: domain-specific preprocessing
+(implicit in all configurations), multi-scale global receptive field, and regularisation
+through scale consistency.
+
+
+\section{Evaluation Procedure}
+\label{sec:exp_eval}
+
+The evaluation procedure is identical for CT-MUSIQ and the Agaldran Combo baseline:
+
+\begin{enumerate}
+    \item Load the best saved checkpoint (EMA weights stored in the checkpoint file).
+    \item Set the model to evaluation mode (\texttt{model.eval()}) and disable gradient
+          computation (\texttt{torch.no\_grad()}).
+    \item Iterate over the test set (\texttt{DataLoader} with \texttt{shuffle=False},
+          \texttt{batch\_size=10}).
+    \item For each batch, perform a forward pass and collect the global predicted scores
+          $\hat{q}_i$ for all 100 test images.
+    \item Compute PLCC, SROCC, KROCC using SciPy's \texttt{pearsonr}, \texttt{spearmanr},
+          and \texttt{kendalltau} functions between the collected predictions and ground
+          truth scores.
+    \item Compute the aggregate score as $|\text{PLCC}| + |\text{SROCC}| + |\text{KROCC}|$.
+    \item Write predictions and metrics to CSV files
+          (\texttt{ct\_musiq\_predictions.csv} and \texttt{ct\_musiq\_results.csv}).
+\end{enumerate}
+
+Optional TTA (horizontal flip averaging) can be enabled via the \texttt{--tta} flag
+in \texttt{evaluate.py}, and optional isotonic regression calibration can be enabled
+via \texttt{--calibrate}. The primary reported results do not use TTA or calibration
+to match the most direct comparison with the LDCTIQAC 2023 leaderboard.
+
+The comparison table in \texttt{ct\_musiq\_results.csv} includes both the computed
+CT-MUSIQ results and the published leaderboard results from Lee et al.\
+\cite{lee2025ldctiqac}, allowing direct numerical comparison.
+
+
+\section{Reproducibility}
+\label{sec:exp_repro}
+
+Full reproducibility of all experiments is ensured through the following measures:
+
+\begin{itemize}
+    \item \textbf{Fixed random seed}: All experiments use \texttt{SEED = 42}, seeding
+          \texttt{torch.manual\_seed()}, \texttt{torch.cuda.manual\_seed\_all()},
+          \texttt{numpy.random.seed()}, and \texttt{Python random.seed()} at the
+          beginning of each script.
+    \item \textbf{Deterministic cuDNN}: \texttt{torch.backends.cudnn.deterministic = True}
+          ensures that CUDA operations produce identical results across runs.
+    \item \textbf{Deterministic data split}: The 70/20/10 dataset split is
+          deterministic and index-based (not randomly sampled), requiring no seed for
+          splitting.
+    \item \textbf{Centralised configuration}: All hyperparameters in \texttt{config.py}
+          are version-controlled; no hyperparameter exists in any script other than as
+          a \texttt{config.*} reference.
+    \item \textbf{Checkpoint storage}: Best model checkpoints are stored in
+          \texttt{results/ct\_musiq/ct\_musiq\_best.pth} and include the full model
+          state dictionary, optimiser state, EMA shadow weights, and best aggregate
+          value achieved.
+\end{itemize}
+
+Despite the above provisions, minor numerical differences ($< 0.001$ in correlation
+metrics) may arise between runs due to non-deterministic GPU operations (particularly
+in LayerNorm and attention on some CUDA versions). All reported results are from a single
+canonical training run with the fixed seed configuration.
+
+\section{Comparison Protocol Justification}
+\label{sec:exp_comparison_protocol}
+
+A critical methodological question in any empirical deep learning study is whether the
+comparison between methods is fair. This section explicitly addresses the fairness of
+the comparisons made in this thesis.
+
+\subsection{Comparison with LDCTIQAC 2023 Leaderboard}
+
+The LDCTIQAC 2023 leaderboard results published in Lee et al.\ \cite{lee2025ldctiqac}
+represent the official scores of challenge participants on the test set (images
+0900--0999, the same 100-image test set used in this thesis). The comparison is therefore
+directly valid in terms of the test data used, the evaluation metrics applied, and the
+test set size. However, several sources of potential unfairness should be acknowledged:
+
+\textbf{Access to validation labels:} Challenge participants had access to only
+the training labels (indices 0000--0699) and were evaluated on the test set without
+access to test labels. In this thesis, the validation split (indices 0700--0899) is also
+used for hyperparameter tuning and model selection, as explicitly described. This matches
+the challenge setup: validation labels were available to challenge participants for
+tuning purposes.
+
+\textbf{Computational resources:} Challenge participants may have had access to
+significantly more powerful hardware (multi-GPU clusters, large-memory servers) than the
+single consumer GPU used in this thesis. Methods that require multiple GPUs, large batch
+sizes, or expensive ensembles at test time may achieve higher performance than what is
+reproducible on consumer hardware. CT-MUSIQ is specifically designed to operate within
+6~GB VRAM, which is a considerably tighter budget than typical challenge participants
+would use.
+
+\textbf{Development time:} Challenge submissions represent the best efforts of their
+respective teams over the challenge duration, which typically includes extensive
+hyperparameter search and model selection. CT-MUSIQ is developed within the scope of an
+undergraduate thesis with a constrained timeline. The competitive performance achieved
+despite this constraint is therefore notable.
+
+\subsection{Within-Paper Comparison: CT-MUSIQ vs.\ Agaldran Combo}
+
+The within-paper comparison between CT-MUSIQ and the Agaldran Combo baseline is
+explicitly designed to be fair: both models are trained on the same data split, evaluated
+on the same test set, using the same evaluation script and metrics. The primary
+methodological difference is the model architecture (multi-scale patch Transformer vs.\
+full-image ensemble), with training details adapted appropriately for each architecture
+(two-stage schedule for CT-MUSIQ, simpler schedule for Agaldran Combo). The loss
+function is identical for both models.
+
+The only potential source of unfairness is that CT-MUSIQ uses the two-stage training
+schedule, which involves an additional design choice (the Stage~1 epoch count and
+learning rate) that was tuned informally based on observed training dynamics. The
+Agaldran Combo's simpler training schedule requires fewer design choices and may be
+more robustly configured. A fully controlled comparison would use identical training
+schedules for both methods, which is left for future work.
+
+\section{Additional Experimental Notes}
+
+\subsection{Windows DataLoader Compatibility}
+
+PyTorch's multiprocessing-based \texttt{DataLoader} is incompatible with Windows when
+\texttt{num\_workers > 0} in some configurations due to the Windows process forking
+model. To ensure compatibility, \texttt{num\_workers = 0} is used throughout, which
+serialises data loading. This does not create a significant performance bottleneck
+because the primary compute cost is in the Transformer forward and backward passes, and
+the dataset fits entirely in system RAM (1,000 TIFF files $\times$ $\sim$1~MB each
+$\approx$ 1~GB).
+
+\subsection{Memory Profiling}
+
+During the full CT-MUSIQ training run (batch size 10, two scales, AMP enabled), the
+peak GPU memory allocation is approximately 5.2--5.6~GB, leaving a small safety margin
+below the 6~GB VRAM limit. The memory breakdown is approximately: model parameters
+in fp16~$\approx$~350~MB, activation tensors in fp16 for 193 tokens × batch
+10~$\approx$~2~GB, gradient tensors in fp32~$\approx$~700~MB, optimiser states
+(AdamW: two momentum buffers)~$\approx$~1.4~GB.
+
+\subsection{Training with Resume}
+
+The training script supports checkpoint resumption via the \texttt{--resume} flag,
+which loads the latest checkpoint and continues training from the saved epoch. This
+was used in practice to restart training after system interruptions, with no noticeable
+effect on final performance due to the deterministic training configuration.

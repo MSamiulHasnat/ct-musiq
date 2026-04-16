@@ -1,0 +1,68 @@
+%==============================================================================
+% ABSTRACT
+%==============================================================================
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\markboth{Abstract}{Abstract}
+
+\noindent
+\textbf{\thesismajor}\\[4pt]
+\textbf{Student:} \thesisauthor \qquad \textbf{Adviser:} \thesisadviser
+
+\vspace{1em}
+
+Low-Dose Computed Tomography (LDCT) has become a cornerstone of modern clinical diagnostics,
+enabling substantial reductions in patient radiation exposure without sacrificing diagnostic
+utility. However, the inherent trade-off between dose reduction and image quality
+introduces complex, non-stationary noise degradations and streak artefacts that critically
+impair radiological assessment. Accurate, automated evaluation of perceptual image quality
+is therefore essential for quality assurance in high-throughput clinical pipelines, yet
+the field lacks reliable, no-reference methods specifically designed for medical CT imaging.
+
+This thesis proposes \textbf{CT-MUSIQ}, a novel no-reference image quality assessment
+(NR-IQA) framework that adapts the Multi-Scale Image Quality Transformer (MUSIQ)
+architecture to the specific biophysical and perceptual constraints of brain CT imaging.
+CT-MUSIQ accepts a single axial CT slice as input, applies the clinical brain soft-tissue
+windowing transformation (level~40~HU, width~80~HU), and produces a continuous perceptual
+quality score in the range~$[0,4]$ that closely aligns with consensus radiologist Likert
+scale annotations.
+
+The proposed architecture introduces four key innovations over the vanilla MUSIQ baseline:
+(1)~a \textbf{multi-scale spatial pyramid} operating at two resolutions ($224 \times 224$
+and $384 \times 384$ pixels), producing 193 patch tokens per image that simultaneously
+capture global structural context and fine-grained noise texture; (2)~a
+\textbf{hash-based positional encoding} scheme that injects scale, row, and column
+identity into each token without the sequence-length restrictions of standard sinusoidal
+encodings; (3)~a \textbf{scale-consistency Kullback--Leibler divergence regularisation}
+loss that penalises disagreement between per-scale quality predictions and the global
+head, preventing the model from learning scale-specific shortcuts on the small training
+dataset; and (4)~a \textbf{pairwise margin ranking loss} component that explicitly
+optimises the rank-based correlation metrics used in the LDCTIQAC 2023 grand challenge
+evaluation protocol.
+
+The system is trained on the LDCTIQAC 2023 dataset comprising 1,000 brain CT slices
+annotated by expert radiologists, using a two-stage fine-tuning strategy with ViT-B/32
+pretraining, mixed-precision training, exponential moving average weight averaging, and
+gradient clipping, designed to fit within 6~GB of consumer GPU memory.
+
+Experimental evaluation on the held-out test set of 100 images demonstrates that CT-MUSIQ
+achieves a Pearson Linear Correlation Coefficient (PLCC) of \textbf{0.9498}, a Spearman
+Rank-Order Correlation Coefficient (SROCC) of \textbf{0.9488}, a Kendall Rank-Order
+Correlation Coefficient (KROCC) of \textbf{0.8249}, and a composite Aggregate score of
+\textbf{2.7235}, placing it second among all methods evaluated relative to the published
+LDCTIQAC 2023 leaderboard. An ensemble baseline (Agaldran Combo: Swin-T + ResNet-50)
+achieves an Aggregate of 2.7682, outperforming the published leaderboard top submission
+of 2.7427, with CT-MUSIQ remaining highly competitive. Ablation studies confirm the
+individual contributions of each architectural component, with the scale-consistency KL
+loss providing the most significant regularisation benefit on the limited training data.
+
+These results demonstrate that a carefully adapted Vision Transformer architecture with
+domain-specific windowing, multi-scale tokenisation, and scale-consistency regularisation
+can achieve state-of-the-art automated perceptual quality assessment for brain CT imaging,
+providing a computationally efficient and clinically interpretable foundation for
+integration into real-world Picture Archiving and Communication Systems (PACS) pipelines.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} Computed Tomography, Low-Dose CT, No-Reference Image Quality
+Assessment, Vision Transformer, MUSIQ, Perceptual Quality, Brain CT, Multi-Scale Learning,
+KL Divergence Regularisation.

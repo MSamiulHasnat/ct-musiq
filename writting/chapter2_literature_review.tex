@@ -1,0 +1,767 @@
+% ============================================================
+% Chapter 2: Literature Review
+% CT-MUSIQ Undergraduate Thesis
+% ============================================================
+
+\chapter{Literature Review}
+\label{chap:literature_review}
+
+\section{Introduction to the Review}
+\label{sec:lit_intro}
+
+The problem of automated perceptual quality assessment for low-dose CT images sits at the
+intersection of several active research domains: CT reconstruction and denoising, image
+quality assessment theory and practice, deep learning with limited data, and Vision
+Transformer architecture design. This chapter provides a structured review of the prior
+art relevant to each of these domains, beginning with the clinical and technical context
+of CT imaging and progressing through the evolution of IQA methods from hand-crafted
+statistical approaches to modern neural network architectures. The chapter concludes with
+a precise identification of the specific gap that CT-MUSIQ is designed to address.
+
+The review is organised into seven thematic sections: (1) the clinical imperative and
+evolution of CT reconstruction; (2) the dichotomy between subjective evaluation and
+full-reference metrics; (3) ontological flaws in traditional no-reference IQA applied to
+CT; (4) the deep learning revolution in NR-IQA and the feature extraction bottleneck;
+(5) evaluation deficits and standardisation efforts; (6) Vision Transformers, multi-scale
+processing, and the MUSIQ architecture; and (7) emerging frontiers in vision-language
+model-based IQA. The final section synthesises the identified gaps and positions the
+contributions of this thesis.
+
+
+\section{The Clinical Imperative and Evolution of Computed Tomography Reconstruction}
+\label{sec:lit_ct_reconstruction}
+
+The expansion of versatile medical imaging modalities ranging from ultrasound and magnetic
+resonance imaging (MRI) to positron emission tomography (PET) has fundamentally
+revolutionised modern clinical diagnostics, yet it is computed tomography (CT) that
+nowadays accounts for an enormous majority of large-scale, cross-sectional healthcare data
+generation \cite{zhao2023multitask}. While conventional normal-dose CT (NDCT) provides
+unparalleled, high-resolution anatomical visualisation, its diagnostic utility is
+fundamentally connected with ionising X-ray radiation. This radiation raises significant
+health concerns regarding radiation-driven genetic mutations and future cancer-related
+risks. Guided strictly by the ALARA (As Low As Reasonably Achievable) principle, the
+medical physics community has aggressively adopted Low-Dose CT (LDCT) protocols. The
+critical efficacy of this adaptation has been heavily validated in expansive observational
+studies that include trials for lung cancer screening and long-term patient tracking
+\cite{cao2023observational}. Dose reduction is especially important in highly sensitive
+demographics, such as pediatric populations undergoing ultra-low-dose abdominal scans or
+cardiac CT evaluations, where optimising the signal-to-noise ratio (SNR) against radiation
+risk is a delicate physiological necessity \cite{cho2024pediatric}.
+
+Mathematically, image reconstruction is a typical inverse problem where the goal is to
+recover an unknown signal $\mathbf{x}$ from a corrupted measurement
+$\mathbf{y} = A(\mathbf{x}) + \epsilon$, with $A$ representing the forward corruption
+process \cite{niu2023score}. In LDCT, reducing the incident X-ray photons inevitably
+yields photon starvation at the detector array, which mathematically expands as a complex,
+non-stationary ``Poisson + Gaussian'' degradation model; the quantum noise obeys a Poisson
+distribution driven by photon count fluctuations, while the electronic noise of the data
+acquisition system is characterised by a signal-independent Gaussian variance
+\cite{zhang2024review}. Early analytical reconstruction methods, most notably Filtered
+Back Projection (FBP), dominate clinical practice due to their computational efficiency
+in calculating the analytical left inverse of the system matrix. However, FBP relies on
+idealised linear assumptions that fail catastrophically under the high-noise,
+photon-starved conditions of LDCT, resulting in major streak artefacts and extensive
+noise amplification.
+
+To overcome these computational limitations, Model-Based Iterative Reconstruction (MBIR)
+and Hybrid Iterative Reconstruction (IR) algorithms were developed. These formulate the
+reconstruction as a highly regularised objective function combining data fidelity with
+complex structural priors, typically optimised using first-order methods or the
+Alternating Direction Method of Multipliers (ADMM) \cite{goodfellow2016deep}. Although
+IR techniques successfully incorporate statistical noise modelling (e.g., Markov Random
+Field priors) to minimise mean squared errors, they are often computationally expensive
+and frequently interfere with the inherent Noise Power Spectrum (NPS) and Modulation
+Transfer Function (MTF) of the CT system \cite{xun2025bibliometric}. Additionally,
+iterative reconstruction algorithms have been shown to drastically shift the visual
+texture of the images, producing a non-natural, ``plastic'' or ``blotchy'' aesthetic that
+significantly degrades the diagnostic conspicuity of low-contrast lesions
+\cite{mileto2019iterative}.
+
+Therefore, the industry has aggressively pivoted toward Artificial Intelligence and Deep
+Learning Image Reconstruction (DLIR) algorithms, such as the Residual Encoder-Decoder CNN
+(RED-CNN) or dual-domain frameworks, which map degraded low-dose sinograms or image
+patches directly to new targets, significantly outperforming IR in preserving natural
+noise textures and structural sharpness \cite{koetzier2023dlir}. Recently, DLIR has
+evolved beyond basic feed-forward networks to embrace advanced generative approaches,
+including the deployment of Score-Based Generative Models (SGMs) and sophisticated
+diffusion predictive models like the Contextual Error-Modulated Generalised Diffusion
+Model (CoreDiff) \cite{gao2024corediff}. Pushing the boundaries of physical modelling,
+state-of-the-art frameworks such as the Noise-Inspired Diffusion Model (NEED) have
+explicitly tuned the reverse diffusion Markov chain to mimic the specific noise
+characteristics of CT, utilising a modified Poisson diffusion process to align the
+generative pattern directly with the true degradation physics of pre-log LDCT projections
+\cite{gao2025need}. Simultaneously, at the hardware level, the development of
+Photon-Counting Detector CT (PCD-CT) is revolutionising multi-energy imaging by measuring
+individual incident X-ray photons without electronic noise interference, demanding entirely
+new generations of reconstruction networks \cite{willemink2013iterative}.
+
+The proliferation of DLIR methods, each generating large quantities of reconstructed
+images with varying quality characteristics, creates a pressing demand for automated,
+reproducible quality metrics to replace manual radiologist evaluation for benchmarking
+purposes. Furthermore, comparing FBP and advanced IR techniques explicitly reveals that
+while iterative methods drastically improve standard signal-to-noise ratios, the
+aggressive smoothing due to their algorithmic regularisation can reduce the diagnosis of
+minute pathologies compared to the unprocessed raw data \cite{smits2007minor}. This
+highlights why a perceptual, rather than purely signal-theoretic, quality metric is
+essential for clinical relevance.
+
+
+\section{The Dichotomy of Image Quality Assessment: Subjective Evaluation versus Full-Reference Metrics}
+\label{sec:lit_iqa_dichotomy}
+
+In the highly regulated medical domain, image quality is not defined by graphical fidelity
+alone but rather by the measurable contribution to diagnostic accuracy. The ultimate gold
+standard for Image Quality Assessment (IQA) remains the subjective, diagnosis-based
+evaluation performed by highly trained, board-certified radiologists who assess images for
+critical clinical criteria, including lesion visibility, subtle structural preservation,
+and the suppression of hallucinated artefacts \cite{nirupama2025}. To measure the
+reliability of these human annotations, statistical indicators such as the Intraclass
+Correlation Coefficient (ICC) are extensively implemented to quantify both inter-observer
+agreement (consistency across different radiologists) and intra-observer reliability
+(repeatability of a single radiologist's assessments over time) \cite{herath2025}.
+
+However, subjective IQA is limited by unavoidable practical bottlenecks: it is
+labour-intensive, financially exorbitant, and inherently non-scalable for evaluating
+large groups of computational outputs. Early computational attempts to automate this
+assessment relied on complex mathematical model observers, such as the Channelised
+Hotelling Observer (CHO) and the Channelised Support Vector Machine (CSVM). These models
+utilise Singular Value Decomposition (SVD) and Principal Component Analysis (PCA) to
+perform dimensionality reduction on specific Signal-Known-Exactly/Background-Known-Exactly
+(SKE/BKE) detection tasks \cite{pouget2023channelised}.
+
+To automate the assessment of broader, generalised image degradations without
+task-specific requirements, objective Full-Reference IQA (FR-IQA) metrics were eagerly
+adopted from the computer vision domain. These algorithms compute the degradation of a
+test image through direct mathematical comparisons against a perfectly aligned reference
+counterpart, utilising metrics such as Peak Signal-to-Noise Ratio (PSNR), Structural
+Similarity Index Measure (SSIM), Feature Similarity (FSIM), Visual Signal-to-Noise Ratio
+(VSNR), Information Fidelity Criterion (IFC), and Visual Information Fidelity (VIF)
+\cite{yan2018deeplesion}. To properly demonstrate the true clinical utility of these
+metrics and the underlying deep learning denoising networks, researchers construct
+sophisticated virtual imaging simulations based directly on patient raw data; by inserting
+simulated lesions and noise into the projection domain, they can accurately measure the
+oversampled Edge Spread Function (ESF) and in-plane MTF at various clinical contrast
+levels (e.g., $-10$, $-20$, $-50$~HU) \cite{zhou2024virtual}.
+
+Despite demonstrating high mathematical correlation in strictly controlled phantom studies,
+FR-IQA possesses an insurmountable ontological flaw for genuine clinical application.
+Acquiring a perfectly aligned, artefact-free, high-dose NDCT reference image for every
+corresponding LDCT scan is physically, practically, and ethically impossible due to strict
+radiation safety constraints and the inevitability of patient motion between sequential
+scans \cite{athar2019comprehensive}. This fundamental limitation provides the primary
+rationale for developing no-reference (NR-IQA) methods that can operate without any
+paired reference image.
+
+The transition from FR-IQA to NR-IQA, while operationally necessary, introduces
+significant representational challenges. Without a reference, the model must infer quality
+degradation from the statistics of the corrupted image alone. For natural photographs,
+this has been achieved with considerable success by exploiting the statistical regularity
+of high-quality natural scenes. However, medical images do not share these statistical
+properties, as explored in the following section.
+
+
+\section{Ontological Flaws of Traditional No-Reference IQA for CT}
+\label{sec:lit_nr_iqa_failures}
+
+To eliminate the strict reliance on reference data, No-Reference IQA (NR-IQA), frequently
+referred to as ``blind IQA'', was systematically developed to evaluate image quality based
+solely on statistical features extracted from the degraded image itself, transforming the
+assessment problem into a classification or regression task \cite{wang2006modern}. The
+most established traditional NR-IQA algorithms, such as the Blind/Referenceless Image
+Spatial Quality Evaluator (BRISQUE) and the Natural Image Quality Evaluator (NIQE),
+operate on the foundation of Natural Scene Statistics (NSS) \cite{hu2024niqe}. These
+algorithms extract handcrafted statistical features by calculating local Mean Subtracted
+Contrast Normalised (MSCN) coefficients; they rely on the fundamental assumption that
+high-quality, distortion-free photographic images generally exhibit a predictable,
+heavy-tailed Gaussian distribution, whereas distorted images deviate from this norm,
+allowing models to fit deviations using a Generalised Gaussian Distribution (GGD) or an
+Asymmetric GGD (AGGD) \cite{sheikh2005nss}.
+
+While this framework is mathematically elegant and effective for assessing generic
+photographic degradations like JPEG compression or optical blur, the direct application of
+NSS-based NR-IQA to medical CT results in catastrophic performance degradation
+\cite{athar2019comprehensive}. Natural photographic images are shaped by broader spatial
+frequencies generated by reflected visible light, whereas clinical CT images represent
+highly specific, biophysical X-ray absorption coefficients precisely mapped to Hounsfield
+Units (HU). The complex, non-stationary background noise power spectrum and the
+spatially variant, macro-structural streak artefacts characteristic of photon-starved
+LDCT fundamentally violate the core assumptions of natural scene broadband models,
+rendering these classical NR-IQA metrics completely unreliable for predicting true
+diagnostic usefulness.
+
+The LDCTIQAC 2023 challenge results corroborate this quantitatively: BRISQUE achieves an
+Aggregate score of only 2.1219 (PLCC~$= 0.75$, SROCC~$= 0.7863$, KROCC~$= 0.5856$)
+on the leaderboard \cite{lee2025ldctiqac}, demonstrating the severe underperformance of
+classical statistics-based approaches on calibrated medical images. The SNR-based baseline
+similarly achieves only 2.4026, confirming that even physically motivated signal metrics
+do not capture the perceptual quality criteria applied by radiologists.
+
+Furthermore, this catastrophic breakdown of traditional statistical blind IQA is not
+isolated to CT. Analogous failures have been extensively documented in Magnetic Resonance
+(MR) imaging, where classical NR metrics are entirely incapable of accurately quantifying
+modality-specific degradations such as ghosting, aliasing, or spatial displacement of
+water and fat molecules \cite{stepien2023mri}. These cross-modality failures underscore
+the need for dedicated, domain-adapted NR-IQA systems trained with clinical expert labels,
+rather than unsupervised statistical models derived from natural image databases.
+
+
+\section{Deep Learning-Driven NR-IQA and the Feature Extraction Bottleneck}
+\label{sec:lit_dl_iqa}
+
+The representational limitations of handcrafted statistical features led to the massive
+integration of deep learning (DL) into the NR-IQA paradigm, fundamentally transforming
+the field from manual statistical modelling to data-driven representation learning
+\cite{ahmed2024iqanrtl}. Early deep learning IQA solutions aggressively took advantage
+of pre-trained CNN backbones, such as VGG, ResNet, DenseNet, and Inception architectures,
+by eliminating their classification heads and utilising transfer learning to map structured,
+high-dimensional feature representations to continuous subjective quality scores via
+fully connected regression layers.
+
+To further enhance feature extraction and prevent the loss of critical low-level visual
+information due to deep pooling layers, sophisticated architectures like the staircase
+structure were developed to systematically integrate features from intermediate network
+layers, ensuring the model leverages both low-level textural noise signatures and
+high-level semantic anatomical context simultaneously \cite{hosu2020koniq}. To establish
+explicit medical domain priors into the network's learning trajectory, researchers
+developed highly specialised hybrid architectures. A paramount example involves fusing
+Sparse Representation encoding with psychophysical Just Noticeable Distortion (JND)
+models. By explicitly calculating patch-level JND maps based on luminance adaptation and
+texture masking gradients, these networks selectively pool features only from visually
+critical, distortion-sensitive anatomical regions, thereby mimicking the localised
+attention of the Human Visual System (HVS) \cite{shen2025jnd}.
+
+Advanced deep learning frameworks have also been engineered for specific, highly complex
+imaging models, such as Cone-Beam CT (CBCT), where sparse-view projections are repeatedly
+optimised using U-Net-based restoration operators driven by time-embedding modules to
+suppress severe undersampling artefacts \cite{greenspan2023miccai_cbct}. For standard
+LDCT, CNN-based IQA has been applied using encoder-decoder networks with transfer learning
+from 2D to 3D analysis, demonstrating that cross-dimensional knowledge transfer can
+partially address the limited data problem \cite{shan2018transfer}.
+
+Despite these significant architectural improvements, pure CNN-based NR-IQA algorithms
+suffer from a critical geometric limitation. Standard CNNs fundamentally rely on
+localised convolution kernels and stacked spatial pooling to incrementally expand their
+receptive fields. As a direct consequence, they invariably reduce and destroy fine-grained,
+high-frequency quantum noise information in deeper layers, while simultaneously failing
+to establish the global, long-range spatial dependencies required to accurately evaluate
+macro-structural streak artefacts that pass through the entire anatomical cross-section.
+Furthermore, training these deep CNNs on diverse clinical data from multi-institutional
+sources introduces severe domain shift challenges, driving the necessity for advanced
+active learning frameworks and incremental domain adaptation strategies to effectively
+scale model generalisability without requiring exhaustive, dense manual delineations
+\cite{greenspan2023miccai_domain}.
+
+
+\section{Evaluation Deficits and Standardisation}
+\label{sec:lit_standardisation}
+
+The historical progression of deep learning-based LDCT denoising and automated IQA has
+been severely slowed by systemic, widespread flaws in experimental evaluation protocols
+across the scientific literature. A comprehensive literature analysis reveals significant
+deficits: the implementation of insufficient objective metrics that have little to no
+correlation with actual clinical diagnostic value, the highly unfair selection of
+hyperparameters optimised specifically to negatively impact competing reference models,
+and an overwhelming reliance on small, homogeneous, privately held datasets that prevent
+robust model generalisation \cite{mccollough2020ldct}. To comprehensively address this
+critical shortcoming in algorithmic standardisation and benchmarking, researchers utilise
+highly sophisticated physical simulations to generate low-dose estimation data from
+routine-dose scans; these simulations precisely model the Poisson statistics of X-ray
+photons and the non-Gaussian components of detector electronic noise, creating accurate
+datasets at precise dose reductions (e.g., 40\%, 20\%, and 10\% simulated doses)
+\cite{zabic2013simulation}.
+
+Establishing standardised, high-fidelity datasets is not simply an academic exercise for
+IQA evaluation, but an absolute prerequisite for ensuring the reliability of
+next-generation automated medical analysis tasks, such as the precise, deep-learning-driven
+segmentation of COVID-19 infections and pulmonary lesions from highly degraded CT volumes
+\cite{sori2021dfdnet}.
+
+The most significant advancement in standardising perceptual assessment was the
+\textbf{Low-Dose Computed Tomography Perceptual Image Quality Assessment Grand Challenge
+(LDCTIQAC)}, held in association with MICCAI 2023 and subsequently documented in Lee
+et al.\ \cite{lee2025ldctiqac}. The challenge curators released an unprecedented,
+massive open-source dataset comprising 1,000 abdominal CT images sourced from
+multi-institutional scanners, meticulously annotated by expert radiologists using a
+strictly calibrated 5-point Likert grading scale to embed clinical perception directly
+into the ground truth labels.
+
+The challenge attracted multiple competitive teams, whose leaderboard results provide the
+primary benchmark for comparison in this thesis:
+
+\begin{itemize}
+    \item \textbf{agaldran} (Aggregate~$= 2.7427$): The top-performing submission,
+    combining Swin Transformer and ResNet-50 backbones, with multi-head model calibration
+    using the approach described in \cite{galdran2022calibration}.
+
+    \item \textbf{RPI\_AXIS} (Aggregate~$= 2.6843$): Second-place submission.
+
+    \item \textbf{CHILL@UK} (Aggregate~$= 2.6719$): Third-place submission.
+
+    \item \textbf{FeatureNet} (Aggregate~$= 2.6550$): Fourth-place submission.
+
+    \item \textbf{SNR baseline} (Aggregate~$= 2.4026$): Physics-motivated baseline
+    using signal-to-noise ratio measurements.
+
+    \item \textbf{BRISQUE} (Aggregate~$= 2.1219$): Classical NSS-based blind IQA
+    applied directly without adaptation.
+\end{itemize}
+
+To further reduce the severe risk of catastrophic overfitting when training massive deep
+neural networks on relatively small, specialised medical datasets, advanced regularisation
+and data augmentation strategies, such as the unpredictable, convex interpolation of
+image-label pairs known as MixUp, are being extensively investigated and integrated into
+state-of-the-art training pipelines to force the networks to learn robust, linear
+transitions between distinct quality degradation classes \cite{galdran2022calibration}.
+
+
+\section{Vision Transformers, Multi-Scale Processing, and the MUSIQ Architecture}
+\label{sec:lit_vit_musiq}
+
+To absolutely outperform the localised mathematical inductive biases of standard CNNs, the
+computer vision community has recently executed a massive architectural pivot toward the
+Vision Transformer (ViT) approach, which visualises an image as a flattened sequence of
+tokenised pixel patches and employs multi-head self-attention mechanisms to dynamically
+compute complex correlations between all tokens across the entire image \cite{sheikh2005nss}.
+This convolution-free mechanism is uniquely suited for LDCT analysis, as it establishes a
+global receptive field from the very first layer, enabling the network to simultaneously
+correlate distant, low-frequency streak artefacts and preserve overall anatomical structure
+without downsampling.
+
+\subsection{Vision Transformer Foundations}
+\label{subsec:vit_foundations}
+
+The foundational Vision Transformer (ViT) model, introduced by Dosovitskiy et al.\ in
+2020, demonstrated that a pure self-attention architecture without convolutional inductive
+biases could achieve competitive or superior performance on large-scale image recognition
+benchmarks when pretrained on sufficiently large datasets. The core ViT operation
+tokenises an image of dimensions $H \times W$ into $N = HW/P^2$ non-overlapping patches
+of size $P \times P$, projects each patch to a $d$-dimensional embedding, prepends a
+learnable \texttt{[CLS]} token, adds position encodings, and processes the resulting
+sequence through $L$ Transformer encoder blocks consisting of Multi-Head Self-Attention
+(MHSA) and position-wise feed-forward networks (FFN).
+
+The MHSA operation for a query matrix $Q$, key matrix $K$, and value matrix $V$ is:
+
+\begin{equation}
+    \text{Attention}(Q, K, V) = \text{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right) V
+\end{equation}
+
+where $d_k = d / H_{\text{attn}}$ is the per-head dimension. The global attention operation
+allows every patch to attend to every other patch simultaneously, enabling the model to
+capture long-range structural dependencies that CNN architectures require many layers to
+approximate.
+
+However, applying standard ViT architectures to NR-IQA introduces a significant technical
+barrier known as the \textbf{input resolution paradox}: rigid ViTs require fixed-resolution
+inputs to maintain constant sequence lengths for their learnable position embeddings,
+meaning native high-resolution medical slices must be globally resized. This approach
+fundamentally destroys the high-frequency quantum noise signatures critical for quality
+assessment, while rigid crops eliminate the global anatomical context necessary to evaluate
+macro-artefacts.
+
+\subsection{The Swin Transformer and Hierarchical Attention}
+\label{subsec:swin}
+
+The Swin Transformer introduced a hierarchical design using shifted-window attention that
+partially addresses the resolution challenge by computing attention within local windows
+and using shifted window partitioning to introduce cross-window connections. The
+Swin-T backbone achieves competitive performance on dense prediction tasks while
+maintaining linear computational complexity with respect to image size. In the context of
+LDCT denoising, the Swin Transformer-based Encoder-Decoder Network (STEDNet) \cite{zhu2023stednet}
+dramatically improves noise suppression by utilising shifted-window mechanisms and skip
+connections for global feature fusion, constrained by a hybrid L1 and MS-SSIM loss
+function. Similarly, the Hybrid CNN-Transformer codec network (HCformer) \cite{luo2025hcformer}
+utilises Window/Sliding-Window Multi-head Self-Attention (W/SW-MSA) to efficiently
+capture information interaction across the entire image. Furthermore, sophisticated
+convolution-free networks like TED-net \cite{fan2021interpretability}, multi-domain
+optimisation networks (MDST) that integrate Swin Transformers directly into both
+projection and image domain sub-networks for sparse-view CT \cite{li2023mdst}, and
+Cross-Network Contextual (CNA) modules \cite{zhang2021convergent} are setting new
+benchmarks.
+
+\subsection{The MUSIQ Architecture}
+\label{subsec:musiq}
+
+The Multi-Scale Image Quality Transformer (MUSIQ) \cite{ke2021musiq}, proposed by Ke
+et al.\ at ICCV 2021, represents a powerful algorithmic solution to the resolution
+paradox specifically in the context of NR-IQA. Rather than resizing images to a single
+fixed resolution, MUSIQ extracts patches from a multi-scale spatial pyramid consisting of
+two or more target resolutions, concatenates all patches from all scales into a single
+sequence, and processes this variable-length sequence through a standard Transformer
+encoder.
+
+To handle the variable sequence length arising from different scales, MUSIQ introduces a
+\textbf{hash-based 2D spatial embedding mechanism} that encodes each patch's scale index,
+row index, and column index as three independent learned embedding lookups, summed to form
+the positional encoding:
+
+\begin{equation}
+    \text{pos}_{i} = \mathbf{E}_{\text{scale}}(s_i) + \mathbf{E}_{\text{row}}(r_i) + \mathbf{E}_{\text{col}}(c_i)
+\end{equation}
+
+This factored design allows MUSIQ to process images of arbitrary resolution without
+interpolation-induced information loss, explicitly encoding the scale identity and spatial
+coordinates of each patch. MUSIQ achieved state-of-the-art performance on multiple
+natural IQA benchmarks (KonIQ-10K \cite{hosu2020koniq}, SPAQ, etc.) at the time of its
+publication, demonstrating the superiority of the multi-scale Transformer approach over
+CNN-based methods for quality-aware feature extraction.
+
+\subsection{Limitations of MUSIQ for Medical CT}
+\label{subsec:musiq_limitations}
+
+Despite its architectural elegance and strong performance on natural image benchmarks,
+the vanilla MUSIQ architecture is not directly applicable to the medical CT IQA domain
+for several reasons:
+
+\textbf{Natural image preprocessing assumptions.} MUSIQ normalises input images using
+ImageNet mean and standard deviation statistics (designed for RGB natural photographs),
+which is inappropriate for CT images calibrated in Hounsfield Units. The resulting
+mismatch between training distribution and CT pixel value distributions would cause the
+pretrained patch embeddings to operate outside their trained domain.
+
+\textbf{Absence of clinical windowing.} Radiologists who annotated the LDCTIQAC dataset
+applied brain soft-tissue windowing before scoring. A model that does not apply identical
+windowing before feature extraction is processing a fundamentally different image than the
+one being scored, creating a systematic misalignment between the annotation and the model's
+perceptual input.
+
+\textbf{No scale-consistency regularisation.} The original MUSIQ does not enforce any
+agreement between per-scale quality predictions, potentially allowing the model to rely
+on scale-specific artefacts rather than learning truly scale-invariant quality features.
+On a small medical dataset of 700 training samples, this risk of scale-specific
+overfitting is significantly elevated.
+
+\textbf{Small dataset regime.} MUSIQ was designed for and evaluated on large natural image
+IQA datasets (KonIQ-10K has 10,000 images; SPAQ has 11,125 images). Adapting it to 700
+training samples requires additional regularisation strategies beyond those present in
+the original architecture.
+
+These limitations motivate the specific architectural adaptations introduced in CT-MUSIQ,
+as detailed in Chapter~\ref{chap:methodology}.
+
+
+\section{Emerging Frontiers: Vision-Language Models in IQA}
+\label{sec:lit_vlm}
+
+Currently, the highest frontier of medical image quality assessment involves combining
+Large Language Models (LLMs) and Multi-modal Large Language Models (MLLMs) to replicate
+the cognitive, step-by-step diagnostic reasoning of clinical radiologists \cite{wu2024mllm}.
+State-of-the-art architectures, such as IQAGPT, leverage expansive foundational pathways
+(e.g., PaLM, LLaMA) fine-tuned with highly specific, autoregressive language modelling
+targets directly on CT-IQA datasets \cite{chen2024iqagpt}. By passing visual tokens
+extracted from image encoders through complex cross-modal attention mechanisms,
+Vision-Language Models (VLMs), including highly advanced frameworks like LLaVA
+\cite{liu2023llava} and InternLM-XComposer-VL, are capable of generating remarkably
+accurate visual descriptions and reasoning paths.
+
+Through the implementation of strict mental and physical prompting strategies, these models
+seamlessly convert abstract numerical quality ratings into highly semantic, comprehensive
+textual descriptions (e.g., explicitly detailing the presence of ``photon starvation
+streaks blocking the hepatic blood vessel'' or ``optimal preservation of low-contrast
+lesions in the abdominal soft-tissue window''), generating complete, explainable diagnostic
+quality assessment reports along with absolute numerical scores.
+
+Architectures such as InstructBLIP \cite{dai2023instructblip} and CLIP-based models
+\cite{radford2021clip} have demonstrated strong zero-shot and few-shot transfer capabilities
+that are beginning to be explored for medical imaging tasks. The incorporation of
+domain-specific medical knowledge into these large pre-trained models through instruction
+tuning represents a promising direction for reducing the dependency on large labelled
+medical datasets.
+
+While these foundational VLMs offer unprecedented zero-shot explanations and represent a
+monumental leap toward transparent medical AI, they are currently limited by massive
+computational overhead, critical inference latency, and the persistent risk of
+hallucinating clinical metadata. Consequently, their immediate, practical deployment as
+low-latency, high-throughput objective quality scoring substitutes within standard,
+real-time hospital PACS pipelines remains highly limited, requiring further optimisation
+before widespread clinical adoption. Furthermore, fully understanding the underlying
+optimisation principles of deep transformers, specifically phenomena such as ``grokking''
+where networks exhibit sudden, delayed leaps in generalisation performance long after
+achieving perfect training accuracy, remains a critical frontier in theoretical AI
+research \cite{elhage2021mathematical}.
+
+
+\section{Synthesis and Identification of the Research Gap}
+\label{sec:lit_gap}
+
+The comprehensive framework of the deep learning literature clearly suggests that automated
+NR-IQA algorithms must strictly simulate the precise perceptual characteristics of expert
+radiologists to be considered clinically acceptable. The following key conclusions emerge
+from the review:
+
+\textbf{Classical NR-IQA is insufficient.} NSS-based methods like BRISQUE and NIQE fail
+catastrophically on CT images due to the mismatch between natural image statistics and
+the Hounsfield Unit calibration domain. LDCTIQAC challenge results provide quantitative
+confirmation of this failure with BRISQUE achieving only Aggregate~$= 2.1219$.
+
+\textbf{CNN-based methods are architecturally limited for CT IQA.} The localised
+inductive biases of convolutional networks make them poorly suited for capturing the
+global, long-range streak artefacts that dominate LDCT quality degradations.
+
+\textbf{Vanilla ViT architectures face the resolution paradox.} Fixed sequence length
+requirements force interpolation of high-resolution CT slices, destroying the
+high-frequency noise signatures critical for perceptual quality assessment.
+
+\textbf{MUSIQ resolves the resolution paradox but was not designed for CT.} The
+multi-scale hash-based tokenisation of MUSIQ is architecturally ideal for LDCT IQA,
+but the original model assumes natural RGB image statistics and lacks the clinical
+preprocessing and regularisation adaptations necessary for the CT domain.
+
+\textbf{The specific research gap is:} a dedicated MUSIQ-derived architecture that
+enforces clinical CT windowing as a preprocessing stage, incorporates scale-consistency
+regularisation to prevent overfitting on small medical datasets, and is systematically
+evaluated against the LDCTIQAC 2023 grand challenge benchmark.
+
+CT-MUSIQ is proposed to directly address this gap. By synthesising cutting-edge
+Transformer architectures with the physical constraints of clinical neuroradiology, the
+CT-MUSIQ framework delivers a computationally efficient, clinically grounded, and
+empirically validated automated LDCT quality assessment engine. The specific architectural
+and training innovations that constitute CT-MUSIQ are described in full in the following
+chapter.
+
+
+\section{Transfer Learning and Domain Adaptation in Medical Imaging}
+\label{sec:lit_transfer}
+
+A critical enabling technology for CT-MUSIQ is the transfer of representations learned
+on natural image datasets to the medical imaging domain. This section reviews the
+principles and practice of transfer learning in medical imaging contexts, with emphasis
+on the specific challenges and strategies relevant to quality assessment on small
+annotated datasets.
+
+\subsection{Fundamentals of Transfer Learning for Medical Imaging}
+
+Transfer learning in deep neural networks leverages the observation that features learned
+by networks trained on large, diverse datasets (such as ImageNet with 1.28 million
+labelled images across 1,000 categories) are partially general-purpose: lower-layer
+features such as edge detectors, Gabor-like filters, and colour gradients transfer broadly
+across visual domains, while higher-layer features become increasingly task-specific and
+less transferable \cite{goodfellow2016deep}. In the context of medical imaging, this
+observation motivates a two-phase training strategy: initialising a network with
+weights pretrained on natural images, then fine-tuning on the (smaller) medical dataset.
+
+The degree to which natural image pretraining transfers to CT imaging depends on the
+architectural depth at which domain mismatch occurs. For shallow CNNs, the first few
+convolutional layers learn general low-level features (edges, textures) that are relevant
+to CT images; deeper layers trained for natural image classification may not transfer
+as effectively due to the fundamentally different statistical structure of CT images.
+Vision Transformers, however, exhibit a different transfer pattern: the self-attention
+mechanism learned on natural images captures relational patterns between patches that
+generalise more broadly than the rigid spatial inductive biases of convolution,
+potentially enabling better medical image representations from the same pretrained
+starting point.
+
+Several studies have systematically investigated this transfer property for medical
+imaging. Pretraining on ImageNet consistently outperforms random initialisation as a
+starting point for medical image classification, detection, and segmentation tasks, even
+when the target domain (CT, MRI, histopathology) appears visually dissimilar to natural
+photographs. The benefit is especially pronounced for small medical datasets where training
+from random initialisation would overfit severely. In the CT IQA context, this
+justifies the use of ViT-B/32 pretrained on ImageNet as the encoder backbone for
+CT-MUSIQ, despite the obvious domain gap between natural RGB photographs and
+single-channel greyscale CT images calibrated in Hounsfield Units.
+
+\subsection{Grayscale-to-RGB Adaptation Strategies}
+
+A practical challenge in transferring ImageNet-pretrained models to single-channel CT
+images is the three-channel (RGB) assumption embedded in the pretrained weights. Three
+principal strategies exist for handling this mismatch:
+
+\textbf{Strategy 1: Channel repetition.} The greyscale image is replicated to all three
+channels, producing an RGB image where R = G = B = pixel value. This is the simplest
+approach and preserves the pretrained weights intact. The trade-off is that the model
+processes redundant information in all three channels, potentially wasting capacity on
+the trivial inter-channel correlations. However, for the patch embedding layer, channel
+repetition ensures that the linear combination of the three-channel input through the
+pretrained convolutional filter weights produces a meaningful activation, since the filter
+was designed to respond to spatially correlated patterns across channels.
+
+\textbf{Strategy 2: Channel average initialisation.} The pretrained RGB patch embedding
+weights are collapsed to a single channel by averaging across the input channel dimension,
+and the single-channel architecture is used. This reduces the parameter count of the
+patch embedding layer by a factor of three but requires re-initialisation of the patch
+embedding, losing the pretrained weights.
+
+\textbf{Strategy 3: Domain-specific pretraining.} The entire model is pretrained from
+scratch on large unlabelled medical image datasets using self-supervised objectives
+(e.g., masked image modelling as in MAE, or contrastive learning as in MoCo) before
+fine-tuning on the annotated CT quality labels. This approach is computationally expensive
+but potentially produces better initialised features for the CT domain.
+
+CT-MUSIQ adopts Strategy~1 (channel repetition) as the most practical approach given the
+small 700-image training set and limited compute budget. The simplicity of this approach
+is supported by the empirical observation that even with channel repetition, the model
+achieves competitive quality assessment performance, suggesting that the pretrained
+ViT-B/32 features provide strong initialisation regardless of the greyscale-to-RGB
+conversion approach.
+
+\subsection{Fine-Tuning Stability on Small Medical Datasets}
+
+Fine-tuning large pretrained models on small datasets presents significant stability
+challenges. The key risks are: (1) catastrophic forgetting of pretrained representations,
+where aggressive fine-tuning overwrites the useful pretrained features; (2) overfitting
+to the limited training distribution; and (3) gradient instability due to the mismatch
+between the pretrained feature scale and the randomly initialised task head gradients.
+
+Several strategies have emerged to address these challenges in the medical imaging
+literature. Layer-wise learning rate decay, where earlier layers are fine-tuned with
+smaller learning rates than later layers, has been shown to preserve lower-level
+pretrained features while allowing higher-level task-specific adaptation. Prompt-based
+tuning approaches, which freeze the entire pretrained backbone and only train a small
+set of learnable prompt tokens injected into the input sequence, provide an extreme
+form of parameter-efficient adaptation that has shown promise for few-shot medical image
+analysis.
+
+CT-MUSIQ addresses fine-tuning stability through the two-stage training protocol described
+in Chapter~\ref{chap:methodology}: Stage~1 warms up the randomly initialised
+domain-specific components (prediction heads, hash positional encoding) with the encoder
+frozen, preventing their noisy initial gradients from corrupting the pretrained attention
+patterns. Stage~2 then unfolds gradually with linear warm-up followed by cosine
+annealing, allowing the encoder to adapt smoothly to the CT domain while the heads
+continue to refine their quality mapping.
+
+
+\section{Regularisation Strategies for Small Dataset Deep Learning}
+\label{sec:lit_regularisation}
+
+The challenge of training deep learning models on small datasets like the 700-image
+CT-MUSIQ training set is a recurring theme in medical image analysis. This section
+reviews the principal regularisation strategies relevant to this setting, providing
+the motivation for the specific choices made in CT-MUSIQ.
+
+\subsection{Data Augmentation for CT Images}
+
+Data augmentation is the most widely used regularisation strategy for small medical
+datasets, as it artificially increases the effective training set size by applying
+label-preserving transformations to the original images. However, CT images impose
+significantly stricter constraints on acceptable augmentations than natural photographs,
+as discussed in Section~\ref{sec:augmentation}.
+
+Beyond the mild augmentations used in CT-MUSIQ (flips, small rotations, brightness
+jitter, Gaussian noise), more aggressive augmentation strategies such as CutMix, MixUp,
+and random erasing have been explored for medical image analysis. MixUp creates
+convex combinations of image-label pairs, which has been shown to improve calibration
+and reduce overconfident predictions. However, for CT IQA, the quality scores of mixed
+images do not follow a simple convex combination of the component scores (the perceptual
+quality of a noise-blended CT image is not predictable from the component scores),
+making MixUp semantically invalid without careful adaptation. The LDCTIQAC 2023 challenge
+top submission (agaldran) employed MixUp with specific adaptations, as reported in
+Galdran et al.\ \cite{galdran2022calibration}, demonstrating that well-calibrated
+augmentation can improve performance on this dataset.
+
+\subsection{Dropout and Weight Decay}
+
+Dropout, originally introduced by Srivastava et al., is a widely used regularisation
+technique that randomly zeroes a fraction of activations during training, preventing
+co-adaptation of neurons and forcing more distributed feature representations. For
+Vision Transformers fine-tuned on small datasets, reducing the dropout rate below the
+standard 0.1 has been found to improve performance: the pretrained features already
+provide a form of implicit regularisation, and excessive dropout can prevent the model
+from fully leveraging the informative pretrained attention patterns.
+
+Weight decay (L2 regularisation) applied through the decoupled AdamW optimiser provides
+an additional regularisation force that pushes parameter magnitudes toward zero,
+preventing overly large weights that generalise poorly. In CT-MUSIQ, weight decay is
+set to 0.01, a value that provides meaningful regularisation without preventing
+convergence.
+
+\subsection{Scale-Consistency KL Regularisation as a Novel Form of Self-Supervision}
+
+The scale-consistency KL divergence loss introduced in CT-MUSIQ can be understood as a
+form of self-supervised consistency regularisation, conceptually related to the
+consistency training paradigm in semi-supervised learning. In consistency training,
+the model is trained to produce similar predictions for two different augmented versions
+of the same input; this forces the model to learn representations that are invariant
+to the specific augmentation applied.
+
+In CT-MUSIQ, the ``two views'' of the same CT image are the coarse-scale patches
+($224 \times 224$) and the fine-scale patches ($384 \times 384$). These two views
+present the same underlying image content at different spatial resolutions, and the
+scale-consistency KL loss enforces that the model's quality assessment is consistent
+across these two views. This is semantically valid because the true diagnostic quality
+of a CT image does not depend on the resolution at which it is evaluated---a streak
+artefact visible at fine resolution is also present in the coarse-scale representation,
+merely at lower spatial frequency.
+
+From a statistical learning theory perspective, the KL regularisation can be interpreted
+as an inductive bias toward scale-invariant quality representations. By penalising
+per-scale predictions that differ substantially from the global prediction, the loss
+encourages the model to learn features that are simultaneously visible and discriminative
+at both resolutions. This is particularly valuable for CT IQA because different classes
+of quality degradations manifest at different scales: global contrast reduction is
+visible at both scales equally, streak artefacts are more conspicuous at fine scale,
+while overall structural noise is better captured at coarse scale.
+
+
+\section{Evaluation Metrics in IQA Research}
+\label{sec:lit_metrics}
+
+A comprehensive understanding of the evaluation metrics used in IQA research is
+essential for interpreting the experimental results in this thesis. This section reviews
+the theoretical properties of the three correlation metrics used in the LDCTIQAC 2023
+challenge evaluation, with emphasis on what each metric measures and why their joint
+assessment provides a more complete picture of quality prediction performance.
+
+\subsection{Pearson Linear Correlation Coefficient}
+
+The Pearson Linear Correlation Coefficient (PLCC) measures the strength of the linear
+relationship between predicted and true quality scores. A PLCC of 1.0 indicates perfect
+linear agreement; PLCC of 0 indicates no linear relationship; PLCC of -1 indicates
+perfect negative linear correlation. The PLCC is sensitive to the scale and offset of
+the predictions: a model that systematically overestimates scores by a constant will
+have a high PLCC (if the linear relationship is preserved) but poor absolute accuracy.
+
+In practice, PLCC rewards models that produce scores whose magnitude tracks the true
+quality scale accurately. It is the most natural metric for evaluating the quality of
+a regression model in the absolute sense, and is sensitive to the specific calibration
+of the prediction scale. A low PLCC may indicate either that the model cannot distinguish
+quality levels (poor rank ordering) or that its scores are poorly calibrated on the
+absolute scale (even if the relative ordering is correct).
+
+\subsection{Spearman Rank-Order Correlation Coefficient}
+
+The Spearman Rank-Order Correlation Coefficient (SROCC) measures the agreement of the
+rank orderings of predicted and true scores, independently of any linear or monotone
+rescaling of the predictions. Formally, SROCC is the Pearson correlation of the rank
+variables $R(\hat{q})$ and $R(q)$, where $R(\cdot)$ denotes the rank function.
+
+SROCC is invariant to any monotone transformation of the predicted scores, making it
+a robust metric that does not penalise systematic scale errors. This property makes
+SROCC particularly appropriate as an evaluation metric for IQA, where the goal is to
+correctly order images by quality rather than to produce scores on a specific absolute
+scale. High SROCC indicates that the model can reliably order images from worst to best
+quality, which is the core requirement for practical applications such as scan rejection
+(reject scans below a threshold) and comparative benchmarking.
+
+\subsection{Kendall Rank-Order Correlation Coefficient}
+
+The Kendall Rank-Order Correlation Coefficient (KROCC) measures the proportion of
+concordant pairs (pairs where the model's ordering agrees with the true ordering) minus
+the proportion of discordant pairs, normalised by the total number of pairs. It is a
+more granular measure of local ordering accuracy than SROCC: SROCC is determined by
+the global rank transformation, while KROCC counts each pair independently.
+
+KROCC is generally harder to maximise than SROCC and is more sensitive to local ordering
+errors. A model with high SROCC but lower KROCC is one that gets the overall rank
+ordering roughly right but makes more errors at the pair level---for instance, it
+correctly identifies that group A images are higher quality than group B images, but
+makes more errors in distinguishing within groups. For clinical applications where the
+precise relative ordering of specific pairs of images matters (e.g., selecting the
+best scan from a repeated acquisition), KROCC is the most directly relevant metric.
+
+\subsection{Aggregate Score}
+
+The LDCTIQAC 2023 challenge uses the sum of absolute values of all three metrics
+(PLCC + SROCC + KROCC) as the primary ranking criterion, with a theoretical maximum
+of 3.0. This composite metric rewards models that perform well across all three
+aspects of quality prediction: absolute calibration (PLCC), global rank ordering
+(SROCC), and local pair ordering (KROCC). A model that excels in only one or two of
+these aspects will have a lower aggregate than one that performs well across all three,
+making the aggregate a comprehensive measure of overall IQA performance.
+
+The aggregate metric also provides a natural weighting: since all three metrics have
+similar scales (all bounded in $[-1, 1]$), they contribute approximately equally to the
+aggregate, preventing any single metric from dominating the evaluation. This is
+particularly important when comparing methods with different architectures or training
+objectives, some of which may be more naturally suited to maximising one metric over
+the others.

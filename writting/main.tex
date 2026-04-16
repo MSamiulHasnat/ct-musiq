@@ -1,51 +1,301 @@
-% ============================================================
-% Thesis Main File
-% Build this file to generate the final PDF.
-% ============================================================
+%==============================================================================
+% UNDERGRADUATE THESIS — Sichuan University
+% CT-MUSIQ: An Automated Perceptual Quality Assessment Framework for
+% Low-Dose Brain Computed Tomography
+% Author: M. Samiul Hasnat
+%==============================================================================
 
-\documentclass[journal]{IEEEtran}
+\documentclass[12pt,a4paper]{report}
 
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage{amsmath,amssymb}
-\usepackage{booktabs}
+%------------------------------------------------------------------------------
+% ENGINE DETECTION
+%------------------------------------------------------------------------------
+\usepackage{iftex}
+
+%------------------------------------------------------------------------------
+% ENCODING & FONTS
+%------------------------------------------------------------------------------
+\ifXeTeX
+  \usepackage{fontspec}
+  \setmainfont{Times New Roman}
+\else
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{mathptmx}
+\fi
+
+%------------------------------------------------------------------------------
+% PAGE GEOMETRY
+%------------------------------------------------------------------------------
+\usepackage{geometry}
+\geometry{left=3cm, right=2.5cm, top=3cm, bottom=2.5cm}
+
+%------------------------------------------------------------------------------
+% LINE SPACING
+%------------------------------------------------------------------------------
+\usepackage{setspace}
+\onehalfspacing
+
+%------------------------------------------------------------------------------
+% TITLE / SECTION FORMATTING
+%------------------------------------------------------------------------------
+\usepackage{titlesec}
+\usepackage{titletoc}
+% Font sizes per SCU standard: Heading1=三号(16pt) Heading2=小三(15pt) Heading3=四号(14pt)
+\titleformat{\chapter}
+  {\centering\bfseries\fontsize{16}{20}\selectfont}{\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{10pt}{20pt}
+\titleformat{\section}
+  {\bfseries\fontsize{15}{18}\selectfont}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titleformat{\subsection}
+  {\bfseries\fontsize{14}{17}\selectfont}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+\titleformat{\subsubsection}
+  {\bfseries\normalsize}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{8pt}{4pt}
+
+%------------------------------------------------------------------------------
+% GRAPHICS
+%------------------------------------------------------------------------------
 \usepackage{graphicx}
-\usepackage{hyperref}
+\graphicspath{{figures/}}
 
-% Compatibility shims so chapter-based files can be included under IEEEtran.
-\providecommand{\chapter}[1]{\section{#1}}
-\providecommand{\chapter*}[1]{\section*{#1}}
+%------------------------------------------------------------------------------
+% TABLES
+%------------------------------------------------------------------------------
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{makecell}
 
-% Unicode compatibility for chapter files kept as-is.
-\DeclareUnicodeCharacter{03F5}{\ensuremath{\epsilon}}
-\DeclareUnicodeCharacter{00B0}{\ensuremath{^\circ}}
+%------------------------------------------------------------------------------
+% MATHEMATICS
+%------------------------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
 
-\title{CT-MUSIQ: Automated Perceptual Assessment of Low-Dose CT}
-\author{M. Samiul Hasnat}
-\date{\today}
+%------------------------------------------------------------------------------
+% ALGORITHMS
+%------------------------------------------------------------------------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
+%------------------------------------------------------------------------------
+% FLOATS & CAPTIONS
+%------------------------------------------------------------------------------
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{font=small, labelfont=bf, labelsep=period, justification=centering}
+\captionsetup[table]{position=above}
+\captionsetup[figure]{position=below}
+\numberwithin{figure}{chapter}
+\numberwithin{table}{chapter}
+\numberwithin{equation}{chapter}
+
+%------------------------------------------------------------------------------
+% COLOURS
+%------------------------------------------------------------------------------
+\usepackage{xcolor}
+
+%------------------------------------------------------------------------------
+% HYPERLINKS
+%------------------------------------------------------------------------------
+\usepackage[hidelinks,
+            bookmarks=true,
+            bookmarksopen=true,
+            pdfauthor={M. Samiul Hasnat},
+            pdftitle={CT-MUSIQ: An Automated Perceptual Quality Assessment Framework for Low-Dose Brain Computed Tomography},
+            pdfsubject={Undergraduate Thesis, Sichuan University}]{hyperref}
+
+%------------------------------------------------------------------------------
+% COLOURED BOXES
+%------------------------------------------------------------------------------
+\usepackage{tcolorbox}
+\tcbuselibrary{skins}
+
+%------------------------------------------------------------------------------
+% LISTS
+%------------------------------------------------------------------------------
+\usepackage{enumitem}
+\setlist{noitemsep, topsep=4pt}
+
+%------------------------------------------------------------------------------
+% BIBLIOGRAPHY
+%------------------------------------------------------------------------------
+\usepackage[numbers,sort&compress]{natbib}
+
+%------------------------------------------------------------------------------
+% HEADERS & FOOTERS
+%------------------------------------------------------------------------------
+\usepackage{fancyhdr}
+\setlength{\headheight}{15pt}
+\setlength{\footskip}{1cm}
+
+\fancypagestyle{fancy}{%
+  \fancyhf{}%
+  \fancyhead[L]{\small\textit{Sichuan University Undergraduate Graduation Project (Academic Thesis)}}%
+  \fancyhead[R]{\small\textit{\thesistitle}}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0.4pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+%------------------------------------------------------------------------------
+% TABLE OF CONTENTS DEPTH
+%------------------------------------------------------------------------------
+\usepackage{tocloft}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{3}
+
+%------------------------------------------------------------------------------
+% PARAGRAPH SETTINGS
+%------------------------------------------------------------------------------
+\usepackage{parskip}
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+%------------------------------------------------------------------------------
+% MISCELLANEOUS
+%------------------------------------------------------------------------------
+\usepackage{microtype}
+\usepackage{appendix}
+\usepackage{emptypage}
+\usepackage{listings}
+\usepackage{cleveref}
+\usepackage{pdfpages}
+
+%==============================================================================
+% THESIS METADATA  -- edit these fields
+%==============================================================================
+\newcommand{\thesistitle}{CT-MUSIQ: An Automated Perceptual Quality Assessment Framework for Low-Dose Brain Computed Tomography}
+\newcommand{\thesisauthor}{M.\ Samiul Hasnat}
+\newcommand{\studentid}{2021141460103}
+\newcommand{\thesisgrade}{2021}
+\newcommand{\thesisschool}{College of Computer Science}
+\newcommand{\thesismajor}{Computer Science and Technology}
+\newcommand{\thesisadviser}{[Supervisor Name]}
+\newcommand{\thesisdate}{April 2026}
+
+%==============================================================================
+% DOCUMENT
+%==============================================================================
 \begin{document}
+\onehalfspacing
+\normalsize
+\pagestyle{fancy}
 
-\maketitle
+%------------------------------------------------------------------------------
+% COVER PAGE
+%------------------------------------------------------------------------------
+\begin{titlepage}
+\begin{center}
+
+\vspace*{1cm}
+
+\IfFileExists{figures/SCU-SLOGO-copy.png}{%
+  \includegraphics[width=0.504\textwidth]{figures/SCU-SLOGO-copy.png}
+}{%
+  {\scshape\LARGE Sichuan University \par}
+}
+
+\vspace{0.5cm}
+
+{\Large Undergraduate Graduation Project}\\[4pt]
+{\large (Academic Thesis)}
+
+\vspace{0.8cm}
+
+\IfFileExists{figures/SCU_RLOGO.png}{%
+  \includegraphics[width=0.22\textwidth]{figures/SCU_RLOGO.png}
+}{}
+
+\vspace{1.2cm}
+
+\begin{tabular}{rl}
+  \textbf{Title:}          & \underline{\hspace{6cm}\thesistitle\hspace{0.5cm}} \\[10pt]
+  \textbf{School:}         & \underline{\hspace{7cm}\thesisschool\hspace{0.5cm}} \\[10pt]
+  \textbf{Major:}          & \underline{\hspace{7cm}\thesismajor\hspace{0.5cm}} \\[10pt]
+  \textbf{Student's Name:} & \underline{\hspace{7cm}\thesisauthor\hspace{0.5cm}} \\[10pt]
+  \textbf{Student ID:}     & \underline{\hspace{3cm}\studentid\hspace{0.5cm}}
+                             \quad Grade: \underline{\hspace{1.2cm}\thesisgrade\hspace{0.3cm}} \\[10pt]
+  \textbf{Adviser:}        & \underline{\hspace{7cm}\thesisadviser\hspace{0.5cm}} \\[10pt]
+\end{tabular}
+
+\vfill
+
+{\small Made by the Office of Academic Affairs}\\[6pt]
+{\small \thesisdate}
+
+\end{center}
+\end{titlepage}
+
+%------------------------------------------------------------------------------
+% FRONT MATTER  (roman page numbers)
+%   Order: Abstract → TOC → List of Figures → List of Tables
+%------------------------------------------------------------------------------
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+% Abstract
+\input{frontmatter}
+\clearpage
+
+% Table of Contents
 \tableofcontents
+\clearpage
 
-% Literature review text is taken directly from literatureReview.tex
-% without modifying its wording.
-{\catcode`\_=12 \input{literatureReview.tex}}
+% List of Figures
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\clearpage
 
-% Added to ensure all 50 listed references are explicitly cited in the
-% literature review context.
-Additional foundational references for this literature review are [16], [23], [25], [32], and [33].
+% List of Tables
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\clearpage
 
-\include{methodoloy}
-% \include{experiments}
-% \include{results}
-% \include{conclusion}
+%------------------------------------------------------------------------------
+% MAIN MATTER  (arabic page numbers)
+%------------------------------------------------------------------------------
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
-\chapter*{References}
+\input{chapter1_introduction}
+\input{chapter2_literature_review}
+\input{chapter3_methodology}
+\input{chapter4_experiments}
+\input{chapter5_results}
+\input{chapter6_conclusion}
+
+%------------------------------------------------------------------------------
+% REFERENCES
+%------------------------------------------------------------------------------
+\cleardoublepage
 \addcontentsline{toc}{chapter}{References}
-{\catcode`\&=12 \catcode`\_=12 \input{References.tex}}
+\bibliographystyle{unsrtnat}
+\bibliography{references}
+
+%------------------------------------------------------------------------------
+% BACK MATTER — Declaration, Acknowledgements, Appendices
+%   These appear AFTER references per the SCU format.
+%------------------------------------------------------------------------------
+\input{declaration}
+\input{acknowledgements}
+
+\cleardoublepage
+\appendix
+\input{appendix}
 
 \end{document}

@@ -1,0 +1,313 @@
+\begin{thebibliography}{52}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Hounsfield(1973)]{hounsfield1973}
+G.~N. Hounsfield.
+\newblock Computerized transverse axial scanning (tomography): Part 1.
+  description of system.
+\newblock \emph{British Journal of Radiology}, 46:\penalty0 1016--1022, 1973.
+
+\bibitem[{International Commission on Radiological
+  Protection}(2007)]{alara_ref}
+{International Commission on Radiological Protection}.
+\newblock {ICRP} publication 103: The 2007 recommendations of the {ICRP}.
+\newblock ICRP, 2007.
+
+\bibitem[Team(2011)]{ldct_lung_screening}
+National Lung Screening Trial~Research Team.
+\newblock Reduced lung-cancer mortality with low-dose computed tomographic
+  screening.
+\newblock \emph{New England Journal of Medicine}, 365:\penalty0 395--409, 2011.
+
+\bibitem[Zhang et~al.(2024)]{zhang2024review}
+J.~Zhang et~al.
+\newblock A review of deep learning methods for denoising of medical low-dose
+  {CT} images.
+\newblock \emph{Computers in Biology and Medicine}, 171:\penalty0 108112, 2024.
+
+\bibitem[Wintermark et~al.(2005)]{brainCT_window}
+M.~Wintermark et~al.
+\newblock Comparative overview of brain perfusion imaging techniques.
+\newblock \emph{American Journal of Neuroradiology}, 26:\penalty0 2012--2020,
+  2005.
+
+\bibitem[Herath et~al.(2025)]{herath2025}
+H.~M. S.~S. Herath et~al.
+\newblock A systematic review of medical image quality assessment.
+\newblock \emph{Journal of Imaging}, 11:\penalty0 100, 2025.
+
+\bibitem[Mittal et~al.(2012)Mittal, Moorthy, and Bovik]{brisque_original}
+A.~Mittal, A.~K. Moorthy, and A.~C. Bovik.
+\newblock No-reference image quality assessment in the spatial domain.
+\newblock \emph{IEEE Transactions on Image Processing}, 21\penalty0
+  (12):\penalty0 4695--4708, 2012.
+
+\bibitem[Mittal et~al.(2013)Mittal, Soundararajan, and Bovik]{niqe_original}
+A.~Mittal, R.~Soundararajan, and A.~C. Bovik.
+\newblock Making a ``completely blind'' image quality analyzer.
+\newblock \emph{IEEE Signal Processing Letters}, 20\penalty0 (3):\penalty0
+  209--212, 2013.
+
+\bibitem[Ke et~al.(2021)]{ke2021musiq}
+Junjie Ke et~al.
+\newblock {MUSIQ}: Multi-scale image quality transformer.
+\newblock In \emph{Proceedings of the IEEE/CVF International Conference on
+  Computer Vision (ICCV)}, pages 5148--5157, 2021.
+
+\bibitem[Zhao et~al.(2023)]{zhao2023multitask}
+Y.~Zhao et~al.
+\newblock Multi-task deep learning on medical imaging.
+\newblock \emph{Computers in Biology and Medicine}, 153:\penalty0 106496, 2023.
+
+\bibitem[P. et~al.(2023)]{cao2023observational}
+C.~P. et~al.
+\newblock Observational studies in low-dose {CT}.
+\newblock \emph{MDPI}, 2023.
+
+\bibitem[Cho et~al.(2024)]{cho2024pediatric}
+H.-H. Cho et~al.
+\newblock Deep learning adaptation for pediatric cardiac {CT} datasets.
+\newblock \emph{PLoS ONE}, 19\penalty0 (8):\penalty0 e0300090, 2024.
+
+\bibitem[Niu and Shan(2023)]{niu2023score}
+C.~Niu and H.~Shan.
+\newblock Score-based generative models for medical imaging.
+\newblock \emph{IEEE Transactions on Medical Imaging}, 2023.
+
+\bibitem[Goodfellow et~al.(2016)Goodfellow, Bengio, and
+  Courville]{goodfellow2016deep}
+I.~Goodfellow, Y.~Bengio, and A.~Courville.
+\newblock \emph{Deep Learning}.
+\newblock MIT Press, 2016.
+
+\bibitem[Xun et~al.(2025)]{xun2025bibliometric}
+Siyi Xun et~al.
+\newblock Bibliometric analysis of {CT-IQA}.
+\newblock \emph{Journal of King Saud University Computer and Information
+  Sciences}, 37\penalty0 (92), 2025.
+
+\bibitem[Mileto et~al.(2019)]{mileto2019iterative}
+A.~Mileto et~al.
+\newblock State of the art in abdominal {CT}: The limits of iterative
+  reconstruction algorithms.
+\newblock \emph{Radiology}, 293\penalty0 (3):\penalty0 491--503, 2019.
+
+\bibitem[Koetzier et~al.(2023)]{koetzier2023dlir}
+L.~R. Koetzier et~al.
+\newblock Deep learning image reconstruction for {CT}: Technical principles and
+  clinical prospects.
+\newblock \emph{Radiology}, 306\penalty0 (3):\penalty0 e221257, 2023.
+
+\bibitem[Gao et~al.(2024)]{gao2024corediff}
+Q.~Gao et~al.
+\newblock {CoreDiff}: Contextual error-modulated generalized diffusion model
+  for low-dose {CT} denoising and generalization.
+\newblock \emph{IEEE Transactions on Medical Imaging}, 43\penalty0
+  (2):\penalty0 745--759, 2024.
+
+\bibitem[Gao et~al.(2025)]{gao2025need}
+Q.~Gao et~al.
+\newblock Noise-inspired diffusion model for generalizable low-dose {CT}
+  reconstruction.
+\newblock \emph{Medical Image Analysis}, 105:\penalty0 103710, 2025.
+
+\bibitem[Willemink et~al.(2013)]{willemink2013iterative}
+M.~J. Willemink et~al.
+\newblock Iterative reconstruction techniques for computed tomography part 1:
+  Technical principles.
+\newblock \emph{European Radiology}, 23\penalty0 (6):\penalty0 1623--1631,
+  2013.
+
+\bibitem[Smits et~al.(2007)]{smits2007minor}
+M.~Smits et~al.
+\newblock Minor head injury: Guidelines for the use of {CT}.
+\newblock \emph{Radiology}, 245:\penalty0 831--838, 2007.
+
+\bibitem[Nirupama et~al.(2025)]{nirupama2025}
+B.~Nirupama et~al.
+\newblock Diagnosis based image quality assessment and enhancement for low dose
+  {CT} image.
+\newblock \emph{Frontiers in Radiology}, 5:\penalty0 1704113, 2025.
+
+\bibitem[Pouget and Dedieu(2023)]{pouget2023channelised}
+E.~Pouget and V.~Dedieu.
+\newblock Comparison of supervised-learning approaches for designing a
+  channelized observer for image quality assessment in {CT}.
+\newblock \emph{Medical Physics}, 50\penalty0 (7):\penalty0 4282--4295, 2023.
+
+\bibitem[Yan et~al.(2018)]{yan2018deeplesion}
+K.~Yan et~al.
+\newblock {DeepLesion}: Automated mining of large-scale lesion annotations and
+  universal lesion detection with deep learning.
+\newblock \emph{Journal of Medical Imaging}, 5\penalty0 (3), 2018.
+
+\bibitem[Zhou et~al.(2024)]{zhou2024virtual}
+Z.~Zhou et~al.
+\newblock Image quality evaluation in deep-learning-based {CT} noise reduction
+  using virtual imaging trial methods.
+\newblock \emph{Medical Physics}, 51:\penalty0 5399--5413, 2024.
+
+\bibitem[Athar and Wang(2019)]{athar2019comprehensive}
+S.~Athar and Z.~Wang.
+\newblock A comprehensive performance evaluation of image quality assessment
+  algorithms.
+\newblock \emph{IEEE Access}, 7:\penalty0 140030--140070, 2019.
+
+\bibitem[Wang and Bovik(2006)]{wang2006modern}
+Z.~Wang and A.~C. Bovik.
+\newblock \emph{Modern Image Quality Assessment}.
+\newblock Morgan \& Claypool, 2006.
+
+\bibitem[Hu et~al.(2024)]{hu2024niqe}
+Z.~Hu et~al.
+\newblock No-reference image quality assessment based on global awareness.
+\newblock \emph{PLoS ONE}, 19\penalty0 (10):\penalty0 e0310206, 2024.
+
+\bibitem[Sheikh et~al.(2005)]{sheikh2005nss}
+H.~R. Sheikh et~al.
+\newblock No-reference quality assessment using natural scene statistics.
+\newblock \emph{IEEE Transactions on Image Processing}, 14\penalty0
+  (11):\penalty0 1918--1927, 2005.
+
+\bibitem[Lee et~al.(2025)]{lee2025ldctiqac}
+Wonkyeong Lee et~al.
+\newblock Low-dose computed tomography perceptual image quality assessment
+  grand challenge.
+\newblock \emph{Medical Image Analysis}, 99:\penalty0 103343, 2025.
+
+\bibitem[Stepien and Oszust(2023)]{stepien2023mri}
+I.~Stepien and M.~Oszust.
+\newblock A brief survey on no-reference image quality assessment methods for
+  magnetic resonance images.
+\newblock \emph{Engineering Applications of Artificial Intelligence},
+  123:\penalty0 106283, 2023.
+
+\bibitem[Ahmed and Asif(2024)]{ahmed2024iqanrtl}
+N.~Ahmed and S.~Asif.
+\newblock {IQA-NRTL}: A no-reference image quality assessment algorithm based
+  on transfer learning.
+\newblock \emph{PeerJ Computer Science}, 2024.
+
+\bibitem[Hosu et~al.(2020)]{hosu2020koniq}
+V.~Hosu et~al.
+\newblock {KonIQ-10k}: An ecologically valid database for deep learning of
+  blind image quality assessment.
+\newblock \emph{IEEE Transactions on Image Processing}, 29:\penalty0
+  4041--4056, 2020.
+
+\bibitem[Shen et~al.(2025)]{shen2025jnd}
+X.~Shen et~al.
+\newblock No-reference image quality assessment for low-dose {CT} images based
+  on sparse representation and {JND} model.
+\newblock \emph{IEEE Access}, 2025.
+
+\bibitem[Greenspan et~al.(2023{\natexlab{a}})]{greenspan2023miccai_cbct}
+H.~Greenspan et~al.
+\newblock {MICCAI} 2023 proceedings part x.
+\newblock In \emph{MICCAI 2023}. Springer Nature Switzerland AG,
+  2023{\natexlab{a}}.
+
+\bibitem[Shan et~al.(2018)]{shan2018transfer}
+H.~Shan et~al.
+\newblock 3-{D} convolutional encoder-decoder network for low-dose {CT} via
+  transfer learning from a 2-{D} trained network.
+\newblock \emph{IEEE Transactions on Medical Imaging}, 37\penalty0
+  (6):\penalty0 1522--1534, 2018.
+
+\bibitem[Greenspan et~al.(2023{\natexlab{b}})]{greenspan2023miccai_domain}
+H.~Greenspan et~al.
+\newblock {MICCAI} 2023 proceedings part {II}.
+\newblock In \emph{MICCAI 2023}. Springer Nature Switzerland AG,
+  2023{\natexlab{b}}.
+
+\bibitem[McCollough et~al.(2020)]{mccollough2020ldct}
+C.~H. McCollough et~al.
+\newblock Low dose {CT} image and projection data.
+\newblock The Cancer Imaging Archive, 2020.
+
+\bibitem[Zabic et~al.(2013)]{zabic2013simulation}
+S.~Zabic et~al.
+\newblock A low dose simulation tool for {CT} systems with energy integrating
+  detectors.
+\newblock \emph{Medical Physics}, 40\penalty0 (3), 2013.
+
+\bibitem[Sori et~al.(2021)]{sori2021dfdnet}
+W.~J. Sori et~al.
+\newblock {DFD-Net}: Lung cancer detection from denoised {CT} scan image using
+  deep learning.
+\newblock \emph{Frontiers in Computer Science}, 15:\penalty0 1--13, 2021.
+
+\bibitem[Galdran et~al.(2022)]{galdran2022calibration}
+A.~Galdran et~al.
+\newblock Multi-head multi-loss model calibration.
+\newblock \emph{Transactions on Machine Learning Research}, 2022.
+
+\bibitem[Zhu et~al.(2023)]{zhu2023stednet}
+L.~Zhu et~al.
+\newblock {STEDNet}: Swin transformer-based encoder--decoder network for noise
+  reduction in low-dose {CT}.
+\newblock \emph{Medical Physics}, 50:\penalty0 4443--4458, 2023.
+
+\bibitem[Luo et~al.(2025)]{luo2025hcformer}
+L.~Luo et~al.
+\newblock {HCformer}: Hybrid {CNN}-transformer codec network for low-dose {CT}
+  denoising.
+\newblock \emph{Journal of Data Acquisition and Processing}, 2025.
+
+\bibitem[Fan et~al.(2021)]{fan2021interpretability}
+F.-L. Fan et~al.
+\newblock On interpretability of artificial neural networks: A survey.
+\newblock \emph{IEEE Transactions on Radiation and Plasma Medical Sciences},
+  5\penalty0 (6):\penalty0 741--760, 2021.
+
+\bibitem[Li et~al.(2023)]{li2023mdst}
+Y.~Li et~al.
+\newblock {MDST}: Multi-domain sparse-view {CT} reconstruction based on
+  convolution and swin transformer.
+\newblock \emph{Physics in Medicine \& Biology}, 68:\penalty0 095019, 2023.
+
+\bibitem[Zhang et~al.(2021)]{zhang2021convergent}
+Q.~Zhang et~al.
+\newblock Provably convergent learned inexact descent algorithm for low-dose
+  {CT} reconstruction.
+\newblock In \emph{IEEE Transactions on Medical Imaging}, 2021.
+
+\bibitem[Wu et~al.(2024)]{wu2024mllm}
+T.~Wu et~al.
+\newblock A comprehensive study of {MLLMs} for {IQA}.
+\newblock \emph{arXiv preprint}, 2024.
+
+\bibitem[Chen et~al.(2024)]{chen2024iqagpt}
+Z.~Chen et~al.
+\newblock {IQAGPT}: Image quality assessment with vision-language models.
+\newblock \emph{Visual Computing for Industry, Biomedicine, and Art},
+  7\penalty0 (20), 2024.
+
+\bibitem[Liu et~al.(2023)]{liu2023llava}
+H.~Liu et~al.
+\newblock Visual instruction tuning.
+\newblock arXiv preprint arXiv:2304.08485, 2023.
+
+\bibitem[Dai et~al.(2023)]{dai2023instructblip}
+Wenliang Dai et~al.
+\newblock {InstructBLIP}: Towards general-purpose vision-language models with
+  instruction tuning.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2023.
+
+\bibitem[Radford et~al.(2021)]{radford2021clip}
+A.~Radford et~al.
+\newblock Learning transferable visual models from natural language
+  supervision.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2021.
+
+\bibitem[Elhage et~al.(2021)]{elhage2021mathematical}
+N.~Elhage et~al.
+\newblock A mathematical framework for transformer circuits.
+\newblock \emph{Transformer Circuits Thread}, 2021.
+
+\end{thebibliography}

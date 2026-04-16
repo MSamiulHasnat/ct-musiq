@@ -1,0 +1,338 @@
+% ============================================================
+% Chapter 1: Introduction
+% CT-MUSIQ Undergraduate Thesis
+% ============================================================
+
+\chapter{Introduction}
+\label{chap:introduction}
+
+\section{Background and Motivation}
+\label{sec:intro_background}
+
+Computed Tomography (CT) has established itself as one of the most indispensable modalities
+in modern clinical medicine. Since its clinical introduction by Hounsfield and Cormack in
+the early 1970s, CT imaging has undergone decades of technological evolution, culminating
+in today's multi-detector row scanners capable of acquiring full-body volumetric datasets
+in under ten seconds \cite{hounsfield1973}. The exceptional anatomical resolution, rapid
+acquisition time, and wide clinical accessibility of CT have made it an irreplaceable tool
+for emergency triage, oncological staging, neurological assessment, and pre-surgical
+planning. Globally, hundreds of millions of CT scans are performed annually, generating an
+enormous volume of cross-sectional healthcare imaging data.
+
+Despite its clinical indispensability, CT imaging carries an inherent risk that has long
+concerned the medical physics and radiology communities: exposure to ionising X-ray
+radiation. Unlike natural background radiation, medical X-ray exposure is controllable,
+and the clinical community has adopted the ALARA principle (As Low As Reasonably
+Achievable) as the governing framework for dose management \cite{alara_ref}. Under this
+principle, Low-Dose CT (LDCT) protocols have been aggressively developed and deployed,
+achieving dose reductions of 50--80\% compared to conventional normal-dose CT (NDCT)
+without compromising diagnostic yield for a broad range of indications. The clinical
+validation of LDCT has been particularly compelling in the context of lung cancer screening
+programmes, where multi-institutional observational studies have demonstrated that
+ultra-low-dose protocols can maintain the sensitivity necessary for early-stage nodule
+detection \cite{ldct_lung_screening}.
+
+However, dose reduction is not without consequence. The statistical nature of X-ray
+detection imposes a fundamental physical trade-off: reducing the number of X-ray photons
+incident on the detector array directly degrades the signal-to-noise ratio of the acquired
+sinogram. Specifically, the photon count at each detector cell follows a Poisson
+distribution, and the variance of this distribution scales linearly with the mean photon
+count. When the mean count is reduced, the relative noise (the coefficient of variation)
+increases as the inverse square root of the count, producing a complex, spatially
+non-stationary noise field in the reconstructed image. Superimposed on the quantum noise
+is the Gaussian-distributed electronic readout noise of the data acquisition system,
+creating the well-known ``Poisson-plus-Gaussian'' degradation model of LDCT \cite{zhang2024review}.
+In the image domain, this manifests as conspicuous streak artefacts, grainy noise texture,
+loss of low-contrast lesion conspicuity, and blurring of subtle anatomical boundaries.
+
+The clinical impact of these degradations is not uniform across tissues or disease states.
+In brain CT, the primary diagnostic challenge is to differentiate structures with inherently
+small HU differences: grey matter ($\sim$40~HU), white matter ($\sim$35~HU), cerebrospinal
+fluid (0--15~HU), and pathological processes such as hyperacute haemorrhage (50--80~HU),
+oedema, and early infarction. The narrow Hounsfield unit dynamic range of brain tissue
+renders it exquisitely sensitive to any noise perturbation that narrows the effective
+contrast-to-noise ratio, making brain LDCT quality assessment a particularly demanding
+and clinically high-stakes problem \cite{brainCT_window}.
+
+Conventionally, CT image quality is evaluated by trained radiologists who inspect each
+acquired scan for diagnostic acceptability, using structured criteria covering noise
+level, artefact severity, contrast resolution, and overall lesion visibility. This gold
+standard is both the most clinically valid and the most operationally burdensome approach:
+it is labour-intensive, subject to significant inter-observer and intra-observer
+variability, and fundamentally non-scalable to the throughput demands of modern
+high-volume CT facilities or retrospective research analysis pipelines. As deep learning
+post-processing algorithms increasingly generate large numbers of reconstructed images
+for research evaluation or prospective quality control, the manual radiological audit
+bottleneck becomes acutely limiting \cite{herath2025}.
+
+This gap between clinical need and operational feasibility provides the primary motivation
+for \textbf{automated, no-reference Image Quality Assessment (NR-IQA)} for LDCT. An
+effective NR-IQA system would accept a single CT slice as input and predict a
+perceptual quality score aligned with radiologist assessment, enabling:
+
+\begin{itemize}
+    \item Real-time scan rejection or flagging in the scanner room, prompting immediate
+          re-acquisition at higher dose if a scan is below diagnostic threshold;
+    \item Large-scale retrospective quality auditing of CT archives without radiologist
+          involvement;
+    \item Objective, reproducible benchmarking of competing LDCT denoising and
+          reconstruction algorithms;
+    \item Integration into clinical Picture Archiving and Communication Systems (PACS)
+          as an automated quality gate before image distribution to radiologists.
+\end{itemize}
+
+Achieving these goals requires overcoming a series of fundamental technical challenges,
+which have resisted satisfactory resolution by prior computational approaches, as reviewed
+in detail in Chapter~\ref{chap:literature_review}.
+
+\section{Problem Statement}
+\label{sec:intro_problem}
+
+The formal task addressed in this thesis is defined as follows. Given a single axial brain
+CT slice $\mathbf{x} \in \mathbb{R}^{H \times W}$ (with $H = W = 512$) acquired under
+low-dose protocol, the objective is to learn a function:
+
+\begin{equation}
+    f_\theta : \mathbb{R}^{H \times W} \rightarrow [0, 4]
+\end{equation}
+
+that maps the input CT image to a continuous quality score $\hat{q} = f_\theta(\mathbf{x})$
+maximally correlated with the consensus perceptual quality score $q \in [0, 4]$ assigned
+by a panel of expert radiologists using a five-point Likert scale. Crucially, $f_\theta$
+operates in the \textbf{no-reference} (or blind) setting: no paired high-quality reference
+image is available either during training inference, reflecting the clinical reality that
+acquiring such reference images would itself require an additional radiation dose.
+
+The specific challenges that distinguish this problem from standard NR-IQA on natural
+photographs include:
+
+\begin{enumerate}
+    \item \textbf{Domain specificity of degradations.} CT image noise arises from physical
+    quantum mechanics and detector electronics rather than from digital compression or
+    optical blur. The resulting non-stationary Poisson-driven noise does not conform to
+    the Natural Scene Statistics (NSS) assumptions underlying classical NR-IQA algorithms
+    \cite{brisque_original, niqe_original}.
+
+    \item \textbf{Calibrated Hounsfield Unit scale.} Unlike RGB natural images, CT pixel
+    values are physical quantities with precise clinical meaning. The clinically relevant
+    intensity range for brain tissue spans only 80~HU (0 to 80~HU after brain soft-tissue
+    windowing), meaning that the specific preprocessing applied to the image before
+    assessment fundamentally shapes the perceptual quality distribution seen by both the
+    human radiologist and any automated model.
+
+    \item \textbf{Global artefact structure.} LDCT streak artefacts arising from photon
+    starvation propagate across the entire image cross-section along Radon transform
+    directions, creating long-range spatial correlations that local convolutional kernels
+    cannot model with finite receptive fields.
+
+    \item \textbf{Extremely limited annotated training data.} Radiologist annotation of
+    CT images is expensive and ethically constrained. The largest publicly available
+    annotated LDCT IQA dataset, released by the LDCTIQAC 2023 challenge, contains only
+    1,000 labelled images. Training deep neural networks of the scale required for
+    state-of-the-art IQA on such limited data demands rigorous regularisation strategies.
+
+    \item \textbf{Input resolution paradox.} High-resolution CT images (512~$\times$~512
+    pixels) must be processed to capture fine-grained noise signatures, yet standard
+    Vision Transformer architectures require fixed-resolution inputs and cannot natively
+    process variable-length patch sequences across multiple scales simultaneously.
+\end{enumerate}
+
+\section{Proposed Approach: CT-MUSIQ}
+\label{sec:intro_approach}
+
+This thesis proposes \textbf{CT-MUSIQ}, a purpose-built NR-IQA framework that addresses
+each of the above challenges through a cohesive set of architectural and training
+innovations. CT-MUSIQ is constructed as a principled medical domain adaptation of the
+Multi-Scale Image Quality Transformer (MUSIQ) \cite{ke2021musiq}, an architecture
+originally designed for natural image quality assessment that was selected as the
+foundation for this work due to its unique ability to process images at multiple
+resolutions without interpolation-induced information loss.
+
+The core design philosophy of CT-MUSIQ rests on three guiding principles:
+
+\textbf{Principle 1: Clinical fidelity through domain-specific preprocessing.} Rather
+than applying standard ImageNet normalisation to CT images, CT-MUSIQ enforces the brain
+soft-tissue CT window transformation (level 40~HU, width 80~HU) that replicates the
+exact intensity range presented to annotating radiologists during the labelling process.
+This ensures that the model learns quality representations in the same perceptual space
+as the human ground truth labels.
+
+\textbf{Principle 2: Multi-scale global receptive field from the first layer.} By
+extracting non-overlapping $32 \times 32$ patches from the CT image at both $224 \times
+224$ and $384 \times 384$ resolutions, CT-MUSIQ simultaneously provides the Transformer
+encoder with coarse-scale global structural context (49 patches per image) and fine-scale
+local noise texture (144 patches per image), without any spatial downsampling that would
+destroy frequency information critical for noise assessment.
+
+\textbf{Principle 3: Regularisation through scale consistency.} Given the small
+training set, the model must be prevented from learning scale-specific overfitting
+artefacts. The scale-consistency KL divergence loss, a novel contribution of this thesis,
+penalises disagreement between the quality assessments of individual scale-specific
+prediction heads and the global aggregated prediction, enforcing that each scale learns
+a coherent, internally consistent quality representation.
+
+\section{Contributions}
+\label{sec:intro_contributions}
+
+The principal scientific and engineering contributions of this thesis are as follows:
+
+\begin{enumerate}
+    \item \textbf{CT-MUSIQ architecture.} A complete, end-to-end trainable NR-IQA
+    architecture adapted from MUSIQ for brain CT imaging, incorporating multi-scale patch
+    tokenisation, hash-based positional encoding, and per-scale prediction heads. The
+    architecture is designed to operate within 6~GB of GPU VRAM on consumer hardware
+    using mixed-precision training.
+
+    \item \textbf{Brain CT windowing adaptation.} A principled methodological argument
+    for and implementation of brain soft-tissue windowing as a preprocessing step that
+    bridges the perceptual space between radiologist annotation and model training,
+    constituting a significant departure from the abdominal windowing used in the original
+    LDCTIQAC challenge.
+
+    \item \textbf{Scale-consistency KL regularisation.} A novel composite loss function
+    that combines mean squared error regression, pairwise margin ranking, and
+    Kullback--Leibler divergence between per-scale and global quality prediction
+    distributions, verified through systematic ablation studies to provide measurable
+    improvement over MSE-only training on the small LDCT dataset.
+
+    \item \textbf{Two-stage fine-tuning protocol.} A carefully engineered training
+    strategy that first warms up domain-specific components with the Transformer encoder
+    frozen, then jointly fine-tunes all parameters with cosine-annealed learning rate
+    decay and exponential moving average weight smoothing, achieving stable convergence
+    on 700 training samples.
+
+    \item \textbf{Comprehensive empirical evaluation.} A full benchmark of CT-MUSIQ
+    against both published LDCTIQAC 2023 leaderboard methods and a purpose-built strong
+    baseline (Swin-T + ResNet-50 ensemble), with ablation studies confirming the
+    individual contribution of each proposed component, and an analysis of the
+    complementary strengths of the two approaches.
+
+    \item \textbf{Open-source reproducible implementation.} A complete Python/PyTorch
+    implementation of CT-MUSIQ, including all training, evaluation, and ablation scripts,
+    centralised configuration management, and deterministic reproducibility through
+    fixed random seeds, released as a fully documented open-source repository.
+\end{enumerate}
+
+\section{Thesis Structure}
+\label{sec:intro_structure}
+
+The remainder of this thesis is organised as follows.
+
+\textbf{Chapter~\ref{chap:literature_review}: Literature Review} surveys the relevant
+prior work across five thematic domains: the clinical evolution of CT reconstruction
+algorithms; the theoretical and practical limitations of full-reference IQA in the
+medical imaging context; the failure modes of classical NSS-based NR-IQA when applied
+to CT data; the development of deep learning-based NR-IQA methods including CNN-based and
+Transformer-based architectures; and the emergence of vision-language models as the
+current frontier of IQA research. The chapter concludes with a precise formulation of the
+research gap addressed by this thesis.
+
+\textbf{Chapter~\ref{chap:methodology}: Methodology} provides a comprehensive technical
+description of all components of CT-MUSIQ: the dataset and preprocessing pipeline,
+the model architecture in full mathematical detail, the composite loss function, the
+two-stage training procedure, data augmentation strategy, evaluation protocol, and the
+comparison baseline architecture.
+
+\textbf{Chapter~\ref{chap:experiments}: Experiments} describes the experimental design
+including implementation details, hardware specifications, training hyperparameters, and
+the complete ablation study protocol. The design of each ablation configuration is
+motivated by the specific architectural hypotheses it tests.
+
+\textbf{Chapter~\ref{chap:results}: Results and Discussion} presents the quantitative
+performance of CT-MUSIQ on the LDCTIQAC 2023 test set relative to all published
+leaderboard methods and the Agaldran Combo baseline, followed by detailed analysis of
+the ablation study results, examination of correlation metric components, and discussion
+of the implications of the findings for clinical deployment.
+
+\textbf{Chapter~\ref{chap:conclusion}: Conclusion and Future Work} synthesises the key
+contributions and findings of this thesis, critically examines the limitations of the
+proposed approach, and outlines a roadmap of promising directions for future research
+in automated CT quality assessment.
+
+\textbf{Appendices} provide supplementary material including the complete hyperparameter
+summary table, training curve data, algorithm pseudocode, and implementation notes for
+reproducing all experiments.
+
+\section{Scope and Limitations}
+\label{sec:intro_scope}
+
+This thesis focuses specifically on axial brain CT slices from the LDCTIQAC 2023 dataset
+and does not claim generalisation to other CT modalities (e.g., chest, abdominal, or
+orthopaedic CT), multi-slice volumetric assessment, or other medical imaging modalities.
+The evaluation is conducted exclusively on a single publicly available benchmark dataset;
+multi-institutional validation across different scanner manufacturers, acquisition
+protocols, and patient populations represents an important direction for future work.
+
+The CT images used in this study are pre-processed and normalised prior to release by the
+challenge organisers; direct application to raw DICOM files from clinical PACS systems
+would require additional preprocessing steps including HU calibration verification and
+patient table removal.
+
+Furthermore, the Agaldran Combo baseline used in this thesis as a within-paper comparison
+is not the original ``agaldran'' team's submission to the LDCTIQAC 2023 challenge, but
+rather an independent reimplementation motivated by their published architectural choices,
+trained under the same conditions as CT-MUSIQ. Direct comparison with the original
+challenge submission is therefore approximate, though the reported leaderboard numbers
+are cited for reference throughout.
+
+
+\section{Clinical Context and Significance}
+\label{sec:intro_clinical}
+
+To fully appreciate the significance of the automated IQA problem addressed in this
+thesis, it is important to understand the clinical workflow in which CT image quality
+assessment occurs and the specific consequences of quality failures in routine clinical
+practice.
+
+\subsection{The CT Acquisition Workflow}
+
+In a typical clinical CT examination, the following sequence of events occurs: (1) a
+clinician orders a CT scan for a patient based on clinical indications; (2) the patient
+is positioned on the CT scanner table and the acquisition parameters (kVp, mAs, scan
+duration) are set by the radiographer according to local protocol, often using
+dose-modulation algorithms; (3) the scanner acquires the raw sinogram data and performs
+on-line reconstruction using the configured algorithm (FBP, IR, or DLIR); (4) the
+reconstructed image series is transferred to the hospital PACS; (5) a radiologist accesses
+the images from PACS, applies windowing, and performs a diagnostic assessment;
+(6) a radiological report is generated and communicated to the referring clinician.
+
+In this workflow, quality assessment traditionally occurs implicitly at step~(5): the
+radiologist observes the image quality as part of the diagnostic reading and may note
+quality issues in the report or, in severe cases, request a repeat scan. However, by
+step~(5), the patient has already left the scanner room, and a repeat scan requires
+re-booking the patient, additional radiation exposure, additional scanner time, and
+delay in diagnosis. An automated quality gate at step~(3) or (4)---before the patient
+leaves the room---would enable immediate repeat acquisition when necessary, avoiding
+all of these downstream costs.
+
+\subsection{The Economic and Radiation Safety Case}
+
+The economic case for automated IQA is straightforward. A missed poor-quality scan that
+reaches the radiologist requires: (a) radiologist time to assess and report on a
+subdiagnostic image; (b) communication with the referring clinician to explain the
+limitation; (c) in many cases, a repeat scan booking, which incurs scanner time,
+staff time, and patient transport costs; and (d) a delayed diagnosis that may have
+clinical consequences if the pathology was urgent. The cost of a single repeat CT
+examination varies by region and modality but typically ranges from \$200--\$1,000.
+Even a 1\% reduction in repeat scan rates for a facility performing 50,000 CT scans
+per year would save 500 repeat scans annually---a significant operational benefit.
+
+From a radiation safety perspective, eliminating unnecessary repeat scans directly
+reduces the aggregate population radiation dose. Modern CT scanner dose modulation
+algorithms already minimise dose for any given diagnostic target, but a missed
+poor-quality scan followed by a repeat effectively doubles the patient's radiation
+exposure for that examination. An IQA system that prevents this scenario contributes
+directly to the ALARA principle that governs clinical radiology practice.
+
+\subsection{Research Benchmarking Applications}
+
+Beyond clinical quality control, automated IQA is essential for the reproducible
+benchmarking of competing CT reconstruction and denoising algorithms. The literature
+review (Chapter~\ref{chap:literature_review}) documents the rapidly expanding landscape
+of DLIR methods, each claiming performance improvements over prior art. Without an
+objective, perceptual quality metric aligned with radiologist judgement, comparisons
+between methods rely either on subjective visual inspection (which is non-reproducible
+and expert-dependent) or on non-perceptual metrics such as PSNR and SSIM (which often
+do not correlate with diagnostic quality). CT-MUSIQ provides a reproducible, scalable,
+radiologist-aligned quality assessment tool that can serve as an objective benchmark
+for evaluating LDCT reconstruction quality across large image databases.
