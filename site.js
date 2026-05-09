@@ -77,8 +77,15 @@ function setActiveButton(fileName) {
 function getInitialDoc() {
   const params = new URLSearchParams(window.location.search);
   const doc = params.get('doc');
-  if (doc === 'DefensePrep.md' || doc === 'writting/EDITING_GUIDE.md') return doc;
-  return 'README.md';
+  if (
+    doc === 'LastMinutePrep.md' ||
+    doc === 'README.md' ||
+    doc === 'DefensePrep.md' ||
+    doc === 'writting/EDITING_GUIDE.md'
+  ) {
+    return doc;
+  }
+  return 'LastMinutePrep.md';
 }
 
 docButtons.forEach((btn) => {
