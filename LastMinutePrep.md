@@ -230,3 +230,167 @@ Three — future directions: multi-scanner cross-institution validation; CT-MUSI
 - **Dataset:** 700 train / 100 test (LDCTIQAC 2023)
 - **Windowing:** Level 40 HU, Width 350 HU (soft tissue)
 - **Gap significance:** 0.045 gap, within 95% CI → **not statistically significant**
+
+---
+
+## Probable Defense Board Questions — Verified Against Thesis
+
+> All answers verified against the thesis document as the ultimate ground truth, cross-referenced with the codebase.
+
+---
+
+### Architecture & Design Choices
+
+**Q1. Why did you choose MUSIQ specifically over other ViT variants like Swin Transformer or DeiT?**
+
+Standard ViT and DeiT require fixed-resolution inputs to maintain constant sequence lengths for learnable position embeddings — resizing a 512×512 CT slice to a single resolution destroys high-frequency quantum noise signatures critical for quality assessment. The thesis calls this the "input resolution paradox." Swin Transformer partially addresses it with shifted-window attention but still requires a fixed spatial resolution per scale, making two-resolution inputs awkward. MUSIQ was specifically designed for multi-scale IQA: it concatenates patches from multiple resolutions into one variable-length sequence and handles it with hash-based positional encoding — PE = E_scale(s) + E_row(r) + E_col(c) — requiring no padding, masking, or re-engineering. CNNs were rejected because stacked convolution progressively destroys high-frequency noise signatures while failing to model the long-range streak artefacts that span the full anatomical cross-section.
+
+---
+
+**Q2. Why scales 224 and 384 specifically? Did you experiment with three scales?**
+
+224 matches the native input size of pretrained ViT-B/32. 384 was the largest second scale fitting within the 6 GB VRAM budget (batch size 10, AMP enabled): 7×7=49 patches at 224, 12×12=144 at 384 = 193 tokens total, peak VRAM 5.2–5.6 GB. A third scale (512) was tested as ablation A6, which ran successfully — 449 tokens, Aggregate 2.296, marginally below A4's 2.305. The thesis attributes this to slower convergence at the longer sequence within the 30-epoch ablation budget rather than a genuine signal deficit, and recommends full 100-epoch training of A6 to reach a definitive conclusion.
+
+---
+
+**Q3. Grayscale channel replication — does it introduce bias or redundant computation?**
+
+Yes, mild redundancy: the patch embedding Conv2d processes the same signal three times. The thesis justifies this as the best available option given the constraints: the pretrained ViT-B/32 patch embedding is shaped [768, 3, 32, 32], and replicating the greyscale channel preserves these weights intact with no re-initialisation cost. The thesis explicitly states "No artificial colour information is introduced." The alternative — reinitialising the embedding for a single-channel input — would sacrifice pretrained feature detectors, which is impractical with only 700 training images.
+
+---
+
+**Q4. Why ViT-B/32 (patch size 32) and not ViT-B/16?**
+
+Patch size 32 was chosen for direct compatibility with the pretrained ViT-B/32 from the timm library (`vit_base_patch32_224`). The thesis states this as the primary reason. The VRAM constraint is also implicit: patch size 16 would produce 772 tokens (vs 193), quadrupling attention cost and very likely exceeding 6 GB VRAM. No formal ablation comparing 32 vs 16 was run.
+
+---
+
+**Q5. CLS token versus mean pooling for the global head — did you try alternatives?**
+
+The CLS token for global prediction and mean pooling for per-scale auxiliary heads follows "standard Vision Transformer design" — cited as such in the thesis with no separate ablation comparing the two. The CLS token at position 0 aggregates context from all 193 patch tokens across all 12 transformer layers. Per-scale auxiliary heads apply mean pooling over their respective scale's tokens. No ablation comparing CLS vs global mean pool was run.
+
+---
+
+### Loss Function
+
+**Q6. How were λ=0.10 (KL) and λ=0.5 (ranking) determined?**
+
+λ=0.10 was determined by ablation. Three values were tested: A3 (λ=0.05, Agg 2.289), A4 (λ=0.10, Agg 2.305), A5 (λ=0.20, Agg 2.281) — all two-scale, 30 epochs. λ=0.10 is robustly optimal: 0.05 under-regularises, 0.20 over-regularises by pushing per-scale heads too strongly at the expense of MSE. The performance spread across A3–A5 is only 0.024, suggesting mild sensitivity. λ_rank=0.5 was not ablated — it was set by judgment, not grid search.
+
+---
+
+**Q7. What if the global head is wrong — could KL propagate a bad estimate to both scale heads?**
+
+The thesis directly addresses this. The formula is D_KL(p(q̂_s) ‖ p(q̂)) — per-scale approximates global, global is the target. The justification: the global head accesses the CLS token, which attends over all 193 tokens from both scales across all 12 transformer layers — it has strictly more context than any per-scale head, which only sees mean-pooled tokens within one scale. The asymmetry of KL divergence "severely penalises per-scale predictions that assign high probability to bins the global head considers very unlikely, preventing extreme scale-specific outlier predictions." Per-scale scores are discarded at inference — only the global head's output is used.
+
+---
+
+**Q8. Why 20 bins for the KL soft distribution? Is it sensitive?**
+
+K=20 is specified in Table 4.1 with σ=0.5. The thesis provides no explicit justification for K=20 and no ablation over the bin count. If pressed: 20 bins over [0,4] gives centers spaced ~0.21 apart, and with σ=0.5 each score's mass spans ~2–3 bins — enough smoothness for meaningful KL gradients without excessive computation. This is a reasonable but unevidenced choice.
+
+---
+
+**Q9. Batch size and pairwise ranking — any stability issues?**
+
+Batch size is 10 (Table 4.1). The thesis states: "for a batch of B=10, there are 10×10=100 pairs, computed via outer-product matrix operations." Ranking loss = (1/B²) ΣΣ max(0, m − sgn(qᵢ−qⱼ)·(q̂ᵢ−q̂ⱼ)), m=0.1. Batch size 10 was the VRAM maximum. No ablation over batch size was run.
+
+---
+
+### Dataset & Generalisation
+
+**Q10. One dataset, two institutions — how confident are you in generalisation?**
+
+Not confident yet. The thesis explicitly states the study "does not claim generalisation to other CT anatomical regions, multi-slice volumetric assessment, or other modalities." Section 6.3 acknowledges: scanners differ in detector geometry, reconstruction kernel, and noise power spectrum in ways directly relevant to the features the model learned. All acquisitions come from two institutions under a challenge-standardised protocol. A quality estimator calibrated on Mayo Clinic and NCC images "may produce systematically biased predictions in a different institutional environment." Multi-centre cross-scanner validation is listed as the most immediately pressing future work.
+
+---
+
+**Q11. Why not augment more aggressively with only 700 training images?**
+
+CT images are calibrated physical measurements in HU, and their noise texture carries diagnostic meaning. The thesis states: "Aggressive colour distortions or large geometric deformations would alter perceived quality in ways that do not correspond to any real imaging artefact, introducing label noise." The pipeline applies: horizontal flip (p=0.5), vertical flip (p=0.5), rotation ±7° in float-mode PIL, random crop 85–100% area, brightness/contrast jitter ±0.05, Gaussian noise std 0.005–0.02. MixUp was specifically considered and rejected: "the perceptual quality of a pixel-blended CT image does not follow a convex combination of the component scores." CutMix and random erasing were noted as feasible but not applied.
+
+---
+
+**Q12. How were the ground-truth labels created, and how does label noise affect metrics?**
+
+Multiple radiologists independently scored each image on a five-point Likert scale (0=completely unacceptable, 4=excellent quality). The released labels are averaged consensus scores, yielding continuous float targets. The thesis does not state the exact number of radiologists or an ICC value — these are defined by the LDCTIQAC 2023 challenge organisers. Label noise affects all methods equally and does not bias the comparison. CT-MUSIQ's PLCC of 0.9498 is at the empirical ceiling typically reported in well-designed IQA studies (0.95–0.97), suggesting the model has captured most of the explainable variance.
+
+---
+
+**Q13. Was non-abdominal CT tested — chest or head?**
+
+No. The thesis explicitly scopes the work to "axial abdominal CT slices from LDCTIQAC 2023" and states it "does not claim generalisation to other CT anatomical regions (e.g., chest or orthopaedic CT)." The abdominal soft-tissue regime — liver 50–65 HU, spleen 45–65 HU, kidney cortex 20–40 HU — shapes what quality features matter; different anatomy would require retraining.
+
+---
+
+### Results & Statistical Validity
+
+**Q14. n=100 is small — can you claim statistical significance?**
+
+The thesis is clear: "The performance differences between CT-MUSIQ (2.7235), the Agaldran baseline (2.7682), and the top leaderboard submissions are not statistically significant at the 5% level." The 95% CI for Pearson r≈0.95 at n=100 is approximately [0.93, 0.97]. The PLCC gap between CT-MUSIQ (0.9498) and the local Agaldran (0.9608) is 0.011, which the thesis explicitly says "is not statistically significant at the 5% level." The thesis also states: "the 100-image test set provides insufficient statistical power to claim significant performance differences between methods separated by fewer than 0.02 aggregate points." Bootstrap CIs were not computed — acknowledged as a strengthening step.
+
+---
+
+**Q15. Any baselines beyond BRISQUE — NIQE, PIQE?**
+
+NIQE is mentioned in Section 2.4 as an NSS method that fails on calibrated CT data but its numerical results are not in the comparison table. PIQE does not appear in the thesis. The comparison table includes eight published methods from the LDCTIQAC 2023 leaderboard, including an SNR baseline at Aggregate 2.4026 (PLCC 0.8226, SROCC 0.8748, KROCC 0.7052) — a physically motivated signal metric that still falls 0.60 points below CT-MUSIQ, confirming neither NSS statistics nor physical SNR captures radiologist-defined perceptual quality.
+
+---
+
+**Q16. What is the single-scale, no-KL true baseline score?**
+
+Ablation A1: single scale [224], λ_KL=0.0, 30 epochs — Val Aggregate 2.249. The full ladder from Table 4.2: A1=2.249 → A2=2.271 (two scales, no KL, +0.022) → A4=2.305 (two scales, KL 0.10, +0.034). KL regularisation is the largest single gain — approximately twice the multi-scale contribution. A6 (three scales, KL 0.10) = 2.296, marginally below A4, attributed to slower convergence at 449 tokens within 30 epochs.
+
+---
+
+**Q17. Did PLCC and SROCC ever diverge significantly?**
+
+CT-MUSIQ achieves PLCC 0.9498 — marginally exceeding the published agaldran (0.9491) — while the local Agaldran leads on SROCC (0.9605 vs 0.9488) and KROCC (0.8469 vs 0.8249). The thesis states: "The KROCC gap is the most pronounced among the three metrics (+0.022) and is the primary driver of the overall aggregate difference." CT-MUSIQ's PLCC advantage over the published leaderboard result suggests better absolute score calibration, which the thesis attributes to the KL loss constraining per-scale and global predictions to agree. The ensemble's SROCC/KROCC advantage reflects complementary feature representations giving a more informative relative ordering signal.
+
+---
+
+### Clinical Relevance
+
+**Q18. A single scalar — isn't that an oversimplification of holistic radiologist judgment?**
+
+Yes, and the thesis acknowledges it. The scalar inherits the limitations of the LDCTIQAC 2023 Likert annotation — a collapsed consensus judgment, not a breakdown by artefact type, anatomical region, or diagnostic task. The thesis frames the scalar as sufficient for the four targeted use cases: real-time scan flagging, retrospective archive auditing, reconstruction benchmarking, and PACS quality gating. The richer output direction — VLM-based explainable quality reports replacing the scalar head with a language decoder — is proposed as a longer-horizon future work.
+
+---
+
+**Q19. Inference latency on your RTX 3060 — fast enough for real-time flagging?**
+
+Inference latency per slice was not benchmarked in this work — the thesis does not report a per-image prediction time. Training throughput is reported (one epoch over 700 images ≈ 31–40 seconds), giving a rough pipeline sense, but formal inference timing was not done. The thesis proposes prospective clinical PACS deployment as a future validation step where latency would need to be measured and verified.
+
+---
+
+**Q20. How do you handle edge cases — motion artefacts, metal implants, contrast agents?**
+
+The thesis does not address these edge cases. The only distortion types characterised in LDCTIQAC 2023 are noise level (N0–N3) and streak artefacts (S0–S2). Motion artefacts, metal implant streaks, and contrast agent effects are qualitatively different degradation types not present in the training distribution. The thesis makes no claim of robustness to them. Handling pathological edge cases would require dedicated training data.
+
+---
+
+### Comparison to Agaldran
+
+**Q21. Did you try a CT-MUSIQ + Agaldran ensemble?**
+
+No. The thesis proposes it explicitly as future work: "A CT-MUSIQ + Agaldran ensemble would exploit the complementary strengths observed in Section 5.2 — CT-MUSIQ's PLCC advantage and the Agaldran's superiority in SROCC and KROCC — and averaging their predictions would likely outperform either alone." It was not attempted in this thesis.
+
+---
+
+**Q22. Your reimplemented Agaldran scored higher than the original published result (2.7682 vs 2.7427). How is that possible, and how faithful is the reimplementation?**
+
+The thesis is explicitly upfront about this. Section 1.6 states: "The Agaldran baseline is not the original team's submission but an independent reimplementation motivated by their published architectural choices, trained under the same conditions as CT-MUSIQ." The reimplementation uses the same pretrained Swin-T and ResNet-50 backbones (from timm and torchvision), simple quality heads, 0.5/0.5 score averaging, and the same training loop as CT-MUSIQ. The higher score (2.7682 vs 2.7427) "may reflect independently optimised training conditions rather than architectural superiority and cannot be taken as evidence that the reimplementation surpasses the original in any absolute sense." The within-paper comparison is therefore approximate, and the published leaderboard figures are cited for reference.
+
+---
+
+**Q23. If you had six more months, what would you do?**
+
+Four directions from Section 6.4:
+
+One — CT-MUSIQ × Agaldran ensemble: score-level averaging to exploit CT-MUSIQ's PLCC advantage and Agaldran's SROCC/KROCC superiority. Predicted to outperform either alone.
+
+Two — Multi-centre cross-scanner validation: the most pressing priority. Requires assembling a multi-institution, multi-scanner annotated dataset across at least four scanner platforms, repeating the MOS annotation protocol at each site, and evaluating domain adaptation strategies including scanner-conditioned normalisation layers, self-supervised feature alignment, or lightweight scanner-specific regression heads.
+
+Three — VLM-based explainable quality reports: replace the scalar prediction head with a language decoder to produce radiologist-style natural-language justifications alongside numerical scores, directly enabling PACS deployment with the explainability layer that regulatory review would require.
+
+Four — Self-supervised CT pretraining via masked image modelling in HU space: yield stronger CT-domain representations than ImageNet-pretrained ViT-B/32, directly addressing the chronic scarcity of annotated CT quality data constraining all current approaches.
