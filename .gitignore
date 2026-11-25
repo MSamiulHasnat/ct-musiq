@@ -80,6 +80,7 @@ target/
 
 # Dataset images
 dataset/image/
+dataset/challenge_test/
 
 # IPython
 profile_default/
@@ -182,3 +183,10 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+# Local research artifacts
+/results/
+/research_audit/results/**/*predictions.csv
+/research_audit/results/**/*.tar.gz
+*.pth
+ProjectRunningFolder_Programming.zip
+/ProjectRunningFolder_Programming/

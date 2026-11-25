@@ -22,7 +22,7 @@
 
 ## How to Compile
 
-Run these commands in the `writting/` directory, in order:
+Run these commands in the `thesis/` directory, in order:
 
 ```bash
 xelatex main.tex

@@ -795,7 +795,7 @@ Goal:
 - Understand the project purpose and where everything lives.
 
 Read in this order:
-1. [README.md](README.md)
+1. [README.md](../README.md)
 2. [DefensePrep.md](DefensePrep.md)
 
 Know before moving on:
@@ -1070,9 +1070,9 @@ Goal:
 
 Re-read in this order:
 1. [DefensePrep.md](DefensePrep.md)
-2. [README.md](README.md)
-3. [writting/main.tex](writting/main.tex)
-4. [writting/methodoloy.tex](writting/methodoloy.tex)
+2. [README.md](../README.md)
+3. [../thesis/main.tex](../thesis/main.tex)
+4. [../thesis/chapter3_methodology.tex](../thesis/chapter3_methodology.tex)
 
 Know before defense day:
 - 1-minute, 3-minute, and 10-minute narrative

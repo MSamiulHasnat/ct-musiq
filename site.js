@@ -78,14 +78,14 @@ function getInitialDoc() {
   const params = new URLSearchParams(window.location.search);
   const doc = params.get('doc');
   if (
-    doc === 'LastMinutePrep.md' ||
+    doc === 'docs/LastMinutePrep.md' ||
     doc === 'README.md' ||
-    doc === 'DefensePrep.md' ||
-    doc === 'writting/EDITING_GUIDE.md'
+    doc === 'docs/DefensePrep.md' ||
+    doc === 'thesis/EDITING_GUIDE.md'
   ) {
     return doc;
   }
-  return 'LastMinutePrep.md';
+  return 'docs/LastMinutePrep.md';
 }
 
 docButtons.forEach((btn) => {
