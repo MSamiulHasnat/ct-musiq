@@ -1,0 +1,70 @@
+{
+  "screen_compact448_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 75.28705378412269,
+    "gpu": 1,
+    "command": [
+      "research_audit.compact_iqa",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/compact448_seed123",
+      "--resolution",
+      "448",
+      "--batch-size",
+      "32",
+      "--epochs",
+      "100",
+      "--seed",
+      "123",
+      "--workers",
+      "4"
+    ]
+  },
+  "eval_compact448_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 3.7370358831249177,
+    "gpu": 1,
+    "command": [
+      "research_audit.compact_iqa",
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/compact448_seed42/best.pth",
+      "--output",
+      "../evaluations/compact448_seed42",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4"
+    ]
+  },
+  "eval_compact448_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.582684912951663,
+    "gpu": 1,
+    "command": [
+      "research_audit.compact_iqa",
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/compact448_seed123/best.pth",
+      "--output",
+      "../evaluations/compact448_seed123",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4"
+    ]
+  }
+}

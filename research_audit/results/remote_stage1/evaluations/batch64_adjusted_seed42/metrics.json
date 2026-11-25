@@ -1,0 +1,37 @@
+{
+  "PLCC": 0.8772000074386597,
+  "PLCC_p": 5.816719963329137e-97,
+  "SROCC": 0.8997,
+  "SROCC_p": 2.86802476677387e-109,
+  "KROCC": 0.7271,
+  "KROCC_p": 1.5802261007885112e-75,
+  "Aggregate": 2.5039,
+  "n": 300,
+  "mae": 0.9691595435142517,
+  "checkpoint_sha256": "816fc12cc6af8b45e8fdcc4d68ef34c7863c4e305d3e40d956026488385a298d",
+  "checkpoint_epoch_zero_based": 99,
+  "checkpoint_config": {
+    "scales": [
+      224,
+      384
+    ],
+    "lambda_kl": 0.1,
+    "batch_size": 64,
+    "seed": 42,
+    "split_manifest": "research_audit/development_split_seed42.json",
+    "pretrained_file": "../vit_base_patch32_224.safetensors",
+    "num_workers": 4,
+    "ema_decay": 0.993617254677532,
+    "min_epochs": 40,
+    "selection_mode": "signed"
+  },
+  "torch": "2.13.0+cu132",
+  "scipy": "1.15.3",
+  "timm": "1.0.31",
+  "python": "3.10.12",
+  "cuda_runtime": "13.2",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "device": "cuda",
+  "model": "ct_musiq",
+  "tta": false
+}

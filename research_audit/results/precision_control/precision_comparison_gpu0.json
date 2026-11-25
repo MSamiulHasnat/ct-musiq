@@ -1,0 +1,100 @@
+{
+  "precision_uint8_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 123.97182961204089,
+    "gpu": 0,
+    "command": [
+      "research_audit.compact_iqa",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--resolution",
+      "448",
+      "--epochs",
+      "100",
+      "--seed",
+      "42",
+      "--quantize-uint8",
+      "--output",
+      "results/uint8_seed42"
+    ]
+  },
+  "eval_precision_uint8_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 3.5380781169515103,
+    "gpu": 0,
+    "command": [
+      "research_audit.compact_iqa",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4",
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/uint8_seed42/best.pth",
+      "--output",
+      "../evaluations/compact448_uint8_seed42"
+    ]
+  },
+  "precision_uint8_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 111.14622612600215,
+    "gpu": 0,
+    "command": [
+      "research_audit.compact_iqa",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--resolution",
+      "448",
+      "--epochs",
+      "100",
+      "--seed",
+      "456",
+      "--quantize-uint8",
+      "--output",
+      "results/uint8_seed456"
+    ]
+  },
+  "eval_precision_uint8_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 3.546224000165239,
+    "gpu": 0,
+    "command": [
+      "research_audit.compact_iqa",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4",
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/uint8_seed456/best.pth",
+      "--output",
+      "../evaluations/compact448_uint8_seed456"
+    ]
+  }
+}

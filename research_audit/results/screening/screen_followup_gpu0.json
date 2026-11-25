@@ -1,0 +1,66 @@
+{
+  "screen_compact448_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 114.58364071696997,
+    "gpu": 0,
+    "command": [
+      "research_audit.compact_iqa",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/compact448_seed456",
+      "--resolution",
+      "448",
+      "--batch-size",
+      "32",
+      "--epochs",
+      "100",
+      "--seed",
+      "456",
+      "--workers",
+      "4"
+    ]
+  },
+  "eval_compact448_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 3.4784939989913255,
+    "gpu": 0,
+    "command": [
+      "research_audit.compact_iqa",
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/compact448_seed456/best.pth",
+      "--output",
+      "../evaluations/compact448_seed456",
+      "--batch-size",
+      "32",
+      "--workers",
+      "4"
+    ]
+  },
+  "eval_aligned_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 5.5077069599647075,
+    "gpu": 0,
+    "command": [
+      "research_audit.evaluate_released_test",
+      "--data",
+      "../LDCTIQAC_test",
+      "--checkpoint",
+      "results/aligned_seed42/ct_musiq/ct_musiq_best.pth",
+      "--output",
+      "../evaluations/aligned_seed42",
+      "--batch-size",
+      "32"
+    ]
+  }
+}

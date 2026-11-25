@@ -1,0 +1,22 @@
+{
+  "PLCC": 0.9473,
+  "PLCC_p": 2.28604779626415e-149,
+  "SROCC": 0.9468,
+  "SROCC_p": 9.682712333449943e-149,
+  "KROCC": 0.8106,
+  "KROCC_p": 1.9780921522748956e-93,
+  "Aggregate": 2.7047,
+  "n": 300,
+  "mae": 0.3028814300232463,
+  "checkpoint_config": {
+    "model": "efficientnet_b0",
+    "resolution": 448,
+    "seed": 123,
+    "batch_size": 32,
+    "epochs": 100,
+    "lr": 0.0001,
+    "lambda_rank": 0.5,
+    "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+    "pretrained_sha256": "d569899762ea9b1384ee07f4af64805cf8caa1c55f9253ebb1080dc40e87a2cd"
+  }
+}

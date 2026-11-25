@@ -1,0 +1,10 @@
+{
+  "batch32": {
+    "gpu": 0,
+    "exit_code": 0
+  },
+  "batch64": {
+    "gpu": 1,
+    "exit_code": 0
+  }
+}

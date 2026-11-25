@@ -1,0 +1,12 @@
+{
+  "n_train": 790,
+  "n_evaluation": 300,
+  "evaluation_set": "released_test",
+  "increasing": false,
+  "PLCC": 0.8148213092394386,
+  "SROCC": 0.8135845912453565,
+  "KROCC": 0.6594829233957572,
+  "Aggregate": 2.2878888238805524,
+  "MAE": 0.53731767296757,
+  "warning": "Exploratory analysis; inferred groups are not patient IDs."
+}

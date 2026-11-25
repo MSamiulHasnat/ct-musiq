@@ -1,0 +1,6 @@
+ablation,description,scales,lambda_kl,status,test_PLCC,test_SROCC,test_KROCC,test_Aggregate,epochs_trained,best_val_aggregate
+A1,"Single-scale baseline (224 only, no KL loss)",[224],0.0,error: index 1 is out of range,,,,,,
+A2,"Two scales, no KL loss","[224, 384]",0.0,completed,0.8131999969482422,0.7996,0.6199,2.2327,23.0,2.4428
+A3,"Two scales, KL λ=0.05 (low weight)","[224, 384]",0.05,completed,0.7954999804496765,0.8057,0.6477,2.2489,24.0,2.4029
+A4,"Two scales, KL λ=0.10 (intended best)","[224, 384]",0.1,completed,0.8259000182151794,0.8292,0.6502,2.3052,23.0,2.4166
+A5,"Two scales, KL λ=0.20 (over-strong KL?)","[224, 384]",0.2,completed,0.8136000037193298,0.8092,0.6278,2.2506,26.0,2.4063

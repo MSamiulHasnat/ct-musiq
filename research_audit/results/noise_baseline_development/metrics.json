@@ -1,0 +1,11 @@
+{
+  "n_train": 790,
+  "n_val": 210,
+  "increasing": false,
+  "PLCC": 0.8621525065956783,
+  "SROCC": 0.844630653421543,
+  "KROCC": 0.7006366088927045,
+  "Aggregate": 2.407419768909926,
+  "MAE": 0.43550989919391175,
+  "warning": "Exploratory development split; inferred groups are not patient IDs."
+}

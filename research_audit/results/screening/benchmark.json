@@ -1,0 +1,112 @@
+{
+  "torch": "2.13.0+cu132",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "precision": "float32, no autocast",
+  "tf32_matmul": false,
+  "tf32_cudnn": true,
+  "warmup_forwards": 10,
+  "measured_forwards_per_repeat": 20,
+  "repeats": 5,
+  "excluded": [
+    "CPU preprocessing",
+    "disk I/O",
+    "host-device transfer",
+    "model loading"
+  ],
+  "input_ids": [
+    "0000.tif",
+    "0001.tif",
+    "0003.tif",
+    "0005.tif",
+    "0006.tif",
+    "0007.tif",
+    "0008.tif",
+    "0009.tif",
+    "0010.tif",
+    "0011.tif",
+    "0012.tif",
+    "0013.tif",
+    "0014.tif",
+    "0015.tif",
+    "0016.tif",
+    "0017.tif",
+    "0019.tif",
+    "0020.tif",
+    "0022.tif",
+    "0023.tif",
+    "0024.tif",
+    "0027.tif",
+    "0029.tif",
+    "0030.tif",
+    "0031.tif",
+    "0032.tif",
+    "0033.tif",
+    "0036.tif",
+    "0037.tif",
+    "0038.tif",
+    "0039.tif",
+    "0041.tif"
+  ],
+  "models": {
+    "compact": {
+      "parameters": 4335741,
+      "trainable_parameters": 4335741,
+      "batches": {
+        "1": {
+          "repeat_seconds_per_forward": [
+            0.0019474096945486963,
+            0.00195614859694615,
+            0.0019504184019751847,
+            0.0019367445493116975,
+            0.001938388356938958
+          ],
+          "median_seconds_per_forward": 0.0019474096945486963,
+          "images_per_second": 513.5026300830579,
+          "peak_allocated_bytes": 154284032
+        },
+        "32": {
+          "repeat_seconds_per_forward": [
+            0.024913741543423386,
+            0.024918115546461193,
+            0.024924275057855994,
+            0.024911045050248503,
+            0.024911713053006677
+          ],
+          "median_seconds_per_forward": 0.024913741543423386,
+          "images_per_second": 1284.4317239233467,
+          "peak_allocated_bytes": 1722707968
+        }
+      }
+    },
+    "aligned": {
+      "parameters": 88325379,
+      "trainable_parameters": 88325379,
+      "batches": {
+        "1": {
+          "repeat_seconds_per_forward": [
+            0.0026317417505197227,
+            0.002638619649223983,
+            0.0026344761019572614,
+            0.0026391005492769183,
+            0.002640234294813126
+          ],
+          "median_seconds_per_forward": 0.002638619649223983,
+          "images_per_second": 378.98603548036925,
+          "peak_allocated_bytes": 450059776
+        },
+        "32": {
+          "repeat_seconds_per_forward": [
+            0.03356588644674048,
+            0.033733603451400994,
+            0.03378333910368383,
+            0.03361611674772576,
+            0.033661733055487274
+          ],
+          "median_seconds_per_forward": 0.033661733055487274,
+          "images_per_second": 950.6343582266513,
+          "peak_allocated_bytes": 726613504
+        }
+      }
+    }
+  }
+}
