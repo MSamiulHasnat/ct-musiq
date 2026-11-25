@@ -12,11 +12,11 @@ Computes metrics matching the LDCTIQAC 2023 leaderboard format:
 Works with CT-MUSIQ and one combined baseline method.
 
 Usage:
-  python evaluate.py                                    # Evaluate CT-MUSIQ
-  python evaluate.py --model agaldran_combo             # Evaluate combined baseline
-  python evaluate.py --model ct_musiq --checkpoint path.pth
-  python evaluate.py --tta                              # TTA with horizontal flip
-  python evaluate.py --tta --calibrate                  # TTA + val-set calibration
+  python -m ct_musiq.evaluate                                    # Evaluate CT-MUSIQ
+  python -m ct_musiq.evaluate --model agaldran_combo             # Evaluate combined baseline
+  python -m ct_musiq.evaluate --model ct_musiq --checkpoint path.pth
+  python -m ct_musiq.evaluate --tta                              # TTA with horizontal flip
+  python -m ct_musiq.evaluate --tta --calibrate                  # TTA + val-set calibration
 
 Author: M Samiul Hasnat, Sichuan University
 Project: CT-MUSIQ -- Undergraduate Thesis
@@ -34,10 +34,10 @@ from scipy.stats import pearsonr, spearmanr, kendalltau
 from sklearn.isotonic import IsotonicRegression
 
 # Import project modules
-import config
-from dataset import create_dataloaders
-from model import create_model, CTMUSIQ
-from get_model import get_model
+from . import config
+from .dataset import create_dataloaders
+from .model import create_model, CTMUSIQ
+from .get_model import get_model
 
 
 def compute_metrics(predictions: np.ndarray, targets: np.ndarray) -> Dict[str, float]:
@@ -130,9 +130,9 @@ def flip_patches_horizontal(
 
     col_vals = coords_flipped[:, :, 2].clone()  # [B, N] — col indices
 
-    for scale_i, scale in enumerate(config.SCALES):
-        grid_size = scale // config.PATCH_SIZE
+    for scale_i in coords[:, :, 0].unique():
         mask = coords[:, :, 0] == scale_i  # [B, N] bool mask
+        grid_size = int(coords[:, :, 2][mask].max().item()) + 1
         col_vals[mask] = (grid_size - 1) - col_vals[mask]
 
     coords_flipped[:, :, 2] = col_vals
@@ -367,7 +367,7 @@ def evaluate(
 
     if not os.path.exists(checkpoint_path):
         print(f"\nFAIL Checkpoint not found: {checkpoint_path}")
-        print(f"  Please train {model_type} first: python train.py --model {model_type}")
+        print(f"  Please train {model_type} first: python -m ct_musiq.train --model {model_type}")
         sys.exit(1)
 
     print(f"Checkpoint: {checkpoint_path}")
@@ -375,6 +375,9 @@ def evaluate(
     # Load checkpoint
     print("\nLoading checkpoint...")
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    checkpoint_config = checkpoint.get('config', {})
+    profile = checkpoint_config.get('profile', 'legacy')
+    scales = checkpoint_config.get('scales', config.SCALES) if model_type == 'ct_musiq' else config.SCALES
     print(f"  Epoch: {checkpoint['epoch'] + 1}")
     print(f"  Best aggregate: {checkpoint['best_aggregate']:.4f}")
 
@@ -383,7 +386,9 @@ def evaluate(
     train_loader, val_loader, test_loader = create_dataloaders(
         batch_size=batch_size,
         num_workers=0,
-        pin_memory=True
+        pin_memory=True,
+        scales=scales,
+        float_resize=profile == 'aligned_vit'
     )
     print(f"  Val images:  {len(val_loader.dataset)}")
     print(f"  Test images: {len(test_loader.dataset)}")
@@ -391,13 +396,13 @@ def evaluate(
     # Create model
     print(f"\nCreating {model_type.upper()} model...")
     if model_type == 'ct_musiq':
-        checkpoint_config = checkpoint.get('config', {})
-        scales = checkpoint_config.get('scales', config.SCALES)
         num_scales = len(scales)
         model = create_model(
             num_scales=num_scales,
             pretrained=False,
-            device=device
+            device=device,
+            scales=scales,
+            profile=profile
         )
     else:
         model = get_model(model_type, pretrained=False)

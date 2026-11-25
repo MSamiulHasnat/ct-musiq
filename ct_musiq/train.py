@@ -33,9 +33,9 @@ VRAM Management:
   - Gradient clipping at max_norm=1.0
 
 Usage:
-  python train.py                    # Train with default config
-  python train.py --lambda_kl 0.05   # Override KL weight
-  python train.py --epochs 30        # Override epochs
+  python -m ct_musiq.train                    # Train with default config
+  python -m ct_musiq.train --lambda_kl 0.05   # Override KL weight
+  python -m ct_musiq.train --epochs 30        # Override epochs
 
 Author: M Samiul Hasnat, Sichuan University
 Project: CT-MUSIQ — Undergraduate Thesis
@@ -48,7 +48,7 @@ import argparse
 import numpy as np
 import pandas as pd
 from datetime import datetime
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 
 import torch
 import torch.nn as nn
@@ -57,11 +57,11 @@ from torch.amp import GradScaler, autocast
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
 # Import project modules
-import config
-from dataset import create_dataloaders
-from model import create_model, CTMUSIQ
-from loss import create_criterion, CTMUSIQLoss
-from get_model import get_model
+from . import config
+from .dataset import create_dataloaders
+from .model import create_model, CTMUSIQ
+from .loss import create_criterion, CTMUSIQLoss
+from .get_model import get_model
 
 # Import evaluation metrics (will be created in evaluate.py)
 # For now, we'll define basic metric computation here
@@ -445,7 +445,8 @@ def save_checkpoint(
     epoch: int,
     best_aggregate: float,
     save_path: str,
-    model_type: str = 'ct_musiq'
+    model_type: str = 'ct_musiq',
+    run_config: Optional[dict] = None
 ) -> None:
     """
     Save model checkpoint.
@@ -467,9 +468,9 @@ def save_checkpoint(
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'scheduler_state_dict': scheduler.state_dict(),
-        'best_aggregate': best_aggregate,
+        'best_aggregate': float(best_aggregate),
         'model_type': model_type,
-        'config': {
+        'config': run_config or {
             'scales': config.SCALES if hasattr(config, 'SCALES') else None,
             'lambda_kl': config.LAMBDA_KL,
             'batch_size': config.BATCH_SIZE,
@@ -514,7 +515,18 @@ def train(
     epochs: int = config.EPOCHS,
     batch_size: int = config.BATCH_SIZE,
     lambda_kl: float = config.LAMBDA_KL,
-    resume_from: Optional[str] = None
+    resume_from: Optional[str] = None,
+    split_manifest: Optional[str] = None,
+    output_dir: Optional[str] = None,
+    seed: int = config.SEED,
+    pretrained_file: Optional[str] = None,
+    num_workers: int = 0,
+    ema_decay: float = 0.999,
+    min_epochs: int = 0,
+    selection_mode: str = 'absolute',
+    scales: Optional[List[int]] = None,
+    lambda_rank: float = 0.5,
+    profile: str = 'legacy'
 ) -> None:
     """
     Main training function.
@@ -529,9 +541,20 @@ def train(
     print("="*70)
     print(f"Training {model_type.upper()} Model")
     print("="*70)
+    if pretrained_file and model_type != 'ct_musiq':
+        raise ValueError('--pretrained-file currently supports CT-MUSIQ only')
+    if not 0 <= ema_decay < 1 or min_epochs < 0:
+        raise ValueError('EMA decay must be in [0, 1) and minimum epochs must be non-negative')
+    if selection_mode not in ('absolute', 'signed'):
+        raise ValueError('Unknown selection mode')
+    if profile not in ('legacy', 'aligned_vit'):
+        raise ValueError('Unknown model profile')
+    scales = list(config.SCALES if scales is None else scales)
+    if output_dir and not resume_from and os.path.exists(os.path.join(output_dir, model_type)):
+        raise FileExistsError('Output directory already contains this model; choose a new run directory or resume explicitly')
     
     # Set random seed
-    set_seed()
+    set_seed(seed)
     
     # Set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -547,21 +570,28 @@ def train(
     print("\nCreating data loaders...")
     train_loader, val_loader, test_loader = create_dataloaders(
         batch_size=batch_size,
-        num_workers=0,  # Windows compatibility
-        pin_memory=True
+        num_workers=num_workers,
+        pin_memory=True,
+        split_manifest=split_manifest,
+        scales=scales,
+        float_resize=profile == 'aligned_vit',
+        quality_safe_augmentation=profile == 'aligned_vit'
     )
     
     print(f"  Train: {len(train_loader.dataset)} images")
     print(f"  Val:   {len(val_loader.dataset)} images")
-    print(f"  Test:  {len(test_loader.dataset)} images")
+    print(f"  Test:  {len(test_loader.dataset)} images" if test_loader is not None else '  Test:  held out separately')
     
     # Create model
     print(f"\nCreating {model_type.upper()} model...")
     if model_type == 'ct_musiq':
         model = create_model(
-            num_scales=len(config.SCALES),
+            num_scales=len(scales),
             pretrained=True,
-            device=device
+            device=device,
+            pretrained_file=pretrained_file,
+            scales=scales,
+            profile=profile
         )
     else:
         model = get_model(model_type, pretrained=True)
@@ -571,7 +601,7 @@ def train(
     
     # Create loss criterion
     print(f"\nCreating loss criterion (lambda_kl={lambda_kl})...")
-    criterion = create_criterion(lambda_kl=lambda_kl, device=device)
+    criterion = create_criterion(lambda_kl=lambda_kl, device=device, lambda_rank=lambda_rank)
     
     # Create optimizer
     print("\nCreating optimizer...")
@@ -590,7 +620,7 @@ def train(
     )
 
     # EMA improves validation stability in noisy training regimes
-    ema_model = ModelEMA(model, decay=0.999) if model_type == 'ct_musiq' else None
+    ema_model = ModelEMA(model, decay=ema_decay) if model_type == 'ct_musiq' else None
     
     # Create GradScaler for mixed precision (only if CUDA available)
     use_amp = device.type == 'cuda'
@@ -605,7 +635,7 @@ def train(
     
     # Resume from checkpoint if specified
     start_epoch = 0
-    best_aggregate = 0.0
+    best_aggregate = float('-inf') if selection_mode == 'signed' else 0.0
     
     if resume_from and os.path.exists(resume_from):
         print(f"\nResuming from checkpoint: {resume_from}")
@@ -615,9 +645,17 @@ def train(
         print(f"  Resumed at epoch {start_epoch + 1}, best aggregate: {best_aggregate:.4f}")
     
     # Create results directory and model-specific subdirectory
-    os.makedirs(config.RESULTS_DIR, exist_ok=True)
-    model_results_dir = os.path.join(config.RESULTS_DIR, model_type)
+    results_dir = output_dir or config.RESULTS_DIR
+    os.makedirs(results_dir, exist_ok=True)
+    model_results_dir = os.path.join(results_dir, model_type)
     os.makedirs(model_results_dir, exist_ok=True)
+    run_config = {'scales': scales, 'lambda_kl': lambda_kl, 'lambda_rank': lambda_rank,
+                  'batch_size': batch_size, 'seed': seed,
+                  'split_manifest': split_manifest, 'pretrained_file': pretrained_file,
+                  'num_workers': num_workers, 'ema_decay': ema_decay,
+                  'min_epochs': min_epochs, 'selection_mode': selection_mode,
+                  'profile': profile, 'float_resize': profile == 'aligned_vit',
+                  'quality_safe_augmentation': profile == 'aligned_vit'}
     
     # Create model-specific paths
     best_model_path = os.path.join(model_results_dir, f'{model_type}_best.pth')
@@ -708,8 +746,10 @@ def train(
         print(f"  Val   — PLCC: {val_metrics['PLCC']:.4f} | SROCC: {val_metrics['SROCC']:.4f} | KROCC: {val_metrics['KROCC']:.4f} | Agg: {val_metrics['Aggregate']:.4f}")
         
         # Check for improvement
-        if val_metrics['Aggregate'] > best_aggregate:
-            best_aggregate = val_metrics['Aggregate']
+        selection_score = (val_metrics['Aggregate'] if selection_mode == 'absolute' else
+                           val_metrics['PLCC'] + val_metrics['SROCC'] + val_metrics['KROCC'])
+        if selection_score > best_aggregate:
+            best_aggregate = selection_score
             patience_counter = 0
             
             # Save best checkpoint
@@ -717,15 +757,15 @@ def train(
                 ema_model.apply_shadow(model)
                 save_checkpoint(
                     model, optimizer, scheduler, epoch, best_aggregate,
-                    best_model_path, model_type
+                    best_model_path, model_type, run_config
                 )
                 ema_model.restore(model)
             else:
                 save_checkpoint(
                     model, optimizer, scheduler, epoch, best_aggregate,
-                    best_model_path, model_type
+                    best_model_path, model_type, run_config
                 )
-            print(f"  → New best! Saving checkpoint. (Aggregate: {best_aggregate:.4f})")
+            print(f"  → New best! Saving checkpoint. (Selection score: {best_aggregate:.4f})")
         else:
             patience_counter += 1
             print(f"  → No improvement. Patience: {patience_counter}/{config.PATIENCE}")
@@ -750,10 +790,10 @@ def train(
         log_entry.to_csv(log_path, mode='a', header=False, index=False)
         
         # Early stopping
-        if patience_counter >= config.PATIENCE:
+        if epoch + 1 >= min_epochs and patience_counter >= config.PATIENCE:
             print(f"\n{'='*70}")
             print(f"Early stopping triggered after {config.PATIENCE} epochs without improvement")
-            print(f"Best validation aggregate: {best_aggregate:.4f}")
+            print(f"Best validation selection score: {best_aggregate:.4f}")
             print(f"{'='*70}")
             break
     
@@ -761,7 +801,7 @@ def train(
     print(f"\n{'='*70}")
     print("Training Complete!")
     print(f"{'='*70}")
-    print(f"Best validation aggregate: {best_aggregate:.4f}")
+    print(f"Best validation selection score: {best_aggregate:.4f}")
     print(f"Best model saved to: {best_model_path}")
     print(f"Training log saved to: {log_path}")
     
@@ -807,6 +847,17 @@ def main():
         default=None,
         help='Path to checkpoint to resume from'
     )
+    parser.add_argument('--split-manifest', help='JSON file defining disjoint development train and validation images')
+    parser.add_argument('--output-dir', help='Directory for this run’s checkpoints and logs')
+    parser.add_argument('--seed', type=int, default=config.SEED)
+    parser.add_argument('--pretrained-file', help='Local safetensors ViT weights for offline initialization')
+    parser.add_argument('--num-workers', type=int, default=0, help='Data-loading worker processes')
+    parser.add_argument('--ema-decay', type=float, default=0.999)
+    parser.add_argument('--min-epochs', type=int, default=0)
+    parser.add_argument('--selection-mode', choices=['absolute', 'signed'], default='absolute')
+    parser.add_argument('--scales', nargs='+', type=int, default=None)
+    parser.add_argument('--lambda-rank', type=float, default=0.5)
+    parser.add_argument('--profile', choices=['legacy', 'aligned_vit'], default='legacy')
     
     args = parser.parse_args()
     
@@ -816,11 +867,23 @@ def main():
         epochs=args.epochs,
         batch_size=args.batch_size,
         lambda_kl=args.lambda_kl,
-        resume_from=args.resume
+        resume_from=args.resume,
+        split_manifest=args.split_manifest,
+        output_dir=args.output_dir,
+        seed=args.seed,
+        pretrained_file=args.pretrained_file,
+        num_workers=args.num_workers,
+        ema_decay=args.ema_decay,
+        min_epochs=args.min_epochs,
+        selection_mode=args.selection_mode,
+        scales=args.scales,
+        lambda_rank=args.lambda_rank,
+        profile=args.profile
     )
     
-    print(f"\nTo evaluate {args.model} on test set, run:")
-    print(f"  python evaluate.py --model {args.model}")
+    if args.split_manifest is None:
+        print(f"\nTo evaluate {args.model} on test set, run:")
+        print(f"  python -m ct_musiq.evaluate --model {args.model}")
 
 
 if __name__ == "__main__":

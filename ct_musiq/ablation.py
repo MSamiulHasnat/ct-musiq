@@ -36,9 +36,9 @@ All configs use:
   - Save best validation and final test metrics
 
 Usage:
-  python ablation.py              # Run all ablations
-  python ablation.py --configs A1 A2 A4  # Run specific ablations
-  python ablation.py --skip A6    # Skip 3-scale experiment
+  python -m ct_musiq.ablation              # Run all ablations
+  python -m ct_musiq.ablation --configs A1 A2 A4  # Run specific ablations
+  python -m ct_musiq.ablation --skip A6    # Skip 3-scale experiment
 
 Author: M Samiul Hasnat, Sichuan University
 Project: CT-MUSIQ — Undergraduate Thesis
@@ -55,12 +55,12 @@ from typing import Dict, List, Optional
 import torch
 
 # Import project modules
-import config
-from dataset import LDCTDataset, create_dataloaders
-from model import create_model, CTMUSIQ
-from loss import create_criterion
-from train import train, set_seed, compute_metrics
-from evaluate import evaluate_model
+from . import config
+from .dataset import LDCTDataset, create_dataloaders
+from .model import create_model, CTMUSIQ
+from .loss import create_criterion
+from .train import train, set_seed, compute_metrics
+from .evaluate import evaluate_model
 
 
 def run_ablation(
@@ -136,7 +136,7 @@ def run_ablation(
     
     # Create data loaders
     from torch.utils.data import DataLoader
-    from dataset import custom_collate_fn
+    from .dataset import custom_collate_fn
     
     train_loader = DataLoader(
         train_dataset,
@@ -177,7 +177,8 @@ def run_ablation(
     model = create_model(
         num_scales=len(scales),
         pretrained=True,
-        device=device
+        device=device,
+        scales=scales
     )
     
     # Create loss criterion with ablation-specific lambda_kl
@@ -214,20 +215,20 @@ def run_ablation(
         if epoch < config.STAGE1_EPOCHS:
             stage = 1
             if epoch == 0:
-                from train import freeze_encoder
+                from .train import freeze_encoder
                 freeze_encoder(model)
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = config.LR_STAGE1
         else:
             stage = 2
             if epoch == config.STAGE1_EPOCHS:
-                from train import unfreeze_encoder
+                from .train import unfreeze_encoder
                 unfreeze_encoder(model)
                 for param_group in optimizer.param_groups:
                     param_group['lr'] = config.LR
         
         # Train one epoch
-        from train import train_one_epoch, validate
+        from .train import train_one_epoch, validate
         
         train_losses = train_one_epoch(
             model, train_loader, criterion, optimizer, scaler, device, epoch
@@ -255,10 +256,12 @@ def run_ablation(
                 config.RESULTS_DIR,
                 f"ablation_{ablation_name}_best.pth"
             )
-            from train import save_checkpoint
+            from .train import save_checkpoint
             save_checkpoint(
                 model, optimizer, scheduler, epoch, best_aggregate,
-                checkpoint_path
+                checkpoint_path,
+                run_config={'scales': scales, 'lambda_kl': lambda_kl,
+                            'seed': config.SEED, 'batch_size': config.BATCH_SIZE}
             )
         else:
             patience_counter += 1

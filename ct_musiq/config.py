@@ -17,9 +17,9 @@ import os
 # =============================================================================
 
 # Root directory of the project (resolved relative to this file's location)
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Directory containing the 1,000 brain CT .tif images (0000.tif … 0999.tif)
+# Directory containing the 1,000 low-dose abdominal CT .tif images (0000.tif … 0999.tif)
 DATA_DIR = os.path.join(PROJECT_ROOT, "dataset", "image")
 
 # JSON file mapping image filenames to radiologist quality scores
@@ -63,27 +63,11 @@ TEST_RANGE  = (900, 999)  # 100 images for testing      (0900.tif – 0999.tif)
 TOTAL_IMAGES = 1000       # Expected total number of images in the dataset
 
 # =============================================================================
-# 4. CT WINDOWING (Brain Soft-Tissue)
+# 4. IMAGE PREPROCESSING
 # =============================================================================
-# CT windowing clips raw pixel / HU values to a clinically relevant range and
-# then normalises to [0, 1].
-#
-# ** Why brain window differs from the original challenge: **
-# The LDCTIQAC 2023 challenge originally used abdominal CT (width=350,
-# level=40).  This dataset contains BRAIN CT slices, which have much narrower
-# tissue contrast.  The brain soft-tissue window (width=80, level=40) is the
-# clinical standard used by radiologists to evaluate brain parenchyma.
-# This is a deliberate, thesis-relevant adaptation — document it in the
-# Method section.
-#
-# Window formula:
-#   HU_min = WINDOW_LEVEL - WINDOW_WIDTH / 2  →  40 - 40 = 0
-#   HU_max = WINDOW_LEVEL + WINDOW_WIDTH / 2  →  40 + 40 = 80
-#   pixel  = clip(pixel, HU_min, HU_max)
-#   pixel  = (pixel - HU_min) / (HU_max - HU_min)   →  [0.0, 1.0]
-
-WINDOW_WIDTH = 80   # Width of the brain soft-tissue CT window (in HU)
-WINDOW_LEVEL = 40   # Centre of the brain soft-tissue CT window (in HU)
+# The released TIFFs are normalized to [0, 1]. The loader clips those values
+# and does not apply CT windowing. dataset.py later converts to 8-bit before
+# resizing; this model-specific preprocessing should be reported explicitly.
 
 # =============================================================================
 # 5. QUALITY SCORE RANGE

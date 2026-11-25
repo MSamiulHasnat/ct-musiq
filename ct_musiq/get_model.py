@@ -46,13 +46,13 @@ def get_model(
     """
     if model_name == 'ct_musiq':
         # Import here to avoid circular dependency
-        from model import create_model
+        from .model import create_model
         model = create_model()
         model.model_name = 'ct_musiq'
         
     elif model_name == 'agaldran_combo':
         # Import baseline models
-        from baseline_models import create_baseline_model
+        from .baseline_models import create_baseline_model
         model = create_baseline_model(model_name, pretrained=pretrained)
         
     else:

@@ -12,7 +12,7 @@ scipy
 # Machine learning utilities (e.g. train_test_split, metrics)
 scikit-learn
 
-# Image I/O — needed to load .tif brain CT slices
+# Image I/O for normalized abdominal CT TIFFs
 pillow
 
 # Tabular data handling and CSV export
@@ -29,3 +29,4 @@ einops
 
 # Pretrained Vision Transformer weights (vit_base_patch32_224)
 timm
+safetensors

@@ -7,21 +7,24 @@ Combined loss for training CT-MUSIQ:
   2. Scale-Consistency Loss: KL divergence between per-scale predictions
      and the global prediction
 
-The KL loss encourages agreement across scales, preventing the model from
-learning scale-specific shortcuts. This is a key innovation over vanilla MUSIQ.
+The KL term penalizes disagreement between Gaussian encodings of the scalar
+scale predictions. A benefit to generalization or shortcut avoidance has not
+been established by the available experiments; no novelty claim is implied.
 
 Loss Formula:
-  L_total = L_mse + λ * L_kl
+  L_total = L_mse + λ_kl * L_kl + λ_rank * L_rank
   
 Where:
   - L_mse = MSE(global_score, target_score)
-  - L_kl = mean(KL(scale_i || global) for each scale i)
+  - L_kl = mean(KL(global || scale_i) for each scale i)
+  - L_rank = mean pairwise margin loss, including diagonal and tied-label pairs
   - λ = LAMBDA_KL (default: 0.1)
 
 Score-to-Distribution Conversion:
   Scalar scores are converted to soft probability distributions using a
   Gaussian kernel centered at the score value. This enables KL divergence
-  computation between predictions.
+  computation between predictions. They are not observed reader-vote
+  distributions or estimates of clinical uncertainty.
 
 Author: M Samiul Hasnat, Sichuan University
 Project: CT-MUSIQ — Undergraduate Thesis
@@ -33,7 +36,7 @@ import torch.nn.functional as F
 from typing import List, Dict
 
 # Import project configuration
-import config
+from . import config
 
 
 class ScoreToDistribution(nn.Module):
@@ -45,8 +48,8 @@ class ScoreToDistribution(nn.Module):
     between different score predictions.
     
     Example:
-        score = 2.5, bins = [0, 0.2, 0.4, ..., 4.0]
-        → distribution peaks around bin 12-13 (corresponding to 2.4-2.6)
+        A score of 2.5 places most mass in the nearby linearly spaced bins.
+        Bin spacing depends on num_bins and need not match the target grid.
     
     Args:
         num_bins: Number of discrete bins (default: 20)
@@ -191,7 +194,7 @@ class CTMUSIQLoss(nn.Module):
         margin = 0.1
         loss = torch.relu(margin - true_rank * diff_pred)
         
-        # Mean over all non-diagonal elements (where i != j)
+        # Mean over the complete B-by-B matrix, including diagonal and ties.
         return loss.mean()
 
     def compute_kl_loss(
@@ -250,7 +253,8 @@ class CTMUSIQLoss(nn.Module):
 
 def create_criterion(
     lambda_kl: float = config.LAMBDA_KL,
-    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device: str = 'cuda' if torch.cuda.is_available() else 'cpu',
+    lambda_rank: float = 0.5
 ) -> CTMUSIQLoss:
     """
     Factory function to create loss criterion.
@@ -262,7 +266,7 @@ def create_criterion(
     Returns:
         CT-MUSIQ loss criterion
     """
-    criterion = CTMUSIQLoss(lambda_kl=lambda_kl)
+    criterion = CTMUSIQLoss(lambda_kl=lambda_kl, lambda_rank=lambda_rank)
     criterion = criterion.to(device)
     
     return criterion

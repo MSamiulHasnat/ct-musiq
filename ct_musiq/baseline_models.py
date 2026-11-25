@@ -23,7 +23,7 @@ import torch.nn as nn
 import warnings
 from typing import Dict, Tuple
 
-import config
+from . import config
 
 # Try to import timm for Swin transformer
 try:

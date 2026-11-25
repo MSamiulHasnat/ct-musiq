@@ -2,7 +2,7 @@
 dataset.py — CT-MUSIQ Multi-Scale Dataset Pipeline
 ===================================================
 
-PyTorch Dataset class for loading LDCTIQAC 2023 brain CT images.
+PyTorch Dataset class for loading LDCTIQAC 2023 abdominal CT images.
 Handles multi-scale pyramid construction, patch extraction, and
 hash-based coordinate tracking for positional encoding.
 
@@ -28,12 +28,12 @@ import torchvision.transforms.functional as TF
 import torchvision.transforms as T
 
 # Import project configuration
-import config
+from . import config
 
 
 class LDCTDataset(Dataset):
     """
-    PyTorch Dataset for LDCTIQAC 2023 brain CT images.
+    PyTorch Dataset for LDCTIQAC 2023 abdominal CT images.
     
     Loads CT images, constructs multi-scale pyramid, extracts patches,
     and returns patch tensors with spatial coordinates for hash-based
@@ -62,7 +62,10 @@ class LDCTDataset(Dataset):
         split: str,
         scales: List[int],
         patch_size: int = 32,
-        augment: bool = False
+        augment: bool = False,
+        image_ids: Optional[List[str]] = None,
+        float_resize: bool = False,
+        quality_safe_augmentation: bool = False
     ):
         super().__init__()
         
@@ -70,6 +73,8 @@ class LDCTDataset(Dataset):
         self.data_dir = data_dir
         self.scales = scales
         self.patch_size = patch_size
+        self.float_resize = float_resize
+        self.quality_safe_augmentation = quality_safe_augmentation
         self.augment = augment and (split == 'train')  # Only augment training data
         
         # Validate split argument
@@ -93,7 +98,9 @@ class LDCTDataset(Dataset):
         self.labels = {}
         self.image_ids = []
         
-        for idx in range(self.idx_range[0], self.idx_range[1] + 1):
+        indices = (range(self.idx_range[0], self.idx_range[1] + 1)
+                   if image_ids is None else [int(os.path.splitext(name)[0]) for name in image_ids])
+        for idx in indices:
             # Build the key format (e.g., "0042.tif")
             key = config.LABEL_KEY_FORMAT.format(idx=idx)
             
@@ -102,6 +109,8 @@ class LDCTDataset(Dataset):
                 # Store numeric ID without extension for easy reference
                 self.image_ids.append(key.replace('.tif', '').replace('.tiff', ''))
             else:
+                if image_ids is not None:
+                    raise ValueError(f"Missing label for manifest image {key}")
                 print(f"Warning: Missing label for {key}")
         
         # Precompute patch grid dimensions for each scale
@@ -185,10 +194,12 @@ class LDCTDataset(Dataset):
         if np.random.random() < 0.5:
             image = image[:, ::-1].copy()
 
-        # Random vertical flip (p=0.5) — brain CT axial slices are
-        # roughly symmetric top/bottom in terms of quality
+        # Random vertical flip (p=0.5), retained from the historical pipeline.
         if np.random.random() < 0.5:
             image = image[::-1, :].copy()
+
+        if self.quality_safe_augmentation:
+            return image
 
         # Small random rotation (±7°) — use PIL for interpolation quality
         # but keep float32 by converting via uint16 to minimize quantization
@@ -242,14 +253,20 @@ class LDCTDataset(Dataset):
             List of resized images, one per scale
         """
         # Convert to PIL for high-quality resizing
-        img_pil = Image.fromarray((image * 255).astype(np.uint8), mode='L')
+        img_pil = (Image.fromarray(image.astype(np.float32), mode='F')
+                   if getattr(self, 'float_resize', False) else
+                   Image.fromarray((image * 255).astype(np.uint8), mode='L'))
         
         pyramid = []
         for scale in self.scales:
             # Resize to target scale using bicubic interpolation
             resized = img_pil.resize((scale, scale), Image.BICUBIC)
             # Convert back to numpy float32
-            resized_array = np.array(resized, dtype=np.float32) / 255.0
+            resized_array = np.array(resized, dtype=np.float32)
+            if getattr(self, 'float_resize', False):
+                resized_array = np.clip(resized_array, 0.0, 1.0)
+            else:
+                resized_array /= 255.0
             pyramid.append(resized_array)
         
         return pyramid
@@ -388,7 +405,11 @@ class LDCTDataset(Dataset):
 def create_dataloaders(
     batch_size: int = config.BATCH_SIZE,
     num_workers: int = 0,
-    pin_memory: bool = True
+    pin_memory: bool = True,
+    split_manifest: Optional[str] = None,
+    scales: Optional[List[int]] = None,
+    float_resize: bool = False,
+    quality_safe_augmentation: bool = False
 ) -> Tuple[DataLoader, DataLoader, DataLoader]:
     """
     Create DataLoaders for train, validation, and test splits.
@@ -401,32 +422,50 @@ def create_dataloaders(
     Returns:
         Tuple of (train_loader, val_loader, test_loader)
     """
+    scales = list(config.SCALES if scales is None else scales)
+    manifest = None
+    if split_manifest is not None:
+        with open(split_manifest, 'r', encoding='utf-8') as stream:
+            manifest = json.load(stream)
+        train_ids, val_ids = manifest['train'], manifest['val']
+        if not train_ids or not val_ids or len(set(train_ids + val_ids)) != len(train_ids) + len(val_ids):
+            raise ValueError('Manifest splits must be non-empty, unique and disjoint')
+        with open(config.LABEL_FILE, 'r', encoding='utf-8') as stream:
+            labels = json.load(stream)
+        if set(train_ids + val_ids) != set(labels):
+            raise ValueError('Manifest must account for every labeled development image')
     # Create datasets
     train_dataset = LDCTDataset(
         data_dir=config.DATA_DIR,
         label_file=config.LABEL_FILE,
         split='train',
-        scales=config.SCALES,
+        scales=scales,
         patch_size=config.PATCH_SIZE,
-        augment=True  # Enable augmentation for training
+        augment=True,  # Enable augmentation for training
+        image_ids=manifest['train'] if manifest is not None else None,
+        float_resize=float_resize,
+        quality_safe_augmentation=quality_safe_augmentation
     )
     
     val_dataset = LDCTDataset(
         data_dir=config.DATA_DIR,
         label_file=config.LABEL_FILE,
         split='val',
-        scales=config.SCALES,
+        scales=scales,
         patch_size=config.PATCH_SIZE,
-        augment=False  # No augmentation for validation
+        augment=False,  # No augmentation for validation
+        image_ids=manifest['val'] if manifest is not None else None,
+        float_resize=float_resize
     )
     
-    test_dataset = LDCTDataset(
+    test_dataset = None if manifest is not None else LDCTDataset(
         data_dir=config.DATA_DIR,
         label_file=config.LABEL_FILE,
         split='test',
-        scales=config.SCALES,
+        scales=scales,
         patch_size=config.PATCH_SIZE,
-        augment=False  # No augmentation for testing
+        augment=False,  # No augmentation for testing
+        float_resize=float_resize
     )
     
     # Create DataLoaders
@@ -449,7 +488,7 @@ def create_dataloaders(
         drop_last=False
     )
     
-    test_loader = DataLoader(
+    test_loader = None if test_dataset is None else DataLoader(
         test_dataset,
         batch_size=batch_size,
         shuffle=False,  # No shuffling for testing

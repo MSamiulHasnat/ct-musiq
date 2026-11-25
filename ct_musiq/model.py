@@ -9,12 +9,12 @@ Architecture Overview:
   1. Patch Embedding: Conv2d(3, 768, 32, 32) — loads pretrained ViT-B/32 weights
   2. Hash-based Positional Encoding: Sum of 3 nn.Embedding lookups
      (scale_idx, row_idx, col_idx) — handles variable multi-scale sequences
-  3. Transformer Encoder: 12 layers, 8 heads, d_model=768, FFN=3072
+  3. Transformer Encoder: 12 layers, 8 legacy or 12 aligned heads, d_model=768
   4. Global [CLS] Head: Linear(768, 1) → final quality score
   5. Per-scale Heads: Average pool per scale → Linear(768, 1) → scale scores
 
-Key Innovations over vanilla MUSIQ:
-  - Hash-based positional encoding for multi-scale patch sequences
+Design choices (not established novelty claims):
+  - Factorized learned scale, row and column positional embeddings
   - Per-scale prediction heads for scale-consistency KL loss
   - Grayscale-to-RGB replication for pretrained weight compatibility
 
@@ -42,7 +42,7 @@ except ImportError:
     timm = None
 
 # Import project configuration
-import config
+from . import config
 
 
 class HashPositionalEncoding(nn.Module):
@@ -174,7 +174,7 @@ class PatchEmbedding(nn.Module):
 
 class CTMUSIQ(nn.Module):
     """
-    CT-MUSIQ: CT-adapted MUSIQ Transformer for brain CT quality assessment.
+    CT-MUSIQ: CT-adapted MUSIQ Transformer for abdominal CT quality assessment.
     
     Full model architecture:
       1. Patch Embedding: Convert patches to token embeddings
@@ -204,7 +204,10 @@ class CTMUSIQ(nn.Module):
         patch_size: int = config.PATCH_SIZE,
         max_grid_size: int = config.MAX_GRID_SIZE,
         dropout: float = config.DROPOUT,
-        pretrained: bool = True
+        pretrained: bool = True,
+        pretrained_file: Optional[str] = None,
+        scales: Optional[List[int]] = None,
+        transfer_aligned: bool = False
     ):
         super().__init__()
         
@@ -212,6 +215,14 @@ class CTMUSIQ(nn.Module):
         self.num_scales = num_scales
         self.d_model = d_model
         self.num_layers = num_layers
+        self.transfer_aligned = transfer_aligned
+        if transfer_aligned and num_heads != 12:
+            raise ValueError('Aligned ViT-B transfer requires twelve attention heads')
+        self.scales = list(config.SCALES[:num_scales] if scales is None else scales)
+        self.patch_size = patch_size
+        if len(self.scales) != num_scales or any(scale <= 0 or scale % patch_size for scale in self.scales):
+            raise ValueError('Provide one positive, patch-aligned resolution per scale')
+        max_grid_size = max(max_grid_size, max(scale // patch_size for scale in self.scales))
         
         # =========================================================================
         # 1. PATCH EMBEDDING
@@ -250,6 +261,7 @@ class CTMUSIQ(nn.Module):
             dim_feedforward=config.FFN_DIM,  # 3072 = 4 * 768
             dropout=dropout,
             activation='gelu',
+            layer_norm_eps=1e-6 if transfer_aligned else 1e-5,
             batch_first=True,  # Input shape: [B, N, D]
             norm_first=True    # Pre-norm for better training stability
         )
@@ -260,7 +272,7 @@ class CTMUSIQ(nn.Module):
         )
         
         # Layer norm after transformer
-        self.norm = nn.LayerNorm(d_model)
+        self.norm = nn.LayerNorm(d_model, eps=1e-6 if transfer_aligned else 1e-5)
         
         # =========================================================================
         # 5. PREDICTION HEADS
@@ -289,8 +301,10 @@ class CTMUSIQ(nn.Module):
         # 6. LOAD PRETRAINED WEIGHTS
         # =========================================================================
         if pretrained and timm is not None:
-            self._load_pretrained_weights()
+            self._load_pretrained_weights(pretrained_file)
         elif pretrained and timm is None:
+            if pretrained_file is not None:
+                raise RuntimeError('timm is required to load the requested pretrained weights')
             warnings.warn("timm not available. Using random initialization.")
         
         # Print model statistics
@@ -301,7 +315,7 @@ class CTMUSIQ(nn.Module):
         print(f"  Trainable parameters: {trainable_params:,}")
         print(f"  Model size:           {total_params * 4 / 1024 / 1024:.1f} MB (fp32)")
     
-    def _load_pretrained_weights(self) -> None:
+    def _load_pretrained_weights(self, pretrained_file: Optional[str] = None) -> None:
         """
         Load pretrained weights from ViT-B/32.
         
@@ -313,10 +327,10 @@ class CTMUSIQ(nn.Module):
             print("\nLoading pretrained ViT-B/32 weights...")
             
             # Load pretrained ViT-B/32 from timm
-            pretrained_vit = timm.create_model(
-                'vit_base_patch32_224',
-                pretrained=True
-            )
+            pretrained_vit = timm.create_model('vit_base_patch32_224', pretrained=pretrained_file is None)
+            if pretrained_file is not None:
+                from safetensors.torch import load_file
+                pretrained_vit.load_state_dict(load_file(pretrained_file), strict=True)
             
             # Get state dicts
             pretrained_dict = pretrained_vit.state_dict()
@@ -325,6 +339,12 @@ class CTMUSIQ(nn.Module):
             # Track what gets loaded
             loaded_keys = []
             skipped_keys = []
+            if self.transfer_aligned:
+                for key in ('cls_token', 'norm.weight', 'norm.bias'):
+                    if pretrained_dict[key].shape != model_dict[key].shape:
+                        raise ValueError(f'Pretrained tensor shape mismatch: {key}')
+                    model_dict[key] = pretrained_dict[key]
+                    loaded_keys.append(key)
             
             # Try to load patch embedding weights
             # Pretrained: patch_embed.proj.weight shape is [768, 3, 32, 32]
@@ -386,6 +406,8 @@ class CTMUSIQ(nn.Module):
                 print(f"  ⚠ Skipped {len(skipped_keys)} incompatible layers")
             
         except Exception as e:
+            if pretrained_file is not None:
+                raise RuntimeError(f'Could not load requested pretrained weights: {pretrained_file}') from e
             warnings.warn(f"Failed to load pretrained weights: {e}")
             print(f"  ✗ Using random initialization")
     
@@ -409,6 +431,11 @@ class CTMUSIQ(nn.Module):
                 'scale_scores': List of Tensor [B, 1] — per-scale predictions
         """
         batch_size, num_patches = patches.shape[:2]
+        if self.transfer_aligned:
+            patches = patches * 2.0 - 1.0
+        expected_patches = sum((scale // self.patch_size) ** 2 for scale in self.scales)
+        if num_patches != expected_patches:
+            raise ValueError(f'Expected {expected_patches} patches for scales {self.scales}, got {num_patches}')
         
         # =========================================================================
         # 1. PATCH EMBEDDING
@@ -470,9 +497,9 @@ class CTMUSIQ(nn.Module):
         
         # Track which patches belong to which scale
         patch_idx = 0
-        for scale_idx, scale in enumerate(config.SCALES):
+        for scale_idx, scale in enumerate(self.scales):
             # Calculate number of patches for this scale
-            grid_size = scale // config.PATCH_SIZE
+            grid_size = scale // self.patch_size
             num_scale_patches = grid_size * grid_size
             
             # Extract patches for this scale
@@ -496,7 +523,10 @@ class CTMUSIQ(nn.Module):
 def create_model(
     num_scales: int = len(config.SCALES),
     pretrained: bool = True,
-    device: str = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device: str = 'cuda' if torch.cuda.is_available() else 'cpu',
+    pretrained_file: Optional[str] = None,
+    scales: Optional[List[int]] = None,
+    profile: str = 'legacy'
 ) -> CTMUSIQ:
     """
     Factory function to create and initialize CT-MUSIQ model.
@@ -509,9 +539,15 @@ def create_model(
     Returns:
         Initialized CT-MUSIQ model
     """
+    if profile not in ('legacy', 'aligned_vit'):
+        raise ValueError(f'Unknown model profile: {profile}')
     model = CTMUSIQ(
         num_scales=num_scales,
-        pretrained=pretrained
+        pretrained=pretrained,
+        pretrained_file=pretrained_file,
+        scales=scales,
+        num_heads=12 if profile == 'aligned_vit' else config.NUM_HEADS,
+        transfer_aligned=profile == 'aligned_vit'
     )
     
     model = model.to(device)
