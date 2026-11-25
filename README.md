@@ -11,10 +11,28 @@ earlier transformer pipeline. These are exploratory results on one fixed
 compact architecture is an established baseline; no novelty, clinical
 readiness or state-of-the-art claim is made. [Results and limitations](research_audit/README.md).
 
+## Current paper study
+
+The completed quality-conditioned ranking study contains **nine configurations
+and 27 trained models**, including scalar/ordinal heads, conditional/universal
+constraints and a ResNet-18 control. Every model was evaluated on the released
+300-image LDCT test set and 1,666 expert-annotated CBCT phantom images.
+
+The scalar conditional model retains a similar observed LDCT aggregate
+(2.7197 versus 2.7200) and improves external reader-pair agreement
+(74.5% versus 42.5%). Universal scalar ranking gives 49.3%. Other controls
+show that synthetic consistency does not ensure useful external transfer;
+the method does not improve every backbone or head. This is exploratory
+phantom evidence, with substantial training variation and no new clinical
+validation. See the [working manuscript](paper/main.pdf),
+[reproducibility instructions](paper/README.md) and
+[complete numerical summary](research_audit/results/robustness_summary.json).
+
 ## Layout
 
 - `ct_musiq/` — model, data pipeline, training, evaluation and ablation code.
 - `dataset/` — training labels and local image files in `dataset/image/`; the released 300-image test set is in `dataset/challenge_test/`. Both image directories and the local test labels are not tracked by Git.
+- `paper/` — current LaTeX manuscript, verified PDF, generated tables and figures.
 - `research_audit/` — exploratory evaluation and image-grouping tools, with documented limitations.
 - `thesis/` — original thesis source and artifacts, retained as historical material.
 - `docs/` — original defense preparation notes, retained as historical material.

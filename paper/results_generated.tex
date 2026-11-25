@@ -1,0 +1,39 @@
+\begin{table}[ht]\centering\small
+\caption{Released LDCT test results, mean $\pm$ sample SD over three training seeds on one fixed test collection.}
+\begin{tabular}{lrr}\toprule Model & Aggregate $\uparrow$ & MAE $\downarrow$ \\ \midrule
+Scalar & $2.7200\pm0.0133$ & $0.3010\pm0.0021$ \\
+Ordinal & $2.6931\pm0.0201$ & $0.2961\pm0.0276$ \\
+Ordinal + blur 1.5 & $2.6912\pm0.0194$ & $0.2965\pm0.0260$ \\
+Ordinal + blur 0.75 & $2.7016\pm0.0168$ & $0.2895\pm0.0234$ \\
+Scalar + conditional blur 0.75 & $2.7197\pm0.0040$ & $0.3164\pm0.0327$ \\
+Scalar + unconditional blur 0.75 & $2.7070\pm0.0139$ & $0.3261\pm0.0101$ \\
+ResNet-18 scalar & $2.6256\pm0.0075$ & $0.4249\pm0.0522$ \\
+ResNet-18 + conditional blur 0.75 & $2.6064\pm0.0371$ & $0.4043\pm0.0536$ \\
+Ordinal + unconditional blur 1.5 & $2.6928\pm0.0236$ & $0.3084\pm0.0396$ \\
+\bottomrule\end{tabular}\label{tab:ldct}\end{table}
+\begin{table}[ht]\centering\small
+\caption{External CBCT-IQ phantom transfer, mean $\pm$ seed SD. All models use fixed inference on 1,666 expert-annotated slices.}
+\begin{tabular}{lrr}\toprule Model & Spearman $\uparrow$ & Pair agreement $\uparrow$ \\ \midrule
+Scalar & $-0.142\pm0.253$ & $0.425\pm0.158$ \\
+Ordinal & $-0.222\pm0.328$ & $0.376\pm0.213$ \\
+Ordinal + blur 1.5 & $0.426\pm0.255$ & $0.737\pm0.144$ \\
+Ordinal + blur 0.75 & $-0.097\pm0.215$ & $0.484\pm0.092$ \\
+Scalar + conditional blur 0.75 & $0.348\pm0.307$ & $0.745\pm0.149$ \\
+Scalar + unconditional blur 0.75 & $-0.075\pm0.485$ & $0.493\pm0.264$ \\
+ResNet-18 scalar & $-0.603\pm0.130$ & $0.034\pm0.055$ \\
+ResNet-18 + conditional blur 0.75 & $-0.470\pm0.116$ & $0.118\pm0.111$ \\
+Ordinal + unconditional blur 1.5 & $0.391\pm0.063$ & $0.728\pm0.059$ \\
+\bottomrule\end{tabular}\label{tab:external}\end{table}
+\begin{table}[ht]\centering\small
+\caption{External signed Spearman correlation by phantom anatomy, mean $\pm$ seed SD. The thorax and pelvis contain 1,207 and 459 annotated images, respectively.}
+\begin{tabular}{lrr}\toprule Model & Thorax & Pelvis \\ \midrule
+Scalar & $-0.045\pm0.386$ & $-0.273\pm0.677$ \\
+Ordinal & $-0.096\pm0.433$ & $-0.630\pm0.309$ \\
+Ordinal + blur 1.5 & $0.506\pm0.188$ & $0.196\pm0.672$ \\
+Ordinal + blur 0.75 & $0.080\pm0.182$ & $-0.385\pm0.375$ \\
+Scalar + conditional blur 0.75 & $0.552\pm0.199$ & $0.041\pm0.464$ \\
+Scalar + unconditional blur 0.75 & $0.131\pm0.522$ & $-0.491\pm0.323$ \\
+ResNet-18 scalar & $-0.822\pm0.060$ & $-0.719\pm0.214$ \\
+ResNet-18 + conditional blur 0.75 & $-0.582\pm0.249$ & $-0.660\pm0.025$ \\
+Ordinal + unconditional blur 1.5 & $0.568\pm0.067$ & $0.095\pm0.248$ \\
+\bottomrule\end{tabular}\label{tab:anatomy}\end{table}

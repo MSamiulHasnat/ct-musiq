@@ -185,6 +185,8 @@ def main():
         axes[0].set_xlabel('Signed Spearman correlation'); axes[1].set_xlabel('Fraction of reader-majority pairs')
         fig.savefig(paper/'images/external_transfer.png',dpi=220)
         fig.savefig(paper/'images/external_transfer.svg'); plt.close(fig)
+    for svg in (paper/'images').glob('*.svg'):
+        svg.write_text('\n'.join(line.rstrip() for line in svg.read_text(encoding='utf-8').splitlines())+'\n',encoding='utf-8')
     print(json.dumps({a:result['arms'][a]['test']['Aggregate'] for a in arms},indent=2))
 
 
