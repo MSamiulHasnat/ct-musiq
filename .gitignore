@@ -81,6 +81,7 @@ target/
 # Dataset images
 dataset/image/
 dataset/challenge_test/
+dataset/external_cbct_iq/
 
 # IPython
 profile_default/

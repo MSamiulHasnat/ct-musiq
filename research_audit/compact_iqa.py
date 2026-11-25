@@ -44,9 +44,9 @@ class Images(Dataset):
 
 
 class CompactIQA(nn.Module):
-    def __init__(self, pretrained_file=None):
+    def __init__(self, pretrained_file=None, backbone='efficientnet_b0'):
         super().__init__()
-        self.backbone = timm.create_model('efficientnet_b0', pretrained=False)
+        self.backbone = timm.create_model(backbone, pretrained=False)
         if pretrained_file:
             self.backbone.load_state_dict(load_file(pretrained_file), strict=True)
         width = self.backbone.num_features
