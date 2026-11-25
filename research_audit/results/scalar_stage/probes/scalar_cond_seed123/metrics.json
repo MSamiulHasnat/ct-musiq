@@ -1,0 +1,110 @@
+{
+  "warning": "Synthetic score changes only; no transformed-image MOS or clinical preference labels.",
+  "checkpoint_sha256": "77789cf098d107e08858433e6d87f2c611f138fdfed2df3377635551cabdedee",
+  "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+  "applied_at": "448x448 normalized float image after resizing",
+  "summary": {
+    "gaussian_0.75": {
+      "all": {
+        "n": 210,
+        "mean_delta": -0.0181254247824351,
+        "fraction_score_increases": 0.580952380952381
+      },
+      "target_at_least_3": {
+        "n": 49,
+        "mean_delta": -1.2959510258265905,
+        "fraction_score_increases": 0.0
+      },
+      "target_at_most_1": {
+        "n": 49,
+        "mean_delta": 0.9033161170628606,
+        "fraction_score_increases": 1.0
+      }
+    },
+    "gaussian_1.5": {
+      "all": {
+        "n": 210,
+        "mean_delta": -0.31789312816801524,
+        "fraction_score_increases": 0.42857142857142855
+      },
+      "target_at_least_3": {
+        "n": 49,
+        "mean_delta": -1.6533011027744837,
+        "fraction_score_increases": 0.0
+      },
+      "target_at_most_1": {
+        "n": 49,
+        "mean_delta": 0.9490094622787164,
+        "fraction_score_increases": 1.0
+      }
+    },
+    "gaussian_2.5": {
+      "all": {
+        "n": 210,
+        "mean_delta": -0.34978021156220207,
+        "fraction_score_increases": 0.43333333333333335
+      },
+      "target_at_least_3": {
+        "n": 49,
+        "mean_delta": -1.7545472529469703,
+        "fraction_score_increases": 0.0
+      },
+      "target_at_most_1": {
+        "n": 49,
+        "mean_delta": 0.9585553675281758,
+        "fraction_score_increases": 1.0
+      }
+    },
+    "box_5": {
+      "all": {
+        "n": 210,
+        "mean_delta": -0.2807573852084932,
+        "fraction_score_increases": 0.4380952380952381
+      },
+      "target_at_least_3": {
+        "n": 49,
+        "mean_delta": -1.6360515745318667,
+        "fraction_score_increases": 0.0
+      },
+      "target_at_most_1": {
+        "n": 49,
+        "mean_delta": 1.0008256605693273,
+        "fraction_score_increases": 1.0
+      }
+    },
+    "noise_0.01": {
+      "all": {
+        "n": 210,
+        "mean_delta": -0.24536783218028999,
+        "fraction_score_increases": 0.014285714285714285
+      },
+      "target_at_least_3": {
+        "n": 49,
+        "mean_delta": -0.5194580846903275,
+        "fraction_score_increases": 0.0
+      },
+      "target_at_most_1": {
+        "n": 49,
+        "mean_delta": -0.08713970888330012,
+        "fraction_score_increases": 0.061224489795918366
+      }
+    },
+    "noise_0.03": {
+      "all": {
+        "n": 210,
+        "mean_delta": -1.0342763658080782,
+        "fraction_score_increases": 0.004761904761904762
+      },
+      "target_at_least_3": {
+        "n": 49,
+        "mean_delta": -1.8894293575870746,
+        "fraction_score_increases": 0.0
+      },
+      "target_at_most_1": {
+        "n": 49,
+        "mean_delta": -0.38189140692049145,
+        "fraction_score_increases": 0.02040816326530612
+      }
+    }
+  }
+}

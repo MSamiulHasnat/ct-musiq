@@ -1,0 +1,41 @@
+{
+  "compact_seed42": {
+    "status": "existing_completed_output"
+  },
+  "compact_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 269.6739802999946,
+    "command": [
+      "C:\\Users\\sam\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "C:\\Users\\sam\\Documents\\GitHub\\ct-musiq\\results\\external_models\\development_screening\\results\\compact448_seed123\\best.pth",
+      "--output",
+      "C:\\Users\\sam\\Documents\\GitHub\\ct-musiq\\research_audit\\results\\external_cbct_iq\\compact_seed123",
+      "--threads",
+      "4"
+    ]
+  },
+  "compact_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 269.64756510000734,
+    "command": [
+      "C:\\Users\\sam\\AppData\\Local\\Programs\\Python\\Python314\\python.exe",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "C:\\Users\\sam\\Documents\\GitHub\\ct-musiq\\results\\external_models\\development_screening\\results\\compact448_seed456\\best.pth",
+      "--output",
+      "C:\\Users\\sam\\Documents\\GitHub\\ct-musiq\\research_audit\\results\\external_cbct_iq\\compact_seed456",
+      "--threads",
+      "4"
+    ]
+  }
+}

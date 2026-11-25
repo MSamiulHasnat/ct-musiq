@@ -1,0 +1,7 @@
+{
+  "n": 32,
+  "max_absolute_CPU_GPU_prediction_difference": 0.0028618574142456055,
+  "wall_seconds": 2.975674200002686,
+  "torch_local": "2.15.0+cpu",
+  "note": "CPU and original GPU inference are not numerically identical; all external models use the same CPU environment."
+}

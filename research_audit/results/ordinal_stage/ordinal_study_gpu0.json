@@ -1,0 +1,176 @@
+{
+  "ordinal_rps_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 117.05860817595385,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/rps_seed42",
+      "--seed",
+      "42",
+      "--degradation-weight",
+      "0"
+    ]
+  },
+  "probe_rps_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 5.137155953096226,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/rps_seed42/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/rps_seed42"
+    ]
+  },
+  "ordinal_rps_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 87.94127010507509,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/rps_seed123",
+      "--seed",
+      "123",
+      "--degradation-weight",
+      "0"
+    ]
+  },
+  "probe_rps_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 5.16807681391947,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/rps_seed123/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/rps_seed123"
+    ]
+  },
+  "ordinal_rps_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 109.0386901171878,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/rps_seed456",
+      "--seed",
+      "456",
+      "--degradation-weight",
+      "0"
+    ]
+  },
+  "probe_rps_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 5.657913315109909,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/rps_seed456/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/rps_seed456"
+    ]
+  },
+  "eval_ordinal_rps_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 3.884680282091722,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/rps_seed42/best.pth",
+      "--output",
+      "../evaluations/ordinal_rps_seed42"
+    ]
+  },
+  "eval_ordinal_rps_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.6766279749572277,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/rps_seed123/best.pth",
+      "--output",
+      "../evaluations/ordinal_rps_seed123"
+    ]
+  },
+  "eval_ordinal_rps_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 3.5504674171097577,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/rps_seed456/best.pth",
+      "--output",
+      "../evaluations/ordinal_rps_seed456"
+    ]
+  }
+}

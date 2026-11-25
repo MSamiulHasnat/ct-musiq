@@ -1,0 +1,54 @@
+{
+  "rule": "equal arithmetic mean; no fitted weights or calibration",
+  "n": 210,
+  "models": 3,
+  "sources": [
+    {
+      "path": "research_audit\\results\\screening\\development_screening\\results\\compact448_seed42\\validation_predictions.csv",
+      "sha256": "3bd6817870fdd0bb93327690b0c10f7f4704ea422e21e03bd284ff39900c4deb"
+    },
+    {
+      "path": "research_audit\\results\\screening\\development_screening\\results\\compact448_seed123\\validation_predictions.csv",
+      "sha256": "c76f660ff2df79a25d241d74d823291b192b1bea2a812f51c1d68cd3983621b1"
+    },
+    {
+      "path": "research_audit\\results\\screening\\development_screening\\results\\compact448_seed456\\validation_predictions.csv",
+      "sha256": "8b3ad6fae4b9d291f3460abfcee35249b6f8044a103a73ab89b78cc138f3864b"
+    }
+  ],
+  "individual_metrics": [
+    {
+      "PLCC": 0.9775598119589902,
+      "SROCC": 0.9742429284952822,
+      "KROCC": 0.8823811601345022,
+      "Aggregate": 2.8341839005887746,
+      "mae": 0.18068950347247578,
+      "bias": 0.051043881752661294
+    },
+    {
+      "PLCC": 0.9758011377841834,
+      "SROCC": 0.9737847953109368,
+      "KROCC": 0.8821942149734567,
+      "Aggregate": 2.831780148068577,
+      "mae": 0.17859101914224168,
+      "bias": 0.019297935096990494
+    },
+    {
+      "PLCC": 0.9753426811267429,
+      "SROCC": 0.9735979081195891,
+      "KROCC": 0.8825681052955476,
+      "Aggregate": 2.8315086945418795,
+      "mae": 0.18902125842869283,
+      "bias": 0.005022521008338244
+    }
+  ],
+  "ensemble_metrics": {
+    "PLCC": 0.9783545133351073,
+    "SROCC": 0.9758905207828922,
+    "KROCC": 0.8875221520632518,
+    "Aggregate": 2.8417671861812512,
+    "mae": 0.17322590156088744,
+    "bias": 0.02512144595266334
+  },
+  "warning": "Exploratory analysis after prior public test use; inferred development groups are not patient IDs."
+}

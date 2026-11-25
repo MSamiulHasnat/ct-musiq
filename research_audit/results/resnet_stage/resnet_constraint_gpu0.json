@@ -1,0 +1,194 @@
+{
+  "ordinal_resnet_baseline_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 94.6953535808716,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../resnet18.safetensors",
+      "--output",
+      "results/resnet_baseline_seed42",
+      "--seed",
+      "42",
+      "--degradation-weight",
+      "0",
+      "--constraint-sigma",
+      "0.75",
+      "--head",
+      "scalar",
+      "--backbone",
+      "resnet18"
+    ]
+  },
+  "probe_resnet_baseline_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 7.653293308103457,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "results/resnet_baseline_seed42/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/resnet_baseline_seed42"
+    ]
+  },
+  "ordinal_resnet_baseline_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 97.5289958298672,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../resnet18.safetensors",
+      "--output",
+      "results/resnet_baseline_seed123",
+      "--seed",
+      "123",
+      "--degradation-weight",
+      "0",
+      "--constraint-sigma",
+      "0.75",
+      "--head",
+      "scalar",
+      "--backbone",
+      "resnet18"
+    ]
+  },
+  "probe_resnet_baseline_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 6.989911116892472,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "results/resnet_baseline_seed123/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/resnet_baseline_seed123"
+    ]
+  },
+  "ordinal_resnet_baseline_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 188.94857869204134,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../resnet18.safetensors",
+      "--output",
+      "results/resnet_baseline_seed456",
+      "--seed",
+      "456",
+      "--degradation-weight",
+      "0",
+      "--constraint-sigma",
+      "0.75",
+      "--head",
+      "scalar",
+      "--backbone",
+      "resnet18"
+    ]
+  },
+  "probe_resnet_baseline_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 5.972518261056393,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "results/resnet_baseline_seed456/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/resnet_baseline_seed456"
+    ]
+  },
+  "eval_ordinal_resnet_baseline_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 4.574081733124331,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/resnet_baseline_seed42/best.pth",
+      "--output",
+      "../evaluations/ordinal_resnet_baseline_seed42"
+    ]
+  },
+  "eval_ordinal_resnet_baseline_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.7727438940200955,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/resnet_baseline_seed123/best.pth",
+      "--output",
+      "../evaluations/ordinal_resnet_baseline_seed123"
+    ]
+  },
+  "eval_ordinal_resnet_baseline_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 4.010936412960291,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/resnet_baseline_seed456/best.pth",
+      "--output",
+      "../evaluations/ordinal_resnet_baseline_seed456"
+    ]
+  }
+}

@@ -188,6 +188,7 @@ cython_debug/
 /results/
 /research_audit/results/**/*predictions.csv
 /research_audit/results/**/*.tar.gz
+/research_audit/results/**/input_orientation_check.png
 *.pth
 ProjectRunningFolder_Programming.zip
 /ProjectRunningFolder_Programming/

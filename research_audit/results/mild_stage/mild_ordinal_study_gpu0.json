@@ -1,0 +1,182 @@
+{
+  "ordinal_mild_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 177.06796131189913,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/mild_seed42",
+      "--seed",
+      "42",
+      "--degradation-weight",
+      "0.1",
+      "--constraint-sigma",
+      "0.75"
+    ]
+  },
+  "probe_mild_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 4.7182342619635165,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/mild_seed42/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/mild_seed42"
+    ]
+  },
+  "ordinal_mild_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 134.29067098908126,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/mild_seed123",
+      "--seed",
+      "123",
+      "--degradation-weight",
+      "0.1",
+      "--constraint-sigma",
+      "0.75"
+    ]
+  },
+  "probe_mild_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 4.68570195697248,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/mild_seed123/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/mild_seed123"
+    ]
+  },
+  "ordinal_mild_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 169.613725079922,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/mild_seed456",
+      "--seed",
+      "456",
+      "--degradation-weight",
+      "0.1",
+      "--constraint-sigma",
+      "0.75"
+    ]
+  },
+  "probe_mild_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 4.618722465122119,
+    "gpu": 0,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/mild_seed456/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/mild_seed456"
+    ]
+  },
+  "eval_ordinal_mild_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 3.290521379094571,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/mild_seed42/best.pth",
+      "--output",
+      "../evaluations/ordinal_mild_seed42"
+    ]
+  },
+  "eval_ordinal_mild_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.33547122287564,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/mild_seed123/best.pth",
+      "--output",
+      "../evaluations/ordinal_mild_seed123"
+    ]
+  },
+  "eval_ordinal_mild_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 3.281665770104155,
+    "gpu": 0,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/mild_seed456/best.pth",
+      "--output",
+      "../evaluations/ordinal_mild_seed456"
+    ]
+  }
+}

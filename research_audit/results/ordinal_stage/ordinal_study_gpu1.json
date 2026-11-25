@@ -1,0 +1,176 @@
+{
+  "ordinal_conditional_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 192.00389221683145,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/conditional_seed42",
+      "--seed",
+      "42",
+      "--degradation-weight",
+      "0.1"
+    ]
+  },
+  "probe_conditional_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 5.285194204887375,
+    "gpu": 1,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/conditional_seed42/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/conditional_seed42"
+    ]
+  },
+  "ordinal_conditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 151.38302987604402,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/conditional_seed123",
+      "--seed",
+      "123",
+      "--degradation-weight",
+      "0.1"
+    ]
+  },
+  "probe_conditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 5.0971620650961995,
+    "gpu": 1,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/conditional_seed123/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/conditional_seed123"
+    ]
+  },
+  "ordinal_conditional_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 172.7057576670777,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/conditional_seed456",
+      "--seed",
+      "456",
+      "--degradation-weight",
+      "0.1"
+    ]
+  },
+  "probe_conditional_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 5.266270420979708,
+    "gpu": 1,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/conditional_seed456/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/conditional_seed456"
+    ]
+  },
+  "eval_ordinal_conditional_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 3.5339979969430715,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/conditional_seed42/best.pth",
+      "--output",
+      "../evaluations/ordinal_conditional_seed42"
+    ]
+  },
+  "eval_ordinal_conditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.5030740171205252,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/conditional_seed123/best.pth",
+      "--output",
+      "../evaluations/ordinal_conditional_seed123"
+    ]
+  },
+  "eval_ordinal_conditional_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 3.4925357969477773,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/conditional_seed456/best.pth",
+      "--output",
+      "../evaluations/ordinal_conditional_seed456"
+    ]
+  }
+}

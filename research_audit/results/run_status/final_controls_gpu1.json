@@ -1,0 +1,192 @@
+{
+  "ordinal_strong_unconditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 178.18805522006005,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/strong_unconditional_seed123",
+      "--seed",
+      "123",
+      "--degradation-weight",
+      "0.1",
+      "--constraint-sigma",
+      "1.5",
+      "--head",
+      "ordinal",
+      "--quality-threshold",
+      "0"
+    ]
+  },
+  "probe_strong_unconditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 4.934864574111998,
+    "gpu": 1,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "results/strong_unconditional_seed123/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/strong_unconditional_seed123"
+    ]
+  },
+  "eval_ordinal_strong_unconditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.4021758479066193,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/strong_unconditional_seed123/best.pth",
+      "--output",
+      "../evaluations/ordinal_strong_unconditional_seed123"
+    ]
+  },
+  "external_final_scalar_cond_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 14.194599732989445,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/scalar_constraint_study/results/scalar_cond_seed123/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/scalar_cond_seed123"
+    ]
+  },
+  "external_final_unconditional_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 14.323384782997891,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/unconditional_study/results/unconditional_seed42/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/unconditional_seed42"
+    ]
+  },
+  "external_final_unconditional_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 14.282714667962864,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/unconditional_study/results/unconditional_seed456/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/unconditional_seed456"
+    ]
+  },
+  "external_final_resnet_baseline_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 12.22046356415376,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/resnet_constraint_study/results/resnet_baseline_seed123/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/resnet_baseline_seed123"
+    ]
+  },
+  "external_final_resnet_cond_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 11.964181646006182,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/resnet_constraint_study/results/resnet_cond_seed42/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/resnet_cond_seed42"
+    ]
+  },
+  "external_final_resnet_cond_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 12.305918524041772,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/resnet_constraint_study/results/resnet_cond_seed456/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/resnet_cond_seed456"
+    ]
+  },
+  "external_final_strong_unconditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 14.276764989132062,
+    "gpu": 1,
+    "module": "research_audit.evaluate_cbct_iq",
+    "arguments": [
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/strong_unconditional_study/results/strong_unconditional_seed123/best.pth",
+      "--data-root",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_study/dataset/external_cbct_iq/prepared_axial",
+      "--device",
+      "cuda",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/strong_unconditional_seed123"
+    ]
+  }
+}

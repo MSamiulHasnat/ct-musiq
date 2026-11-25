@@ -1,0 +1,74 @@
+{
+  "overall": {
+    "n": 1666,
+    "SROCC": 0.15608908548336806,
+    "PLCC": 0.23340527666808647,
+    "KROCC": 0.10542159488545559
+  },
+  "by_anatomy": {
+    "CHEST": {
+      "n": 1207,
+      "SROCC": 0.38806965036225927,
+      "PLCC": 0.4500681573200177,
+      "KROCC": 0.27721222084628705
+    },
+    "PELVIS": {
+      "n": 459,
+      "SROCC": -0.5793603734794344,
+      "PLCC": -0.6161202071021887,
+      "KROCC": -0.4230925816767237
+    }
+  },
+  "checkpoint_sha256": "9ae133a6076affc2bb68480d5bea65ebd226a2296d659356f8ae06fa9cfc6e64",
+  "target": "Human OIQ_MOS_ZSCORE, signed rank correlation; no calibration",
+  "training_config": {
+    "image_dir": "dataset/image",
+    "labels": "dataset/train.json",
+    "split": "research_audit/development_split_seed42.json",
+    "pretrained_file": "../efficientnet_b0.safetensors",
+    "checkpoint": null,
+    "output": "results/conditional_seed42",
+    "seed": 42,
+    "epochs": 100,
+    "batch_size": 32,
+    "workers": 4,
+    "degradation_weight": 0.1,
+    "model": "efficientnet_b0_ordinal21",
+    "resolution": 448,
+    "rps_weight": 1.0,
+    "constraint": "blur sigma 1.5 on training MOS>=3; margin 0.1; synthetic assumption",
+    "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+    "pretrained_sha256": "d569899762ea9b1384ee07f4af64805cf8caa1c55f9253ebb1080dc40e87a2cd"
+  },
+  "torch": "2.13.0+cu132",
+  "timm": "1.0.31",
+  "device": "cuda",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "data_manifest": {
+    "source": "https://zenodo.org/records/20124496",
+    "license": "CC BY 4.0",
+    "n": 1666,
+    "target": "Human OIQ_MOS_ZSCORE, higher is better; no algorithm-derived IQA ratings",
+    "orientation": "Known RAS NIfTI x/y axes mapped to axial rows/columns with flipud(array.T); anterior at image top. Fixed from geometry and input visual QA, no orientation-score search.",
+    "path_mapping": "CSV anatomy/slice/kernel -> archive anatomy/kernel/slice; VSMOOTH -> VERYSMOOTH; unique exact match",
+    "normalization": "Published reference normalization retained; common model loader clips [0,1]",
+    "warnings": [
+      "Two phantoms, not patients.",
+      "External labels do not select or fit any model.",
+      "No score calibration across different rating scales; use rank correlation."
+    ],
+    "mean_fraction_clipped": 0.0,
+    "history": "Initial stored-array evaluations used a rotated presentation and were stopped and preserved separately; every model is rerun with this geometry correction."
+  },
+  "warnings": [
+    "Two phantoms; images are correlated, not independent patients.",
+    "Different modality, anatomy and score scale; no cross-scale MAE is reported.",
+    "No external fitting or configuration selection is permitted."
+  ],
+  "reconstruction_pair_agreement": {
+    "n": 1509,
+    "ambiguous_or_tied_expert_pairs": 59,
+    "agreement": 0.584493041749503,
+    "definition": "Same anatomy, slice, kernel, kV and pulse; different reconstruction; at least 2/3 readers agree on direction; model ties credit 0.5."
+  }
+}

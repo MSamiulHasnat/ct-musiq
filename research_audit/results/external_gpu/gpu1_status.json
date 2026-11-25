@@ -1,0 +1,116 @@
+{
+  "conditional_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 14.61144707002677,
+    "gpu": 1,
+    "command": [
+      "/home/samiul/.venv/bin/python",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/ordinal_study/results/conditional_seed42/best.pth",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/conditional_seed42",
+      "--device",
+      "cuda"
+    ]
+  },
+  "conditional_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 14.519311328884214,
+    "gpu": 1,
+    "command": [
+      "/home/samiul/.venv/bin/python",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/ordinal_study/results/conditional_seed123/best.pth",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/conditional_seed123",
+      "--device",
+      "cuda"
+    ]
+  },
+  "conditional_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 14.522345243953168,
+    "gpu": 1,
+    "command": [
+      "/home/samiul/.venv/bin/python",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/ordinal_study/results/conditional_seed456/best.pth",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/conditional_seed456",
+      "--device",
+      "cuda"
+    ]
+  },
+  "mild_seed42": {
+    "exit_code": 0,
+    "wall_seconds": 14.517629084875807,
+    "gpu": 1,
+    "command": [
+      "/home/samiul/.venv/bin/python",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/mild_ordinal_study/results/mild_seed42/best.pth",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/mild_seed42",
+      "--device",
+      "cuda"
+    ]
+  },
+  "mild_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 14.162451606011018,
+    "gpu": 1,
+    "command": [
+      "/home/samiul/.venv/bin/python",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/mild_ordinal_study/results/mild_seed123/best.pth",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/mild_seed123",
+      "--device",
+      "cuda"
+    ]
+  },
+  "mild_seed456": {
+    "exit_code": 0,
+    "wall_seconds": 14.263742819894105,
+    "gpu": 1,
+    "command": [
+      "/home/samiul/.venv/bin/python",
+      "-u",
+      "-m",
+      "research_audit.evaluate_cbct_iq",
+      "--kind",
+      "ordinal",
+      "--checkpoint",
+      "/home/samiul/ct-musiq-repro-20261124/mild_ordinal_study/results/mild_seed456/best.pth",
+      "--output",
+      "/home/samiul/ct-musiq-repro-20261124/external_gpu_results/mild_seed456",
+      "--device",
+      "cuda"
+    ]
+  }
+}

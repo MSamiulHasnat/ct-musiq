@@ -1,0 +1,64 @@
+{
+  "ordinal_scalar_cond_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 130.78446962917224,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--pretrained-file",
+      "../efficientnet_b0.safetensors",
+      "--output",
+      "results/scalar_cond_seed123",
+      "--seed",
+      "123",
+      "--degradation-weight",
+      "0.1",
+      "--constraint-sigma",
+      "0.75",
+      "--head",
+      "scalar"
+    ]
+  },
+  "probe_scalar_cond_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 5.5868606409057975,
+    "gpu": 1,
+    "module": "research_audit.degradation_probe",
+    "arguments": [
+      "--kind",
+      "compact",
+      "--checkpoint",
+      "results/scalar_cond_seed123/best.pth",
+      "--image-dir",
+      "dataset/image",
+      "--labels",
+      "dataset/train.json",
+      "--split",
+      "research_audit/development_split_seed42.json",
+      "--output",
+      "../probes/scalar_cond_seed123"
+    ]
+  },
+  "eval_ordinal_scalar_cond_seed123": {
+    "exit_code": 0,
+    "wall_seconds": 3.5144633029121906,
+    "gpu": 1,
+    "module": "research_audit.ordinal_iqa",
+    "arguments": [
+      "--image-dir",
+      "../LDCTIQAC_test/images",
+      "--labels",
+      "../LDCTIQAC_test/test.json",
+      "--checkpoint",
+      "results/scalar_cond_seed123/best.pth",
+      "--output",
+      "../evaluations/ordinal_scalar_cond_seed123"
+    ]
+  }
+}

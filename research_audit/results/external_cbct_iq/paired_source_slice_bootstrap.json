@@ -1,0 +1,86 @@
+{
+  "samples": 2000,
+  "seed": 42,
+  "source_slice_groups": 98,
+  "groups_per_anatomy": {
+    "CHEST": 71,
+    "PELVIS": 27
+  },
+  "n_images": 1666,
+  "n_pairs": 1509,
+  "warning": "Conditional source-slice intervals within two fixed phantoms and three fixed training seeds; not patient/site population confidence intervals.",
+  "comparisons": {
+    "conditional_minus_rps": {
+      "SROCC": {
+        "point": 0.6499800279861964,
+        "percentiles_2_5_50_97_5": [
+          0.628693127785996,
+          0.6505769184764902,
+          0.6725736626216957
+        ]
+      },
+      "pair_agreement": {
+        "point": 0.36094543848022975,
+        "percentiles_2_5_50_97_5": [
+          0.3423478398508948,
+          0.36109276383384703,
+          0.3798207570441516
+        ]
+      }
+    },
+    "mild_minus_rps": {
+      "SROCC": {
+        "point": 0.12439018274652233,
+        "percentiles_2_5_50_97_5": [
+          0.03917125323813838,
+          0.12574351491140917,
+          0.20945003017741906
+        ]
+      },
+      "pair_agreement": {
+        "point": 0.10779765849348355,
+        "percentiles_2_5_50_97_5": [
+          0.06613096549481212,
+          0.10882091287368548,
+          0.1487633415435139
+        ]
+      }
+    },
+    "conditional_minus_compact": {
+      "SROCC": {
+        "point": 0.566296224394269,
+        "percentiles_2_5_50_97_5": [
+          0.532633361932124,
+          0.5667364597693667,
+          0.6039268433429399
+        ]
+      },
+      "pair_agreement": {
+        "point": 0.31124364921581626,
+        "percentiles_2_5_50_97_5": [
+          0.2869134651320657,
+          0.31150792696111607,
+          0.3353290641190697
+        ]
+      }
+    },
+    "mild_minus_compact": {
+      "SROCC": {
+        "point": 0.040706379154594935,
+        "percentiles_2_5_50_97_5": [
+          -0.027154767132621157,
+          0.04064830511000083,
+          0.11219952196436604
+        ]
+      },
+      "pair_agreement": {
+        "point": 0.05809586922907006,
+        "percentiles_2_5_50_97_5": [
+          0.011973676409557162,
+          0.05932762030323008,
+          0.10433833498461693
+        ]
+      }
+    }
+  }
+}

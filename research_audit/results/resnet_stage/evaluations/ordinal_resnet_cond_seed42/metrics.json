@@ -1,0 +1,31 @@
+{
+  "PLCC": 0.9208732554791603,
+  "SROCC": 0.9198358592650673,
+  "KROCC": 0.7583801913770846,
+  "Aggregate": 2.599089306121312,
+  "mae": 0.44458137548632093,
+  "n": 300,
+  "checkpoint_config": {
+    "image_dir": "dataset/image",
+    "labels": "dataset/train.json",
+    "split": "research_audit/development_split_seed42.json",
+    "pretrained_file": "../resnet18.safetensors",
+    "checkpoint": null,
+    "output": "results/resnet_cond_seed42",
+    "seed": 42,
+    "epochs": 100,
+    "batch_size": 32,
+    "workers": 4,
+    "degradation_weight": 0.1,
+    "constraint_sigma": 0.75,
+    "head": "scalar",
+    "backbone": "resnet18",
+    "model": "resnet18_scalar",
+    "resolution": 448,
+    "rps_weight": 0.0,
+    "constraint": "blur sigma 0.75 on training MOS>=3; margin 0.1; synthetic assumption",
+    "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+    "pretrained_sha256": "80c49dee3da4822c009c5a7fe591e9223c5a2cfcf95a4067ca4dfb5a7b89c612"
+  },
+  "checkpoint_sha256": "24c4ea0947776fc89e08c4b79c15e97c9175526ea9e2fcd00b3633eca5e03f18"
+}

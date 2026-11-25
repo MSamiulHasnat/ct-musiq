@@ -4,6 +4,47 @@ See [EXPERIMENT_PROTOCOL.md](EXPERIMENT_PROTOCOL.md) for the current
 development-run protocol and limitations, and [CLAIMS.md](CLAIMS.md) for the
 evidence supporting or contradicting proposed paper claims.
 
+## Completed conditional-ranking study, 2026-11-25
+
+All nine declared arms and all three seeds are complete (27 models), with
+300 released LDCT test cases, 1,666 annotated external CBCT-IQ cases and
+1,509 nonambiguous expert reconstruction pairs per model. No external labels
+fit or calibrate a predictor. Adaptive controls are explicitly exploratory.
+
+| Configuration | LDCT aggregate | External signed Spearman | Expert-pair agreement |
+|---|---:|---:|---:|
+| Scalar baseline | 2.7200 ± 0.0133 | −0.142 ± 0.253 | 42.5% ± 15.8% |
+| Scalar conditional blur .75 | 2.7197 ± 0.0040 | 0.348 ± 0.307 | 74.5% ± 14.9% |
+| Scalar unconditional blur .75 | 2.7070 ± 0.0139 | −0.075 ± 0.485 | 49.3% ± 26.4% |
+| Ordinal baseline | 2.6931 ± 0.0201 | −0.222 ± 0.328 | 37.6% ± 21.3% |
+| Ordinal conditional blur 1.5 | 2.6912 ± 0.0194 | 0.426 ± 0.255 | 73.7% ± 14.4% |
+| Ordinal unconditional blur 1.5 | 2.6928 ± 0.0236 | 0.391 ± 0.063 | 72.8% ± 5.9% |
+| Ordinal conditional blur .75 | 2.7016 ± 0.0168 | −0.097 ± 0.215 | 48.4% ± 9.2% |
+| ResNet-18 baseline | 2.6256 ± 0.0075 | −0.603 ± 0.130 | 3.4% ± 5.5% |
+| ResNet-18 conditional blur .75 | 2.6064 ± 0.0371 | −0.470 ± 0.116 | 11.8% ± 11.1% |
+
+All ± values are sample SD across three fixed training seeds. They are not
+patient confidence intervals. Quality conditioning helps in the scalar
+mild-blur comparison, but the strong ordinal gate contrast includes zero
+in both within-phantom bootstrap intervals. ResNet transfer remains poor.
+The ordinal mild-blur model passes the illustrated synthetic checks yet
+transfers poorly: synthetic consistency is not a substitute for human-rated
+external evaluation. No SOTA, noninferiority or clinical-readiness claim follows.
+
+[Machine-readable summary](results/robustness_summary.json),
+[all checkpoint hashes and environment](results/completed_study_manifest.json),
+[paired external intervals](results/external_gpu/paired_source_slice_bootstrap.json),
+and [working paper](../paper/main.pdf) retain the complete evidence.
+Final GPU results are in `results/external_gpu/`; CPU and initially rotated
+stored-array results are retained separately, not pooled into the final table.
+The fixed axial correction was based on NIfTI geometry and visual QA.
+
+The complete export (251 files without images or weights) has SHA-256
+`b455720f959746baad8d1a42ec1ba8b60622b7cd6ad90c092c9d2a01bc9d3fd8`.
+All endpoint model hashes match, all nine unit tests pass, and the generic
+backbone engine exactly reproduces the reference model on all 1,666 cases.
+The remote queue has finished; there are no further planned experiment runs.
+
 ## Fresh-run interim results
 
 ### Compact follow-up completed 2026-11-25
@@ -87,6 +128,27 @@ file agree with the saved records within four-decimal rounding.
 
 The limited screening and precision comparison are complete; no broad sweep
 remains queued. A submission-ready novelty claim has not been established.
+
+### Fixed three-model average (exploratory follow-up)
+
+After a further improvement request, an equal average of the existing float
+compact seeds 42,123,456 was evaluated on validation first. Its aggregate
+2.841767 and MAE 0.173226 improve on each individual validation checkpoint.
+The same fixed average then obtained test aggregate **2.728080** and MAE
+**0.294445**, without fitted weights, rounding or calibration. The original
+single-model mean remains 2.720026 and MAE 0.300991. This ensemble is one
+predictor; it does not have a three-seed standard deviation of its own.
+
+Its test aggregate is close to seed 42 alone (2.7287), and an exploratory
+paired inferred-group bootstrap of ensemble minus seed 42 gives aggregate
+difference interval [-0.0191,0.0190] and MAE difference [-0.0185,0.0036].
+Neither establishes an improvement over that individual checkpoint. These
+are inferred-slice-group intervals, not patient-level confidence intervals.
+The ensemble needs three forward passes and 13,007,223 parameters in total;
+wall time was not rebenchmarked. This modest gain over the single-model mean
+does not establish a new architecture or a reliable SOTA result. Source-file
+hashes and metrics are in `results/compact_ensemble_validation/` and
+`results/compact_ensemble_test/`; use `ensemble_predictions.py` to reproduce.
 
 ### Earlier exploratory runs
 

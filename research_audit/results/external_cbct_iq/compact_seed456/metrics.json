@@ -1,0 +1,66 @@
+{
+  "overall": {
+    "n": 1666,
+    "SROCC": 0.05727805601852242,
+    "PLCC": 0.13326974938692362,
+    "KROCC": 0.03344404743130109
+  },
+  "by_anatomy": {
+    "CHEST": {
+      "n": 1207,
+      "SROCC": -0.0558020365470131,
+      "PLCC": -0.15551496128829215,
+      "KROCC": -0.03578693388256325
+    },
+    "PELVIS": {
+      "n": 459,
+      "SROCC": 0.4795303379065944,
+      "PLCC": 0.6223143443999408,
+      "KROCC": 0.2672158246359634
+    }
+  },
+  "checkpoint_sha256": "269e568f51d19597cacd55e518657b89c2a927bc1117724527af3af0d8573c42",
+  "target": "Human OIQ_MOS_ZSCORE, signed rank correlation; no calibration",
+  "training_config": {
+    "model": "efficientnet_b0",
+    "resolution": 448,
+    "seed": 456,
+    "batch_size": 32,
+    "epochs": 100,
+    "lr": 0.0001,
+    "lambda_rank": 0.5,
+    "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+    "pretrained_sha256": "d569899762ea9b1384ee07f4af64805cf8caa1c55f9253ebb1080dc40e87a2cd"
+  },
+  "torch": "2.15.0+cpu",
+  "timm": "1.0.31",
+  "device": "cpu",
+  "gpu": null,
+  "data_manifest": {
+    "source": "https://zenodo.org/records/20124496",
+    "license": "CC BY 4.0",
+    "n": 1666,
+    "target": "Human OIQ_MOS_ZSCORE, higher is better; no algorithm-derived IQA ratings",
+    "orientation": "Known RAS NIfTI x/y axes mapped to axial rows/columns with flipud(array.T); anterior at image top. Fixed from geometry and input visual QA, no orientation-score search.",
+    "path_mapping": "CSV anatomy/slice/kernel -> archive anatomy/kernel/slice; VSMOOTH -> VERYSMOOTH; unique exact match",
+    "normalization": "Published reference normalization retained; common model loader clips [0,1]",
+    "warnings": [
+      "Two phantoms, not patients.",
+      "External labels do not select or fit any model.",
+      "No score calibration across different rating scales; use rank correlation."
+    ],
+    "mean_fraction_clipped": 0.0,
+    "history": "Initial stored-array evaluations used a rotated presentation and were stopped and preserved separately; every model is rerun with this geometry correction."
+  },
+  "warnings": [
+    "Two phantoms; images are correlated, not independent patients.",
+    "Different modality, anatomy and score scale; no cross-scale MAE is reported.",
+    "No external fitting or configuration selection is permitted."
+  ],
+  "reconstruction_pair_agreement": {
+    "n": 1509,
+    "ambiguous_or_tied_expert_pairs": 59,
+    "agreement": 0.5361166335321405,
+    "definition": "Same anatomy, slice, kernel, kV and pulse; different reconstruction; at least 2/3 readers agree on direction; model ties credit 0.5."
+  }
+}

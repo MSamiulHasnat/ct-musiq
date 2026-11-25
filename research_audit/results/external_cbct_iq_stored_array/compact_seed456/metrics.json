@@ -1,0 +1,49 @@
+{
+  "overall": {
+    "n": 1666,
+    "SROCC": -0.17034196178269445,
+    "PLCC": -0.054785315479814294,
+    "KROCC": -0.140967958873535
+  },
+  "by_anatomy": {
+    "CHEST": {
+      "n": 1207,
+      "SROCC": -0.42076070679710426,
+      "PLCC": -0.41680617871749504,
+      "KROCC": -0.29835066354368
+    },
+    "PELVIS": {
+      "n": 459,
+      "SROCC": 0.5393930561556352,
+      "PLCC": 0.6792922465058664,
+      "KROCC": 0.3323672768047596
+    }
+  },
+  "checkpoint_sha256": "269e568f51d19597cacd55e518657b89c2a927bc1117724527af3af0d8573c42",
+  "target": "Human OIQ_MOS_ZSCORE, signed rank correlation; no calibration",
+  "training_config": {
+    "model": "efficientnet_b0",
+    "resolution": 448,
+    "seed": 456,
+    "batch_size": 32,
+    "epochs": 100,
+    "lr": 0.0001,
+    "lambda_rank": 0.5,
+    "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+    "pretrained_sha256": "d569899762ea9b1384ee07f4af64805cf8caa1c55f9253ebb1080dc40e87a2cd"
+  },
+  "torch": "2.15.0+cpu",
+  "timm": "1.0.31",
+  "device": "CPU",
+  "warnings": [
+    "Two phantoms; images are correlated, not independent patients.",
+    "Different modality, anatomy and score scale; no cross-scale MAE is reported.",
+    "No external fitting or configuration selection is permitted."
+  ],
+  "reconstruction_pair_agreement": {
+    "n": 1509,
+    "ambiguous_or_tied_expert_pairs": 59,
+    "agreement": 0.3445990722332671,
+    "definition": "Same anatomy, slice, kernel, kV and pulse; different reconstruction; at least 2/3 readers agree on direction; model ties credit 0.5."
+  }
+}

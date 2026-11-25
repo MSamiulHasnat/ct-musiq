@@ -1,0 +1,2500 @@
+{
+  "warning": "Seed SD describes training variation, not patient-level confidence.",
+  "scoring": "Recomputed from continuous saved predictions; no component rounding.",
+  "pending_arms": [],
+  "arms": {
+    "compact": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9531257072085889,
+          "SROCC": 0.9527061476343808,
+          "KROCC": 0.8229028123552631,
+          "Aggregate": 2.728734667198233,
+          "mae": 0.3013757535980807
+        },
+        "123": {
+          "PLCC": 0.9473033533150835,
+          "SROCC": 0.9467761325015468,
+          "KROCC": 0.8106366745155952,
+          "Aggregate": 2.7047161603322256,
+          "mae": 0.3028814300232463
+        },
+        "456": {
+          "PLCC": 0.9508524780088151,
+          "SROCC": 0.9525539590424978,
+          "KROCC": 0.823222005533247,
+          "Aggregate": 2.72662844258456,
+          "mae": 0.29871576846887665
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9504271795108292,
+          "sample_sd": 0.0029343841474142643
+        },
+        "SROCC": {
+          "mean": 0.9506787463928085,
+          "sample_sd": 0.0033806192820363947
+        },
+        "KROCC": {
+          "mean": 0.8189204974680351,
+          "sample_sd": 0.007175776132359862
+        },
+        "Aggregate": {
+          "mean": 2.720026423371673,
+          "sample_sd": 0.013300833104870069
+        },
+        "mae": {
+          "mean": 0.3009909840300679,
+          "sample_sd": 0.0021093173686621753
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.963816413614485,
+              "sample_sd": 0.12408395549306449
+            },
+            "fraction_score_increases": {
+              "mean": 0.9698412698412698,
+              "sample_sd": 0.030982890945941484
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.3839389239849687,
+              "sample_sd": 0.09149409599058449
+            },
+            "fraction_score_increases": {
+              "mean": 0.870748299319728,
+              "sample_sd": 0.1327838183397492
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.1527557368992136,
+              "sample_sd": 0.11727721422997608
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.0447037895520528,
+              "sample_sd": 0.3480495440662546
+            },
+            "fraction_score_increases": {
+              "mean": 0.8111111111111112,
+              "sample_sd": 0.05223645292668043
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.3089780969684626,
+              "sample_sd": 0.2632636897762205
+            },
+            "fraction_score_increases": {
+              "mean": 0.23129251700680276,
+              "sample_sd": 0.15586992159713742
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.1322546062015353,
+              "sample_sd": 0.34172346608656246
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.5942367110933576,
+              "sample_sd": 0.32146477808950474
+            },
+            "fraction_score_increases": {
+              "mean": 0.6904761904761904,
+              "sample_sd": 0.07663560447348136
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.8563795495195453,
+              "sample_sd": 0.2455059482457905
+            },
+            "fraction_score_increases": {
+              "mean": 0.06122448979591836,
+              "sample_sd": 0.08895712129674845
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.915276413061181,
+              "sample_sd": 0.37889567379305217
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.171822927300892,
+              "sample_sd": 0.3024025799940193
+            },
+            "fraction_score_increases": {
+              "mean": 0.8285714285714286,
+              "sample_sd": 0.03333333333333334
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.23335168799575493,
+              "sample_sd": 0.2551323754605838
+            },
+            "fraction_score_increases": {
+              "mean": 0.27891156462585037,
+              "sample_sd": 0.11958092402208807
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.2389688386398103,
+              "sample_sd": 0.2713862711448123
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.24596320588792128,
+              "sample_sd": 0.01246623857850271
+            },
+            "fraction_score_increases": {
+              "mean": 0.044444444444444446,
+              "sample_sd": 0.024436197330699447
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.580934020126758,
+              "sample_sd": 0.021295914773366335
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.05457600766197354,
+              "sample_sd": 0.017905390917923314
+            },
+            "fraction_score_increases": {
+              "mean": 0.1292517006802721,
+              "sample_sd": 0.0589132927744516
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.0079395321330853,
+              "sample_sd": 0.025595712216535088
+            },
+            "fraction_score_increases": {
+              "mean": 0.003174603174603175,
+              "sample_sd": 0.002749286996141075
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.9334434449267224,
+              "sample_sd": 0.0957225611385726
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.310332362825165,
+              "sample_sd": 0.04593671028113735
+            },
+            "fraction_score_increases": {
+              "mean": 0.013605442176870748,
+              "sample_sd": 0.01178265855489032
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": -0.14180050857799545,
+          "sample_sd": 0.2525198264413948
+        },
+        "CHEST_SROCC": {
+          "mean": -0.044899230226771426,
+          "sample_sd": 0.38600240474062747
+        },
+        "PELVIS_SROCC": {
+          "mean": -0.27297585347268516,
+          "sample_sd": 0.6772141982194181
+        },
+        "pair_agreement": {
+          "mean": 0.42500552242102935,
+          "sample_sd": 0.15838488362094194
+        }
+      }
+    },
+    "rps": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9419809306055646,
+          "SROCC": 0.9391052934755985,
+          "KROCC": 0.796820169811434,
+          "Aggregate": 2.677906393892597,
+          "mae": 0.31559257719251843
+        },
+        "123": {
+          "PLCC": 0.951682682934137,
+          "SROCC": 0.9487265494554122,
+          "KROCC": 0.815424572185354,
+          "Aggregate": 2.7158338045749035,
+          "mae": 0.26450672361585825
+        },
+        "456": {
+          "PLCC": 0.9439942875763178,
+          "SROCC": 0.941788396150326,
+          "KROCC": 0.799647309387863,
+          "Aggregate": 2.6854299931145067,
+          "mae": 0.30817982551124357
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9458859670386732,
+          "sample_sd": 0.005120042768616576
+        },
+        "SROCC": {
+          "mean": 0.9432067463604454,
+          "sample_sd": 0.004964970256324337
+        },
+        "KROCC": {
+          "mean": 0.8039640171282171,
+          "sample_sd": 0.0100252890835828
+        },
+        "Aggregate": {
+          "mean": 2.6930567305273354,
+          "sample_sd": 0.020081022457516237
+        },
+        "mae": {
+          "mean": 0.2960930421065401,
+          "sample_sd": 0.027604507941967605
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.1053870281529805,
+              "sample_sd": 0.049058549143325296
+            },
+            "fraction_score_increases": {
+              "mean": 0.9714285714285715,
+              "sample_sd": 0.017169291787923806
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.4768691435963118,
+              "sample_sd": 0.10314647619348216
+            },
+            "fraction_score_increases": {
+              "mean": 0.8775510204081632,
+              "sample_sd": 0.07358267909110183
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.166193504317277,
+              "sample_sd": 0.062404071318682676
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.5141645049291943,
+              "sample_sd": 0.14119249255143387
+            },
+            "fraction_score_increases": {
+              "mean": 0.9206349206349206,
+              "sample_sd": 0.01198386418296946
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.2061740897950672,
+              "sample_sd": 0.06827435279262267
+            },
+            "fraction_score_increases": {
+              "mean": 0.6598639455782312,
+              "sample_sd": 0.05135941792701191
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.6113255088832106,
+              "sample_sd": 0.2599800437877108
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.06318246655994,
+              "sample_sd": 0.2247373897005525
+            },
+            "fraction_score_increases": {
+              "mean": 0.8047619047619047,
+              "sample_sd": 0.07330859199209831
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.4059199013677584,
+              "sample_sd": 0.35853697360523873
+            },
+            "fraction_score_increases": {
+              "mean": 0.27891156462585037,
+              "sample_sd": 0.21630085844332853
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.3109049148300067,
+              "sample_sd": 0.17412189965830313
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.64845014961939,
+              "sample_sd": 0.06374692496845803
+            },
+            "fraction_score_increases": {
+              "mean": 0.9206349206349206,
+              "sample_sd": 0.01198386418296946
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.24274535568393008,
+              "sample_sd": 0.060036775563541714
+            },
+            "fraction_score_increases": {
+              "mean": 0.6598639455782312,
+              "sample_sd": 0.05135941792701191
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.7968366973254146,
+              "sample_sd": 0.1534919951704782
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.24734499774695862,
+              "sample_sd": 0.037929291328130825
+            },
+            "fraction_score_increases": {
+              "mean": 0.031746031746031744,
+              "sample_sd": 0.02348991839198213
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.6120728440836173,
+              "sample_sd": 0.10645834647979145
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.04735314272040007,
+              "sample_sd": 0.02122782466289209
+            },
+            "fraction_score_increases": {
+              "mean": 0.11564625850340136,
+              "sample_sd": 0.08496595916188297
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.9535200833121227,
+              "sample_sd": 0.0599949258660447
+            },
+            "fraction_score_increases": {
+              "mean": 0.004761904761904762,
+              "sample_sd": 0.004761904761904762
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.9382089708938077,
+              "sample_sd": 0.1196196114715887
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.2573587119097815,
+              "sample_sd": 0.021866927055409772
+            },
+            "fraction_score_increases": {
+              "mean": 0.02040816326530612,
+              "sample_sd": 0.02040816326530612
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": -0.22203213897574078,
+          "sample_sd": 0.32848121159775046
+        },
+        "CHEST_SROCC": {
+          "mean": -0.09649392873063549,
+          "sample_sd": 0.4333828801537116
+        },
+        "PELVIS_SROCC": {
+          "mean": -0.6301678100955659,
+          "sample_sd": 0.3094796614953894
+        },
+        "pair_agreement": {
+          "mean": 0.375524629997791,
+          "sample_sd": 0.21276528718363438
+        }
+      }
+    },
+    "conditional": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9419782510101826,
+          "SROCC": 0.9395925639671526,
+          "KROCC": 0.7980057444725172,
+          "Aggregate": 2.6795765594498526,
+          "mae": 0.3145724176367124
+        },
+        "123": {
+          "PLCC": 0.9510794187672443,
+          "SROCC": 0.9482791060953593,
+          "KROCC": 0.8142389975242709,
+          "Aggregate": 2.7135975223868742,
+          "mae": 0.2666323733164205
+        },
+        "456": {
+          "PLCC": 0.9431102591818373,
+          "SROCC": 0.9402916524988713,
+          "KROCC": 0.7970025659131391,
+          "Aggregate": 2.680404477593848,
+          "mae": 0.3081735520561536
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9453893096530881,
+          "sample_sd": 0.004960178114082819
+        },
+        "SROCC": {
+          "mean": 0.942721107520461,
+          "sample_sd": 0.004826043132082746
+        },
+        "KROCC": {
+          "mean": 0.8030824359699756,
+          "sample_sd": 0.00967487679981412
+        },
+        "Aggregate": {
+          "mean": 2.6911928531435247,
+          "sample_sd": 0.019407428089296175
+        },
+        "mae": {
+          "mean": 0.2964594476697621,
+          "sample_sd": 0.026028391105470672
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.0625401235762097,
+              "sample_sd": 0.05320444051578629
+            },
+            "fraction_score_increases": {
+              "mean": 0.9412698412698411,
+              "sample_sd": 0.00549857399228213
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.309841318195369,
+              "sample_sd": 0.0463356913190547
+            },
+            "fraction_score_increases": {
+              "mean": 0.7482993197278911,
+              "sample_sd": 0.023565317109780607
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.1771888408531137,
+              "sample_sd": 0.07489184431827751
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.07029595658892678,
+              "sample_sd": 0.05682809914781363
+            },
+            "fraction_score_increases": {
+              "mean": 0.5492063492063493,
+              "sample_sd": 0.00991269523555304
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.3073839857464744,
+              "sample_sd": 0.049087935868738296
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.3175048828125,
+              "sample_sd": 0.09429529085708746
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.015759545091598753,
+              "sample_sd": 0.042401603544163974
+            },
+            "fraction_score_increases": {
+              "mean": 0.5365079365079365,
+              "sample_sd": 0.016723259925163072
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.4162586108356916,
+              "sample_sd": 0.045689265610323514
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.2066374806319775,
+              "sample_sd": 0.050091202897514946
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.34113870991600886,
+              "sample_sd": 0.16173063293822545
+            },
+            "fraction_score_increases": {
+              "mean": 0.5873015873015873,
+              "sample_sd": 0.022503883934536215
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.2533354256428828,
+              "sample_sd": 0.06654470590406722
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.8878215551376343,
+              "sample_sd": 0.25323183176400516
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.2465529252730665,
+              "sample_sd": 0.036570686871818435
+            },
+            "fraction_score_increases": {
+              "mean": 0.03650793650793651,
+              "sample_sd": 0.027492869961410746
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.6174606433531054,
+              "sample_sd": 0.1062256351686738
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.04586365682129958,
+              "sample_sd": 0.020700517460374882
+            },
+            "fraction_score_increases": {
+              "mean": 0.12244897959183672,
+              "sample_sd": 0.09352195295828244
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.9539537883585408,
+              "sample_sd": 0.06147272670018792
+            },
+            "fraction_score_increases": {
+              "mean": 0.00634920634920635,
+              "sample_sd": 0.002749286996141075
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.9365238867649417,
+              "sample_sd": 0.128679757912425
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.2567703685894304,
+              "sample_sd": 0.02182401291748743
+            },
+            "fraction_score_increases": {
+              "mean": 0.027210884353741496,
+              "sample_sd": 0.01178265855489032
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": 0.4260327043067793,
+          "sample_sd": 0.25484576543553544
+        },
+        "CHEST_SROCC": {
+          "mean": 0.5064983023684518,
+          "sample_sd": 0.1879984030027068
+        },
+        "PELVIS_SROCC": {
+          "mean": 0.19584419101844833,
+          "sample_sd": 0.6716302267724058
+        },
+        "pair_agreement": {
+          "mean": 0.7369118621603711,
+          "sample_sd": 0.14404032434956265
+        }
+      }
+    },
+    "mild": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.943935327422346,
+          "SROCC": 0.9413173680084902,
+          "KROCC": 0.801972859684603,
+          "Aggregate": 2.687225555115439,
+          "mae": 0.31125931884679525
+        },
+        "123": {
+          "PLCC": 0.9529538635827165,
+          "SROCC": 0.9497309051626616,
+          "KROCC": 0.8174309293041101,
+          "Aggregate": 2.7201156980494883,
+          "mae": 0.26471342368258366
+        },
+        "456": {
+          "PLCC": 0.9454411744131769,
+          "SROCC": 0.9448713276256581,
+          "KROCC": 0.8070343515069196,
+          "Aggregate": 2.6973468535457545,
+          "mae": 0.29247239410049386
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9474434551394131,
+          "sample_sd": 0.004831184606177918
+        },
+        "SROCC": {
+          "mean": 0.9453065335989366,
+          "sample_sd": 0.0042236187139156525
+        },
+        "KROCC": {
+          "mean": 0.8088127134985443,
+          "sample_sd": 0.007880983924632993
+        },
+        "Aggregate": {
+          "mean": 2.701562702236894,
+          "sample_sd": 0.016845486359719095
+        },
+        "mae": {
+          "mean": 0.2894817122099576,
+          "sample_sd": 0.02341662278782383
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.08264759523527963,
+              "sample_sd": 0.10486852879377266
+            },
+            "fraction_score_increases": {
+              "mean": 0.5857142857142857,
+              "sample_sd": 0.037796447300922714
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.331990199835122,
+              "sample_sd": 0.15341262694465638
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.1486278484467747,
+              "sample_sd": 0.14152531871004534
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.004481086182215856,
+              "sample_sd": 0.059711079929319975
+            },
+            "fraction_score_increases": {
+              "mean": 0.5317460317460316,
+              "sample_sd": 0.015307382160306287
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.331215746548711,
+              "sample_sd": 0.057356299583488826
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.2198003883264503,
+              "sample_sd": 0.07792759256820246
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.14659351129380485,
+              "sample_sd": 0.16927777163944188
+            },
+            "fraction_score_increases": {
+              "mean": 0.5952380952380952,
+              "sample_sd": 0.058515265368783355
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.173683870406378,
+              "sample_sd": 0.215515925955261
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.269804688538013,
+              "sample_sd": 0.13613462608551827
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.009023983232558722,
+              "sample_sd": 0.06355603255842769
+            },
+            "fraction_score_increases": {
+              "mean": 0.5285714285714285,
+              "sample_sd": 0.01428571428571429
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.3471426801616644,
+              "sample_sd": 0.0708298150313617
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.1945708398105335,
+              "sample_sd": 0.06875070475711031
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.2489986574742943,
+              "sample_sd": 0.035475345413581244
+            },
+            "fraction_score_increases": {
+              "mean": 0.046031746031746035,
+              "sample_sd": 0.03849001794597505
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.6228817936514511,
+              "sample_sd": 0.09952965475980835
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.046156001293106756,
+              "sample_sd": 0.02265247627205776
+            },
+            "fraction_score_increases": {
+              "mean": 0.14285714285714285,
+              "sample_sd": 0.1136278441393882
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.9775065428392579,
+              "sample_sd": 0.05031520389938752
+            },
+            "fraction_score_increases": {
+              "mean": 0.004761904761904762,
+              "sample_sd": 0.0
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.9878964740402845,
+              "sample_sd": 0.1326560902775465
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.2717997025045864,
+              "sample_sd": 0.01274486623205326
+            },
+            "fraction_score_increases": {
+              "mean": 0.02040816326530612,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": -0.0974642210505951,
+          "sample_sd": 0.2147419408090329
+        },
+        "CHEST_SROCC": {
+          "mean": 0.07990689094684282,
+          "sample_sd": 0.1822578235786589
+        },
+        "PELVIS_SROCC": {
+          "mean": -0.3853095998574967,
+          "sample_sd": 0.3752041646964478
+        },
+        "pair_agreement": {
+          "mean": 0.48442677269715045,
+          "sample_sd": 0.09222833317803691
+        }
+      }
+    },
+    "scalar_cond": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9494379490524111,
+          "SROCC": 0.9491470705645619,
+          "KROCC": 0.8166101468464371,
+          "Aggregate": 2.71519516646341,
+          "mae": 0.2915903832432296
+        },
+        "123": {
+          "PLCC": 0.9504631614304648,
+          "SROCC": 0.9516041153308791,
+          "KROCC": 0.8187989000668983,
+          "Aggregate": 2.7208661768282423,
+          "mae": 0.3533986304203669
+        },
+        "456": {
+          "PLCC": 0.9525776574235584,
+          "SROCC": 0.9507176835325446,
+          "KROCC": 0.8196196825245712,
+          "Aggregate": 2.7229150234806743,
+          "mae": 0.30419727999303076
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9508262559688115,
+          "sample_sd": 0.0016010372877593925
+        },
+        "SROCC": {
+          "mean": 0.9504896231426617,
+          "sample_sd": 0.0012442973527243034
+        },
+        "KROCC": {
+          "mean": 0.8183429098126355,
+          "sample_sd": 0.0015557222063972405
+        },
+        "Aggregate": {
+          "mean": 2.719658788924109,
+          "sample_sd": 0.003999048293661382
+        },
+        "mae": {
+          "mean": 0.31639543121887576,
+          "sample_sd": 0.0326597768635054
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.039533335065084795,
+              "sample_sd": 0.018897373701413547
+            },
+            "fraction_score_increases": {
+              "mean": 0.5634920634920635,
+              "sample_sd": 0.016723259925163075
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.2415869884750472,
+              "sample_sd": 0.04709584715298699
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 0.8790297735305059,
+              "sample_sd": 0.02514864451101673
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.20976442969034584,
+              "sample_sd": 0.10182136431496952
+            },
+            "fraction_score_increases": {
+              "mean": 0.4619047619047619,
+              "sample_sd": 0.031225897734771437
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.5159156703624597,
+              "sample_sd": 0.13169752814692237
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.0071752452525964,
+              "sample_sd": 0.05037845099070107
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.18213198998617744,
+              "sample_sd": 0.15312919526442
+            },
+            "fraction_score_increases": {
+              "mean": 0.48095238095238096,
+              "sample_sd": 0.041513323271815915
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.5437790682526673,
+              "sample_sd": 0.18665578361260668
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.0496041280071753,
+              "sample_sd": 0.08532292825766952
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.17486726405128603,
+              "sample_sd": 0.09886186281293524
+            },
+            "fraction_score_increases": {
+              "mean": 0.4761904761904762,
+              "sample_sd": 0.03433858357584751
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.490220694314866,
+              "sample_sd": 0.13446316488693644
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.0450259260579842,
+              "sample_sd": 0.03866517712829904
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.24208107422741632,
+              "sample_sd": 0.008089050592366295
+            },
+            "fraction_score_increases": {
+              "mean": 0.03809523809523809,
+              "sample_sd": 0.02182178902359924
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.5593847839199767,
+              "sample_sd": 0.03550617181964468
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.05947466498734999,
+              "sample_sd": 0.024749633921205993
+            },
+            "fraction_score_increases": {
+              "mean": 0.10204081632653061,
+              "sample_sd": 0.03534797566467096
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.981629809459287,
+              "sample_sd": 0.056919662201794854
+            },
+            "fraction_score_increases": {
+              "mean": 0.00634920634920635,
+              "sample_sd": 0.00727392967453308
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.8751455342688528,
+              "sample_sd": 0.02929306491309434
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.3169680738783613,
+              "sample_sd": 0.06637795774648325
+            },
+            "fraction_score_increases": {
+              "mean": 0.027210884353741496,
+              "sample_sd": 0.03117398431942748
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": 0.34835513112180666,
+          "sample_sd": 0.3071726061957937
+        },
+        "CHEST_SROCC": {
+          "mean": 0.5519913347207596,
+          "sample_sd": 0.1991313480925186
+        },
+        "PELVIS_SROCC": {
+          "mean": 0.041306324086179236,
+          "sample_sd": 0.4637395657394092
+        },
+        "pair_agreement": {
+          "mean": 0.7453059421250275,
+          "sample_sd": 0.14887742437272158
+        }
+      }
+    },
+    "unconditional": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9508318111559293,
+          "SROCC": 0.9470673823067727,
+          "KROCC": 0.8120046452783835,
+          "Aggregate": 2.709903838741085,
+          "mae": 0.31884770929813383
+        },
+        "123": {
+          "PLCC": 0.9448658861284295,
+          "SROCC": 0.9428744086020506,
+          "KROCC": 0.8040704148542116,
+          "Aggregate": 2.6918107095846917,
+          "mae": 0.3376543347703086
+        },
+        "456": {
+          "PLCC": 0.9505683478761318,
+          "SROCC": 0.9500584221323274,
+          "KROCC": 0.8185253059143406,
+          "Aggregate": 2.7191520759228,
+          "mae": 0.32193334314558236
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9487553483868302,
+          "sample_sd": 0.003370948044629734
+        },
+        "SROCC": {
+          "mean": 0.9466667376803836,
+          "sample_sd": 0.0036087254936183117
+        },
+        "KROCC": {
+          "mean": 0.8115334553489785,
+          "sample_sd": 0.007238955991869867
+        },
+        "Aggregate": {
+          "mean": 2.7069555414161925,
+          "sample_sd": 0.013907081690478284
+        },
+        "mae": {
+          "mean": 0.3261451290713416,
+          "sample_sd": 0.010085962816012206
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.8658193467510127,
+              "sample_sd": 0.09078211564263224
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -2.8173543376987484,
+              "sample_sd": 0.22238890205278772
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.8651128429032507,
+              "sample_sd": 0.03205310871720852
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.6283481997156901,
+              "sample_sd": 0.06667030657203214
+            },
+            "fraction_score_increases": {
+              "mean": 0.03809523809523809,
+              "sample_sd": 0.02075666163590797
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -2.8680883102676495,
+              "sample_sd": 0.16589663623604314
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.4680492841467565,
+              "sample_sd": 0.12042506849052168
+            },
+            "fraction_score_increases": {
+              "mean": 0.16326530612244897,
+              "sample_sd": 0.08895712129674845
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.1477765064154353,
+              "sample_sd": 0.37362491450767193
+            },
+            "fraction_score_increases": {
+              "mean": 0.07142857142857144,
+              "sample_sd": 0.0536639412837364
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -2.1864299879593108,
+              "sample_sd": 0.5414416418518879
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.255707830292027,
+              "sample_sd": 0.23702830442253595
+            },
+            "fraction_score_increases": {
+              "mean": 0.28571428571428575,
+              "sample_sd": 0.19468146967692768
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.6665313772265875,
+              "sample_sd": 0.03743224347304455
+            },
+            "fraction_score_increases": {
+              "mean": 0.017460317460317457,
+              "sample_sd": 0.026226526415648103
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -2.7443905841736567,
+              "sample_sd": 0.22198252757317075
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.6588894625504812,
+              "sample_sd": 0.15113559001670204
+            },
+            "fraction_score_increases": {
+              "mean": 0.07482993197278912,
+              "sample_sd": 0.11239939892420617
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.22294840027415563,
+              "sample_sd": 0.015315559947526288
+            },
+            "fraction_score_increases": {
+              "mean": 0.0746031746031746,
+              "sample_sd": 0.02790221560515388
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.5505083564187393,
+              "sample_sd": 0.03281006940721493
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.04156648261206491,
+              "sample_sd": 0.007144427513249545
+            },
+            "fraction_score_increases": {
+              "mean": 0.16326530612244897,
+              "sample_sd": 0.053994924715603895
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.9093404722828714,
+              "sample_sd": 0.03029844340606862
+            },
+            "fraction_score_increases": {
+              "mean": 0.003174603174603175,
+              "sample_sd": 0.00549857399228215
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.7664586265070907,
+              "sample_sd": 0.07018454166184723
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.317494388847124,
+              "sample_sd": 0.02111227166647207
+            },
+            "fraction_score_increases": {
+              "mean": 0.013605442176870748,
+              "sample_sd": 0.02356531710978064
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": -0.07540548989722881,
+          "sample_sd": 0.4850868045306945
+        },
+        "CHEST_SROCC": {
+          "mean": 0.13093017407887306,
+          "sample_sd": 0.5215668022795572
+        },
+        "PELVIS_SROCC": {
+          "mean": -0.49063529349520335,
+          "sample_sd": 0.3226042156594573
+        },
+        "pair_agreement": {
+          "mean": 0.49326264634415723,
+          "sample_sd": 0.2643398763510957
+        }
+      }
+    },
+    "resnet_baseline": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9229723140073892,
+          "SROCC": 0.9261220936020009,
+          "KROCC": 0.7724702902338034,
+          "Aggregate": 2.6215646978431937,
+          "mae": 0.48286240686972937
+        },
+        "123": {
+          "PLCC": 0.9259253040910512,
+          "SROCC": 0.9255275791027162,
+          "KROCC": 0.7694607545556693,
+          "Aggregate": 2.6209136377494366,
+          "mae": 0.41046183240082534
+        },
+        "456": {
+          "PLCC": 0.9295261766904672,
+          "SROCC": 0.9283958000646465,
+          "KROCC": 0.7763462073950367,
+          "Aggregate": 2.6342681841501503,
+          "mae": 0.3814132540093528
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9261412649296359,
+          "sample_sd": 0.0032822642078315766
+        },
+        "SROCC": {
+          "mean": 0.9266818242564545,
+          "sample_sd": 0.0015138185742569644
+        },
+        "KROCC": {
+          "mean": 0.7727590840615032,
+          "sample_sd": 0.003451799039193349
+        },
+        "Aggregate": {
+          "mean": 2.6255821732475937,
+          "sample_sd": 0.007529346509553258
+        },
+        "mae": {
+          "mean": 0.4249124977599692,
+          "sample_sd": 0.05224556393621839
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.1530675675187794,
+              "sample_sd": 0.07789963319593023
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.45464003167184847,
+              "sample_sd": 0.050214974131030515
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.3860501679433446,
+              "sample_sd": 0.16823927517693008
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.7627816834147014,
+              "sample_sd": 0.07161523989717376
+            },
+            "fraction_score_increases": {
+              "mean": 0.9952380952380953,
+              "sample_sd": 0.008247860988423195
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.44588534523840667,
+              "sample_sd": 0.061767330805212475
+            },
+            "fraction_score_increases": {
+              "mean": 0.979591836734694,
+              "sample_sd": 0.03534797566467094
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.906285049153023,
+              "sample_sd": 0.18863475942548258
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.6891260690159269,
+              "sample_sd": 0.15495452863796053
+            },
+            "fraction_score_increases": {
+              "mean": 0.9603174603174603,
+              "sample_sd": 0.053097551376754676
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.33473995104938953,
+              "sample_sd": 0.1666554889690451
+            },
+            "fraction_score_increases": {
+              "mean": 0.8299319727891157,
+              "sample_sd": 0.2275609344718059
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.9104000013701765,
+              "sample_sd": 0.2016791213633603
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": 1.7772883371701316,
+              "sample_sd": 0.04957368476517052
+            },
+            "fraction_score_increases": {
+              "mean": 0.9968253968253968,
+              "sample_sd": 0.00549857399228213
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": 0.4517725487144626,
+              "sample_sd": 0.0558599620336159
+            },
+            "fraction_score_increases": {
+              "mean": 0.9863945578231292,
+              "sample_sd": 0.02356531710978067
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 2.923088427303599,
+              "sample_sd": 0.16060374330586474
+            },
+            "fraction_score_increases": {
+              "mean": 1.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.24266594075967396,
+              "sample_sd": 0.01059329963174242
+            },
+            "fraction_score_increases": {
+              "mean": 0.023809523809523808,
+              "sample_sd": 0.01716929178792376
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.5320076812692239,
+              "sample_sd": 0.06317386332717267
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.08316646567007312,
+              "sample_sd": 0.01730181504985255
+            },
+            "fraction_score_increases": {
+              "mean": 0.047619047619047616,
+              "sample_sd": 0.0513594179270119
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.0685759443907985,
+              "sample_sd": 0.03696639365837818
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.8857673203864067,
+              "sample_sd": 0.03391479470246031
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.43262636836390106,
+              "sample_sd": 0.009142719692030503
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": -0.6027452362846243,
+          "sample_sd": 0.13002994053445271
+        },
+        "CHEST_SROCC": {
+          "mean": -0.8218284177319998,
+          "sample_sd": 0.060402222544773794
+        },
+        "PELVIS_SROCC": {
+          "mean": -0.7185538432634663,
+          "sample_sd": 0.2142663652622866
+        },
+        "pair_agreement": {
+          "mean": 0.03379721669980119,
+          "sample_sd": 0.05509505550914918
+        }
+      }
+    },
+    "resnet_cond": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.92087325547916,
+          "SROCC": 0.9198358592650673,
+          "KROCC": 0.7583801913770846,
+          "Aggregate": 2.5990893061213116,
+          "mae": 0.44458137548632093
+        },
+        "123": {
+          "PLCC": 0.91573270549965,
+          "SROCC": 0.9130814892595354,
+          "KROCC": 0.744654884723776,
+          "Aggregate": 2.5734690794829613,
+          "mae": 0.42485108064280613
+        },
+        "456": {
+          "PLCC": 0.9335642710847089,
+          "SROCC": 0.9324577224819139,
+          "KROCC": 0.7806325157851066,
+          "Aggregate": 2.6466545093517295,
+          "mae": 0.3435331195096175
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.9233900773545063,
+          "sample_sd": 0.009178342827968993
+        },
+        "SROCC": {
+          "mean": 0.9217916903355056,
+          "sample_sd": 0.009835067862199558
+        },
+        "KROCC": {
+          "mean": 0.7612225306286557,
+          "sample_sd": 0.01815644936412604
+        },
+        "Aggregate": {
+          "mean": 2.6064042983186675,
+          "sample_sd": 0.037137024913213364
+        },
+        "mae": {
+          "mean": 0.40432185854624825,
+          "sample_sd": 0.05356093939524116
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.3204315668060666,
+              "sample_sd": 0.19917388239993525
+            },
+            "fraction_score_increases": {
+              "mean": 0.6761904761904761,
+              "sample_sd": 0.10508607852720911
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.8206945690168005,
+              "sample_sd": 0.23222809794223717
+            },
+            "fraction_score_increases": {
+              "mean": 0.11564625850340136,
+              "sample_sd": 0.11239939892420615
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 1.0367399681182137,
+              "sample_sd": 0.1983632148334897
+            },
+            "fraction_score_increases": {
+              "mean": 0.9727891156462585,
+              "sample_sd": 0.047130634219561277
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.4430747494811104,
+              "sample_sd": 0.26007811974576855
+            },
+            "fraction_score_increases": {
+              "mean": 0.34761904761904766,
+              "sample_sd": 0.1238095238095238
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.7013365825017293,
+              "sample_sd": 0.17433940707545792
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 0.6968338570627225,
+              "sample_sd": 0.32345689505757114
+            },
+            "fraction_score_increases": {
+              "mean": 0.8843537414965986,
+              "sample_sd": 0.10067107882278055
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.400059074352658,
+              "sample_sd": 0.22275056116084546
+            },
+            "fraction_score_increases": {
+              "mean": 0.36984126984126986,
+              "sample_sd": 0.12087486579997413
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.6928117113048529,
+              "sample_sd": 0.13046151536329026
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 0.7688232538651446,
+              "sample_sd": 0.33337757346666397
+            },
+            "fraction_score_increases": {
+              "mean": 0.8843537414965986,
+              "sample_sd": 0.11239939892420618
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.3399525982046884,
+              "sample_sd": 0.20574757620787384
+            },
+            "fraction_score_increases": {
+              "mean": 0.3873015873015873,
+              "sample_sd": 0.09359697135114647
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.647101111152545,
+              "sample_sd": 0.16168509416283808
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 0.843871063926593,
+              "sample_sd": 0.24514946769873017
+            },
+            "fraction_score_increases": {
+              "mean": 0.9115646258503401,
+              "sample_sd": 0.07726405912653436
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.21571727671793528,
+              "sample_sd": 0.014772003173770268
+            },
+            "fraction_score_increases": {
+              "mean": 0.047619047619047616,
+              "sample_sd": 0.03333333333333333
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.4780607255948644,
+              "sample_sd": 0.029057236373491384
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.07731432787009647,
+              "sample_sd": 0.013491226286055582
+            },
+            "fraction_score_increases": {
+              "mean": 0.07482993197278912,
+              "sample_sd": 0.06560306640131262
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.0230504894895214,
+              "sample_sd": 0.0456995997274756
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.7700902020850149,
+              "sample_sd": 0.12321022018738712
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.4348076030003781,
+              "sample_sd": 0.045175071358784895
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": -0.4698637050282624,
+          "sample_sd": 0.11646109335375458
+        },
+        "CHEST_SROCC": {
+          "mean": -0.5823252533309248,
+          "sample_sd": 0.24862368057391276
+        },
+        "PELVIS_SROCC": {
+          "mean": -0.6595168616228021,
+          "sample_sd": 0.025449187360653935
+        },
+        "pair_agreement": {
+          "mean": 0.1181798100287166,
+          "sample_sd": 0.11057470138938903
+        }
+      }
+    },
+    "strong_unconditional": {
+      "per_seed_test": {
+        "42": {
+          "PLCC": 0.9425116166527686,
+          "SROCC": 0.9376606143424193,
+          "KROCC": 0.7949050107435304,
+          "Aggregate": 2.6750772417387183,
+          "mae": 0.3469780590136846
+        },
+        "123": {
+          "PLCC": 0.952382750129746,
+          "SROCC": 0.9495219795957349,
+          "KROCC": 0.8177045234566677,
+          "Aggregate": 2.7196092531821487,
+          "mae": 0.2678516081637806
+        },
+        "456": {
+          "PLCC": 0.9439295087268106,
+          "SROCC": 0.9412650809922732,
+          "KROCC": 0.7985529327776324,
+          "Aggregate": 2.6837475224967164,
+          "mae": 0.31033532218800647
+        }
+      },
+      "test": {
+        "PLCC": {
+          "mean": 0.946274625169775,
+          "sample_sd": 0.005337086974967992
+        },
+        "SROCC": {
+          "mean": 0.9428158916434759,
+          "sample_sd": 0.006080851640605386
+        },
+        "KROCC": {
+          "mean": 0.8037208223259436,
+          "sample_sd": 0.012246826396123383
+        },
+        "Aggregate": {
+          "mean": 2.6928113391391943,
+          "sample_sd": 0.02360909972649956
+        },
+        "mae": {
+          "mean": 0.30838832978849057,
+          "sample_sd": 0.03959914002321765
+        }
+      },
+      "probe": {
+        "gaussian_0.75": {
+          "all": {
+            "mean_delta": {
+              "mean": 0.8298028145517623,
+              "sample_sd": 0.1465754149458995
+            },
+            "fraction_score_increases": {
+              "mean": 0.9031746031746032,
+              "sample_sd": 0.050018892878059454
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.09653706128905419,
+              "sample_sd": 0.5249303368095158
+            },
+            "fraction_score_increases": {
+              "mean": 0.7278911564625851,
+              "sample_sd": 0.1476362885320456
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": 0.9985522218301993,
+              "sample_sd": 0.1338975135761721
+            },
+            "fraction_score_increases": {
+              "mean": 0.979591836734694,
+              "sample_sd": 0.03534797566467094
+            },
+            "n": 49
+          }
+        },
+        "gaussian_1.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.9283025737792727,
+              "sample_sd": 0.1603781739984914
+            },
+            "fraction_score_increases": {
+              "mean": 0.0015873015873015875,
+              "sample_sd": 0.002749286996141075
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -3.2114759010522547,
+              "sample_sd": 0.2611951908807785
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.8348682255161052,
+              "sample_sd": 0.10954510958164515
+            },
+            "fraction_score_increases": {
+              "mean": 0.006802721088435374,
+              "sample_sd": 0.01178265855489032
+            },
+            "n": 49
+          }
+        },
+        "gaussian_2.5": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.6367000733280463,
+              "sample_sd": 0.36373223877346145
+            },
+            "fraction_score_increases": {
+              "mean": 0.01904761904761905,
+              "sample_sd": 0.02896553585856295
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -2.817828567660585,
+              "sample_sd": 0.33319442990955184
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.6348617499326767,
+              "sample_sd": 0.32105700113543933
+            },
+            "fraction_score_increases": {
+              "mean": 0.07482993197278912,
+              "sample_sd": 0.11239939892420617
+            },
+            "n": 49
+          }
+        },
+        "box_5": {
+          "all": {
+            "mean_delta": {
+              "mean": -1.8408596490347195,
+              "sample_sd": 0.14055297413350504
+            },
+            "fraction_score_increases": {
+              "mean": 0.03968253968253968,
+              "sample_sd": 0.009912695235553012
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -3.1909302675805122,
+              "sample_sd": 0.2768137307800067
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.5450829896999866,
+              "sample_sd": 0.04584503003249092
+            },
+            "fraction_score_increases": {
+              "mean": 0.14965986394557826,
+              "sample_sd": 0.03117398431942749
+            },
+            "n": 49
+          }
+        },
+        "noise_0.01": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.24151793995073864,
+              "sample_sd": 0.039644680138793305
+            },
+            "fraction_score_increases": {
+              "mean": 0.05714285714285714,
+              "sample_sd": 0.04542567625794979
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -0.6197164139780057,
+              "sample_sd": 0.10074704199826706
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.043931755585735345,
+              "sample_sd": 0.02669210584842372
+            },
+            "fraction_score_increases": {
+              "mean": 0.17006802721088435,
+              "sample_sd": 0.15586992159713742
+            },
+            "n": 49
+          }
+        },
+        "noise_0.03": {
+          "all": {
+            "mean_delta": {
+              "mean": -0.9009855793168148,
+              "sample_sd": 0.0385859485273175
+            },
+            "fraction_score_increases": {
+              "mean": 0.007936507936507936,
+              "sample_sd": 0.005498573992282149
+            },
+            "n": 210
+          },
+          "target_at_least_3": {
+            "mean_delta": {
+              "mean": -1.8502761295863561,
+              "sample_sd": 0.1220364115306502
+            },
+            "fraction_score_increases": {
+              "mean": 0.0,
+              "sample_sd": 0.0
+            },
+            "n": 49
+          },
+          "target_at_most_1": {
+            "mean_delta": {
+              "mean": -0.24818987447489685,
+              "sample_sd": 0.01854421171852282
+            },
+            "fraction_score_increases": {
+              "mean": 0.034013605442176874,
+              "sample_sd": 0.023565317109780645
+            },
+            "n": 49
+          }
+        }
+      },
+      "external": {
+        "SROCC": {
+          "mean": 0.3905158317004553,
+          "sample_sd": 0.06300335038776234
+        },
+        "CHEST_SROCC": {
+          "mean": 0.5677769129361996,
+          "sample_sd": 0.06702073751658605
+        },
+        "PELVIS_SROCC": {
+          "mean": 0.09540030469726703,
+          "sample_sd": 0.24826585018295458
+        },
+        "pair_agreement": {
+          "mean": 0.7280759885133642,
+          "sample_sd": 0.05918881292286705
+        }
+      }
+    }
+  }
+}

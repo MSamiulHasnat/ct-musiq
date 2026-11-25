@@ -1,0 +1,5 @@
+{
+  "n": 1666,
+  "max_absolute_prediction_difference": 0.0,
+  "comparison": "Original B0 engine versus generic backbone engine, same GPU environment"
+}

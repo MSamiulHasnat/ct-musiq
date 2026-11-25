@@ -1,0 +1,32 @@
+{
+  "PLCC": 0.952382750129746,
+  "SROCC": 0.9495219795957349,
+  "KROCC": 0.8177045234566677,
+  "Aggregate": 2.7196092531821487,
+  "mae": 0.2678516081637806,
+  "n": 300,
+  "checkpoint_config": {
+    "image_dir": "dataset/image",
+    "labels": "dataset/train.json",
+    "split": "research_audit/development_split_seed42.json",
+    "pretrained_file": "../efficientnet_b0.safetensors",
+    "checkpoint": null,
+    "output": "results/strong_unconditional_seed123",
+    "seed": 123,
+    "epochs": 100,
+    "batch_size": 32,
+    "workers": 4,
+    "degradation_weight": 0.1,
+    "constraint_sigma": 1.5,
+    "head": "ordinal",
+    "backbone": "efficientnet_b0",
+    "quality_threshold": 0.0,
+    "model": "efficientnet_b0_ordinal",
+    "resolution": 448,
+    "rps_weight": 1.0,
+    "constraint": "blur sigma 1.5 on training MOS>=0.0; margin 0.1; synthetic assumption",
+    "split_sha256": "21976415f1c7c21f6ce776aca475c5aa4e50943aa0f5f3e852b74d905c8ff626",
+    "pretrained_sha256": "d569899762ea9b1384ee07f4af64805cf8caa1c55f9253ebb1080dc40e87a2cd"
+  },
+  "checkpoint_sha256": "4aebc3e032fa0b087e5fb9e53a32eda08d31bf61675c10a069713abd4369d6fc"
+}

@@ -1,5 +1,16 @@
 # Development experiment protocol
 
+## Completion status, 2026-11-25
+
+The fixed nine-arm study is complete: 27 models, each evaluated on 300 LDCT
+test images and 1,666 expert-annotated external phantom images. All six
+development transformations, both quality strata and all declared controls
+are retained. The final numerical summary, model/environment manifest and
+verification record are in `results/`. The remote queue has finished and no
+further experiment runs are planned. Earlier proposals below are retained as
+development history, not an active queue. The working manuscript is in
+`../paper/`; authorship details and institutional declarations require review.
+
 ## Current priority: limited stronger-method screening
 
 The author prioritizes a stronger method with limited implementation work,
@@ -34,6 +45,152 @@ splits and model-selection procedures are checked. They are context for
 screening, not proof that this project is competitive or novel.
 
 ## Question and scope
+
+### Ordinal and conditional degradation study, 2026-11-25
+
+The author requests the smallest feasible significant study. Compare the
+existing scalar compact model with an ordinal 21-bin expectation head and
+with that same ordinal model plus a conditional synthetic-blur ranking term.
+Use seeds 42,123,456, the SAME grouped partition, float 448 input, flips,
+AdamW, learning rate, batch 32, epoch limit 100 and patience as the compact
+baseline. New arms select checkpoints with unrounded signed correlation sum
+(the older compact arm used four-decimal components; disclose this difference).
+Ordinal training uses MSE + 0.5 margin rank + mean CDF squared error over the
+20 nonconstant thresholds. Targets linearly interpolate MOS onto the 0.2
+grid; these are not observed reader-vote distributions.
+
+The conditional arm adds weight 0.1 times relu(0.1-original+blurred), only on
+training images with original MOS>=3. Blur sigma is fixed at 1.5 at 448
+pixels; auxiliary predictions use evaluation-mode BN/dropout with gradients
+enabled, preserving running statistics. This is a synthetic preference
+assumption on relatively high-rated slices, not a clinical ground truth.
+Do not adjust this weight or threshold based on test outcomes.
+
+Probe EVERY baseline and new-arm checkpoint on development validation with
+Gaussian blur sigma .75,1.5,2.5, a box filter width 5 and additive noise
+standard deviation .01,.03 in normalized units. Report score changes overall,
+on original MOS>=3 and MOS<=1; transformed images have no human MOS. Two
+Gaussian settings and the box family are not used in the constraint. These
+are stress tests and do not establish clinical safety or denoiser validity.
+Retain every seed, including failures to improve. Run the new test evaluations
+only after all development training and probes complete; no test selection,
+calibration, rounding or learned ensemble weights. Prior public test use makes
+the entire study exploratory. Published prior art already identifies smoothness
+bias and ordinal losses, so novelty must be evaluated rather than assumed.
+Frozen source: `snapshots/ordinal_study_source.tar.gz`, SHA-256
+`26539b6534307ec09359ff58b801bcfd9d20eb475aafd0f4744ab143835e9231`.
+Three ordinal-loss/gradient checks passed in the remote experiment environment
+before starting the study. External downloads remain local-only.
+
+Follow-up declared before inspecting ANY new ordinal-arm test evaluations:
+development probes show mild blur (sigma .75) raises scores in 73–100% of
+the 49 original MOS>=3 images across baseline seeds, whereas sigma 1.5 is
+already often penalized. The first conditional seed's auxiliary training
+loss often reaches zero. Retain this original arm and run a targeted mild
+sigma .75 arm at the same weight .1 and seeds 42,123,456. No other optimizer,
+target threshold or ranking-margin setting changes. Gaussian 1.5 and 2.5 and
+box smoothing remain nontraining stress settings for this mild arm. This
+development-driven follow-up is exploratory, not a prespecified initial arm.
+Source SHA-256: `d4fa992bbdb4ade32d10b09f5cfb27839e1c00abcfcc4634265588319fadc6a9`
+in `snapshots/mild_ordinal_study_source.tar.gz`.
+
+Investigate independent CBCT-IQ phantom data (Zenodo 20124496, CC BY 4.0),
+downloaded locally. The actual annotations.csv has 1,666 rows, MD5
+37733870d1f6cb796272b5f778a98c0c. Verify matching, input normalization and
+reader-score direction before any external inference. Primary external
+endpoint is Spearman correlation against human OIQ_MOS_ZSCORE, overall and
+separately by phantom anatomy; do not use algorithm-derived IQA-rating columns
+as human labels. No external labels may fit weights or select settings. This
+phantom/domain transfer experiment cannot establish patient-level clinical
+generalization. Record any missing cases rather than silently excluding them.
+Secondary external endpoint, fixed before external inference: agreement with
+at least two of three readers on reconstruction pairs matched on anatomy,
+slice, kernel, voltage and pulse width. Exclude ambiguous/tied reader pairs
+only for this secondary endpoint, reporting their count; model ties within
+1e-6 receive half credit. All 1,666 images remain in the primary endpoint.
+No reference-image ratings are invented for unannotated acquisitions.
+
+External input correction: visual QA found that directly presenting the stored
+NIfTI x/y array as image rows/columns rotates the anatomy relative to axial
+training TIFFs. Every affine reports RAS axes. The fixed mapping
+`flipud(array.T)` puts the physical x axis along columns and anterior at the
+top, based on geometry and visual QA, not score optimization. Initial runs
+were stopped; partial and completed outputs are preserved in
+`results/external_cbct_iq_stored_array/`. Every declared model is rerun on
+`dataset/external_cbct_iq/prepared_axial/`. The initial negative correlations
+must not be presented as primary external results. No external setting,
+normalization or model is selected by the corrected test outcomes.
+
+Final external inference is moved to the two original GPUs for speed and
+framework consistency, using the SAME fixed axial preprocessing and all 12
+models. Uploads originate from the local computer. CPU runs are retained as
+cross-environment checks; GPU results form the final complete external table.
+This change is declared before viewing GPU external outcomes. Source archive
+`snapshots/external_gpu_source.tar.gz` SHA-256 is
+`0902005727533ddbfb0b8c5c071ae2a189fbb34410e5e573e9a035a28740f814`.
+The published CBCT-IQ reader rubric was checked: 1 means very poor and 4 very
+good (paper page 9); the human z-score direction is retained. Readers saw a
+reference image while assigning these scores, whereas models receive only the
+test image. This annotation-task difference is part of the transfer limitation.
+
+### Scalar-head component control
+
+To test whether the ordinal head is necessary for the constraint's effect,
+add a scalar head plus the same mild constraint (.75 sigma, .1 weight, .1
+margin, original MOS>=3) with seeds 42,123,456 and all other settings fixed.
+This completes the head/constraint component comparison without another
+backbone search. It is an exploratory mechanistic follow-up after observing
+earlier benchmark and initial external baselines, not a new untouched-holdout
+claim. No external labels fit its parameters or choose its hyperparameters.
+Source snapshot `snapshots/scalar_constraint_source.tar.gz`, SHA-256
+`3f361a1c582fd0595cc9adf7c2e2c02d558015af38b9936f755536de43e53bd9`.
+The original scalar baseline's rounded selection differs slightly from the
+new unrounded selection and is disclosed for this control as well.
+
+### Second-backbone confirmation
+
+As a final portability check of the same constraint, compare scalar ResNet-18
+with and without mild conditioning at 448, seeds 42,123,456. Keep all data,
+loss weights, threshold, margin, sigma and optimizer settings fixed. Only the
+backbone changes to ImageNet `timm/resnet18.a1_in1k`; no head/loss search is
+performed. This tests a training constraint across two standard CNN families,
+not a new architecture. It is added during the exploratory study after initial
+external outcomes are known; external labels never fit or choose its settings.
+Retain every seed and report the same benchmark/probe/external endpoints.
+Frozen source `snapshots/resnet_constraint_source.tar.gz`, SHA-256
+`493b3eb168a964ad1d4062f97fad07268348d27b202761d9cb1cc1a60811ded3`.
+Offline ResNet-18 weights SHA-256
+`80c49dee3da4822c009c5a7fe591e9223c5a2cfcf95a4067ca4dfb5a7b89c612`.
+
+### Unconditional-ranking ablation
+
+The final mechanistic ablation applies the SAME scalar EfficientNet mild-blur
+ranking term to all training images (threshold 0 instead of 3), seeds
+42,123,456. This tests whether quality conditioning contributes beyond an
+ordinary degradation-ranking prior. It is required to assess the central
+interpretation, not a hyperparameter search for a higher test score. All
+other settings, including auxiliary BN/dropout handling, are fixed. Retain
+the outcome even if it contradicts the conditioning hypothesis. Synthetic
+distortion-ranking prior art includes RankIQA (ICCV 2017) and distortion-guided
+opinion-unaware CT IQA (ISBI 2026); cite both and do not claim that degradation
+ranking itself is new. This is the last planned method component; complete
+the statistics and manuscript after these fixed controls.
+Frozen source `snapshots/unconditional_source.tar.gz`, SHA-256
+`68203ebef5e59898ac121dc84d6cd9fa454d51201acfeeac86fb0ce4f64945ee`.
+
+### Fixed ensemble follow-up on 2026-11-25
+
+Following the author's request for further improvements, first evaluate the
+equal arithmetic mean of the three existing FLOAT compact models (seeds 42,
+123,456) on development validation. No weights are fitted and no subsets,
+rounding or calibration rules are searched. Validation aggregate is 2.841767
+and MAE 0.173226, improving on all three individual validation checkpoints.
+Freeze this same three-model average for subsequent released-test evaluation.
+This is exploratory follow-up after prior test use; the single-model
+three-seed result remains the original primary estimate. The ensemble is one
+predictor, not three independent ensemble replications. Report three forward
+passes and approximately three times the parameter storage as its costs.
+Use `ensemble_predictions.py` and retain prediction-source hashes.
 
 ### Compact follow-up frozen on 2026-11-25
 
@@ -183,6 +340,24 @@ External validation on additional patients, acquisition conditions and sites
 would materially strengthen generalization claims. Keep all exploratory
 choices and test use transparent. Do not describe the project's Swin-T +
 ResNet50 model as an exact implementation of the original challenge winner.
+
+## Final matched strong-blur control (exploratory)
+
+After the original external CPU outcomes were available, retain the original
+ordinal Gaussian sigma 1.5 arm and compare it with the identical constraint
+applied to every training image (threshold 0 instead of 3). Use seeds 42, 123,
+456, weight 0.1, margin 0.1 and unchanged optimization and checkpoint selection.
+This isolates the gate for the initial strong-blur arm; it is an adaptive
+follow-up, not an untouched confirmatory comparison. No external labels fit
+weights, calibrations or hyperparameters. Report all nine arms (27 models),
+including unsuccessful synthetic and transfer outcomes, without selecting a
+new best configuration from external results.
+
+Frozen source `snapshots/strong_unconditional_source.tar.gz`, SHA-256
+`aa037982b80388c4ef124ad47d435be6b37c704bdcbbd9672b845a03aa26d807`.
+The runner waits for current training and the original 12 external GPU runs
+before allocating additional training memory, and then evaluates all 15
+follow-up models externally with the same fixed axial inputs and GPU framework.
 
 ## Publication constraint
 

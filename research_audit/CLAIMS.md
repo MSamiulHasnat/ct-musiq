@@ -5,6 +5,11 @@ for dataset provenance, scripts, hashes, and numerical details.
 
 | Claim | Status | Evidence or action |
 |---|---|---|
+| Quality conditioning improves independent phantom agreement for the scalar mild-blur configuration | Supported within this exploratory fixed experiment | LDCT aggregate 2.7197 versus 2.7200; external pair agreement 74.5% versus 42.5%, or 49.3% for universal ranking. Large seed/anatomy variation and only two physical phantoms limit generalization. |
+| The quality gate universally explains the transfer improvement | Not supported | Strong ordinal conditional/unconditional differences have within-phantom intervals including zero. |
+| Synthetic blur consistency establishes expert preference agreement | Contradicted by controls | Ordinal mild-blur eliminates illustrated score increases but external Spearman is −0.097; ResNet conditioning improves probes but external correlation remains −0.470. |
+| A more elaborate ordinal head is required | Not supported | The scalar conditional arm improves external agreement while retaining a similar observed benchmark aggregate. No universal head superiority is established. |
+| Averaging existing compact seeds reliably outperforms the best individual checkpoint | Not established | Validation improves; fixed test average scores 2.7281, close to seed 42's 2.7287. Paired inferred-group difference interval includes zero. It needs three model passes. |
 | The compact 448-pixel baseline is stronger than our earlier transformer pipeline on this released test collection | Supported for these exploratory runs | Three seeds give aggregate 2.7200 ± 0.0133 and MAE 0.3010 ± 0.0021, versus 2.4617 ± 0.0179 and 0.4652 ± 0.0210. Multiple pipeline settings differ, and the test has prior exploratory use. |
 | The compact model is novel or state of the art | Not established | EfficientNet-B0 at 448 is already used in current author comparisons; ClinReadNet reports 2.7690. Novelty and matched literature comparisons remain unresolved. |
 | Preserving floating-point input precision explains the compact model's stronger aggregate | Not supported by the controlled three-seed comparison | Float aggregate 2.7200 ± 0.0133 versus 8-bit control 2.7170 ± 0.0058; mean difference +0.0030. Quantized MAE is lower. This does not establish equivalence or explain the pipeline-level transformer gap. |
