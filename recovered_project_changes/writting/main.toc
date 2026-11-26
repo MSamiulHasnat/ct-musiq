@@ -1,0 +1,45 @@
+\contentsline {section}{\numberline {I}Methodology}{6}{section.1}%
+\contentsline {section}{\numberline {II}Overview and Problem Formulation}{6}{section.2}%
+\contentsline {section}{\numberline {III}Dataset and Pre-Processing}{6}{section.3}%
+\contentsline {subsection}{\numberline {\mbox {III-A}}LDCTIQAC 2023 Dataset}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {\mbox {III-B}}Data Splits}{6}{subsection.3.2}%
+\contentsline {subsection}{\numberline {\mbox {III-C}}CT Windowing Pre-Processing}{6}{subsection.3.3}%
+\contentsline {subsection}{\numberline {\mbox {III-D}}Data Loading Pipeline}{7}{subsection.3.4}%
+\contentsline {section}{\numberline {IV}Proposed Model Architecture: CT-MUSIQ}{7}{section.4}%
+\contentsline {subsection}{\numberline {\mbox {IV-A}}Architecture Overview}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {\mbox {IV-B}}Multi-Scale Patch Tokenisation}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {\mbox {IV-C}}Spatial Coordinate Representation}{8}{subsection.4.3}%
+\contentsline {subsection}{\numberline {\mbox {IV-D}}Grayscale-to-RGB Channel Replication}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {\mbox {IV-E}}Patch Embedding Module}{8}{subsection.4.5}%
+\contentsline {subsection}{\numberline {\mbox {IV-F}}Hash-Based Positional Encoding}{8}{subsection.4.6}%
+\contentsline {subsection}{\numberline {\mbox {IV-G}}Learnable \texttt {[CLS]} Token}{8}{subsection.4.7}%
+\contentsline {subsection}{\numberline {\mbox {IV-H}}Transformer Encoder}{8}{subsection.4.8}%
+\contentsline {subsection}{\numberline {\mbox {IV-I}}Prediction Heads}{9}{subsection.4.9}%
+\contentsline {section}{\numberline {V}Loss Function}{9}{section.5}%
+\contentsline {subsection}{\numberline {\mbox {V-A}}Mean Squared Error Loss}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {\mbox {V-B}}Scale-Consistency KL Divergence Loss}{9}{subsection.5.2}%
+\contentsline {subsection}{\numberline {\mbox {V-C}}Pairwise Margin Ranking Loss}{9}{subsection.5.3}%
+\contentsline {section}{\numberline {VI}Training Procedure}{10}{section.6}%
+\contentsline {subsection}{\numberline {\mbox {VI-A}}Two-Stage Training Schedule}{10}{subsection.6.1}%
+\contentsline {subsection}{\numberline {\mbox {VI-B}}Optimiser}{10}{subsection.6.2}%
+\contentsline {subsection}{\numberline {\mbox {VI-C}}Mixed Precision Training}{10}{subsection.6.3}%
+\contentsline {subsection}{\numberline {\mbox {VI-D}}Gradient Clipping}{10}{subsection.6.4}%
+\contentsline {subsection}{\numberline {\mbox {VI-E}}Exponential Moving Average}{10}{subsection.6.5}%
+\contentsline {subsection}{\numberline {\mbox {VI-F}}Early Stopping}{10}{subsection.6.6}%
+\contentsline {subsection}{\numberline {\mbox {VI-G}}Reproducibility}{10}{subsection.6.7}%
+\contentsline {section}{\numberline {VII}Data Augmentation}{10}{section.7}%
+\contentsline {section}{\numberline {VIII}Evaluation Protocol}{11}{section.8}%
+\contentsline {subsection}{\numberline {\mbox {VIII-A}}Evaluation Metrics}{11}{subsection.8.1}%
+\contentsline {subsection}{\numberline {\mbox {VIII-B}}Test-Time Augmentation}{11}{subsection.8.2}%
+\contentsline {subsection}{\numberline {\mbox {VIII-C}}Isotonic Regression Calibration}{11}{subsection.8.3}%
+\contentsline {section}{\numberline {IX}Comparison Baseline: Agaldran Combo}{11}{section.9}%
+\contentsline {section}{\numberline {X}Ablation Study Design}{12}{section.10}%
+\contentsline {section}{\numberline {XI}Implementation Details}{12}{section.11}%
+\contentsline {subsection}{\numberline {\mbox {XI-A}}Software Environment}{12}{subsection.11.1}%
+\contentsline {subsection}{\numberline {\mbox {XI-B}}Hardware}{12}{subsection.11.2}%
+\contentsline {subsection}{\numberline {\mbox {XI-C}}Model Parameter Count}{12}{subsection.11.3}%
+\contentsline {subsection}{\numberline {\mbox {XI-D}}Training Convergence}{12}{subsection.11.4}%
+\contentsline {subsection}{\numberline {\mbox {XI-E}}Final Experimental Results}{12}{subsection.11.5}%
+\contentsline {section}{\numberline {XII}Summary}{12}{section.12}%
+\contentsline {section}{\numberline {XIII}*}{14}{section.13}%
+\contentsline {chapter}{References}{14}{section.13}%
